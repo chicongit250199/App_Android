@@ -1,5 +1,6 @@
-package antbuddy.htk.com.antbuddy2016.activities;
+package antbuddy.htk.com.antbuddy2016.activities.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,8 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -16,18 +15,19 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import antbuddy.htk.com.antbuddy2016.activities.login.ItemFragment;
-import antbuddy.htk.com.antbuddy2016.activities.login.ViewPagerAdapder;
+import antbuddy.htk.com.antbuddy2016.activities.R;
+
+import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
  */
-public class WelcomeActivity extends AppCompatActivity {
+public class WalkThroughActivity extends AppCompatActivity {
 
     private ViewPager paper;
     private List<Fragment> listData;
 
-    // Button
+    // Buttons
     private Button signUpFree_Button;
     private Button login_Button;
 
@@ -94,14 +94,18 @@ public class WelcomeActivity extends AppCompatActivity {
     View.OnClickListener welcomeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Intent myIntent = new Intent(WalkThroughActivity.this, LoReActivity.class);
             switch (v.getId()) {
                 case R.id.signUpFree_Button:
-                    Toast.makeText(WelcomeActivity.this, "Click Sign Up Free", Toast.LENGTH_SHORT).show();
-                    Log.i("LoginActivity_onClick", "Click Sign Up Free!");
+                    myIntent.putExtra(Constants.LOGIN_TYPE, 1);  // sign up free
+                    startActivity(myIntent);
+                    finish();
                     break;
+
                 case R.id.login_Button:
-                    Toast.makeText(WelcomeActivity.this, "Click Login!", Toast.LENGTH_SHORT).show();
-                    Log.i("LoginActivity_onClick", "Click Login!");
+                    myIntent.putExtra(Constants.LOGIN_TYPE, 2);  // login
+                    startActivity(myIntent);
+                    finish();
                     break;
 
                 default:
