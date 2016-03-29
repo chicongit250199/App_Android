@@ -41,10 +41,11 @@ public class WalkThroughActivity extends AppCompatActivity {
 
         listData = new ArrayList<>();
         listData = new ArrayList<>();
-        listData.add(new ItemFragment().newInstance("11111111"));
-        listData.add(new ItemFragment().newInstance("22222222"));
-        listData.add(new ItemFragment().newInstance("33333333"));
-        listData.add(new ItemFragment().newInstance("44444444"));
+
+        listData.add(new ItemFragment().newInstance(1));
+        listData.add(new ItemFragment().newInstance(2));
+        listData.add(new ItemFragment().newInstance(3));
+        listData.add(new ItemFragment().newInstance(4));
 
         ViewPagerAdapder adapder = new ViewPagerAdapder(getSupportFragmentManager(), listData);
         paper = (ViewPager) findViewById(R.id.viewpager);
