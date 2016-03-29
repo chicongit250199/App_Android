@@ -15,6 +15,7 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 
+import antbuddy.htk.com.antbuddy2016.module.login.adapter.WalkThroughAdapder;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 /**
@@ -45,7 +46,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         listData.add(new ItemFragment().newInstance(3));
         listData.add(new ItemFragment().newInstance(4));
 
-        ViewPagerAdapder adapder = new ViewPagerAdapder(getSupportFragmentManager(), listData);
+        WalkThroughAdapder adapder = new WalkThroughAdapder(getSupportFragmentManager(), listData);
         paper = (ViewPager) findViewById(R.id.viewpager);
 
         final RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radiogroup);

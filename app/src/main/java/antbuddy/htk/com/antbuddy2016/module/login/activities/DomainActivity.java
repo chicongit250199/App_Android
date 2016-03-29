@@ -16,11 +16,9 @@ import antbuddy.htk.com.antbuddy2016.objects.Domain;
  */
 public class DomainActivity extends Activity {
 
-
     ArrayList<Domain> domainList;
     DomainAdapter domainAdapter;
     ListView domainListView;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
