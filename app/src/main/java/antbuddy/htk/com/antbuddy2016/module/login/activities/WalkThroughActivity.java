@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.activities.login;
+package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,16 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import antbuddy.htk.com.antbuddy2016.activities.R;
+import antbuddy.htk.com.antbuddy2016.R;
 
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 

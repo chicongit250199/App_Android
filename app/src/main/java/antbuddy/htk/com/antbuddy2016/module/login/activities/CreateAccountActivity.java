@@ -1,10 +1,10 @@
-package antbuddy.htk.com.antbuddy2016.activities.login;
+package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import antbuddy.htk.com.antbuddy2016.activities.R;
+import antbuddy.htk.com.antbuddy2016.R;
 
 /**
  * Created by thanhnguyen on 28/03/2016.

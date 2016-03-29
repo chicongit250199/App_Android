@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.activities.login;
+package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import antbuddy.htk.com.antbuddy2016.activities.R;
+import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 /**

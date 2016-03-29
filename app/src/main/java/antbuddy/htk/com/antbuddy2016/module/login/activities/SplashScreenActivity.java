@@ -1,12 +1,11 @@
-package antbuddy.htk.com.antbuddy2016.activities.login;
+package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 
-import antbuddy.htk.com.antbuddy2016.activities.R;
+import antbuddy.htk.com.antbuddy2016.R;
 
 /**
  * Created by thanhnguyen on 29/03/2016.

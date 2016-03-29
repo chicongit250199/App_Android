@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="antbuddy.htk.com.antbuddy2016.activities">
+    package="antbuddy.htk.com.antbuddy2016">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
 
         <!-- Splash screen -->
         <activity
-            android:name=".login.SplashScreenActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.SplashScreenActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme ="@style/WelcomeTheme" >
@@ -21,34 +21,34 @@
         </activity>
 
         <activity
-            android:name=".login.WalkThroughActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.WalkThroughActivity"
             android:label="@string/app_name"
             android:theme ="@style/WelcomeTheme">
         </activity>
 
         <activity
-            android:name=".login.LoReActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.LoReActivity"
             android:label="@string/app_name"
             android:theme ="@style/WelcomeTheme">
         </activity>
 
         <activity
-            android:name=".login.CreateAccountActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.CreateAccountActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".login.LoginActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.LoginActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".login.ForgotPasswordActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.ForgotPasswordActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".login.DomainActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity"
             android:label="@string/app_name" >
         </activity>
 
