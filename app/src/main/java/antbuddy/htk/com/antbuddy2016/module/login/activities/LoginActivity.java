@@ -3,7 +3,6 @@ package antbuddy.htk.com.antbuddy2016.module.login.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +10,7 @@ import android.widget.ProgressBar;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.Request;
 import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -24,7 +24,7 @@ public class LoginActivity extends Activity {
     private ProgressBar progressBar_Login;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -48,7 +48,7 @@ public class LoginActivity extends Activity {
 
                     // Request
                     AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
-                    Request.login("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
+                    LoginAPI.login("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
                         @Override
                         public void onSuccess(String result) {

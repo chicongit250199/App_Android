@@ -163,7 +163,7 @@ public class Request {
 //        return result;
 //    }
 
-    public static void login(String email, String password, HttpRequestReceiver receiver) {
+    protected static void login(String email, String password, HttpRequestReceiver receiver) {
         String responseStr = "";
 
         try {
