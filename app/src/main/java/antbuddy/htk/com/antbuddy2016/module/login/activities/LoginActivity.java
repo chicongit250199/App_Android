@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.Request;
+import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 /**
@@ -44,39 +45,25 @@ public class LoginActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    // Request
-                    Request.login("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
-                        @Override
-                        public void onBegin() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar_Login.setVisibility(View.VISIBLE);
-                                }
-                            });
-                        }
+                    // Request
+                    AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
+                    Request.login("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
                         @Override
                         public void onSuccess(String result) {
                             Log.d("DaiThanh", "Thanh Cong: " + result);
-                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
+//                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
+                            Intent myIntent = new Intent(LoginActivity.this, CenterActivity.class);
                             startActivity(myIntent);
+
+                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                         }
 
                         @Override
                         public void onError(String error) {
                             Log.d("DaiThanh", "That bai: " + error);
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar_Login.setVisibility(View.GONE);
-                                }
-                            });
+                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                         }
                     });
                 } catch (Exception e) {

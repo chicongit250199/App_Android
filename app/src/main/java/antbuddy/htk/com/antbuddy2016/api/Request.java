@@ -164,7 +164,6 @@ public class Request {
 //    }
 
     public static void login(String email, String password, HttpRequestReceiver receiver) {
-        receiver.onBegin();
         String responseStr = "";
 
         try {
@@ -229,8 +228,6 @@ public class Request {
             responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
             receiver.onError(responseStr);
         }
-
-        receiver.onFinish();
     }
 
     private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {
