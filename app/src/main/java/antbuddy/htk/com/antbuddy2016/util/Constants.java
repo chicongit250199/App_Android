@@ -10,4 +10,5 @@ public class Constants {
 
     // Tam thoi cho token static
     public static String token = "";
+    public static String domain = "";
 }

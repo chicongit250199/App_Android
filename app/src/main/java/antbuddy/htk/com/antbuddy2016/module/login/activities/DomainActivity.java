@@ -1,8 +1,12 @@
 package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -13,9 +17,11 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
+import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.module.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.objects.Domain;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
@@ -45,6 +51,29 @@ public class DomainActivity extends Activity {
 
         // Request Data to show List organizations
         requestAPIToGetOrganizations();
+
+        domainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Constants.domain = domainList.get(position).getDomain();
+                Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
+                startActivity(myIntent);
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        AndroidHelper.alertDialogShow(this, "Do you want to sign out?", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent myIntent = new Intent(DomainActivity.this, LoginActivity.class);
+                startActivity(myIntent);
+                finish();
+            }
+        }, null);
     }
 
     private void requestAPIToGetOrganizations() {

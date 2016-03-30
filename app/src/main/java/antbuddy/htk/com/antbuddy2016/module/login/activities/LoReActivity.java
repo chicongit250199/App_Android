@@ -26,6 +26,8 @@ public class LoReActivity extends Activity {
 
         setContentView(R.layout.activity_loreactivity);
 
+        reset();
+
         initViews();
 
         getBunldeAndProcess();
@@ -76,4 +78,10 @@ public class LoReActivity extends Activity {
             }
         }
     };
+
+    // Reset
+    private void reset() {
+        Constants.token = "";
+        Constants.domain = "";
+    }
 }

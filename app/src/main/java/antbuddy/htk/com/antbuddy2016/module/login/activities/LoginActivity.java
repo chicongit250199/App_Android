@@ -73,6 +73,7 @@ public class LoginActivity extends Activity {
 
                             Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                             startActivity(myIntent);
+                            finish();
 
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                             AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);

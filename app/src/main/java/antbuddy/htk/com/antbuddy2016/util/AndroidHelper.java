@@ -1,18 +1,17 @@
 package antbuddy.htk.com.antbuddy2016.util;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.Gravity;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import antbuddy.htk.com.antbuddy2016.R;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -71,5 +70,15 @@ public class AndroidHelper {
         if (!i.isAvailable())
             return false;
         return true;
+    }
+
+    public static void alertDialogShow(Context context, String message, DialogInterface.OnClickListener okClickListener, DialogInterface.OnClickListener cancelClickListener)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogStyle);
+        builder.setTitle("Antbuddy");
+        builder.setMessage(message);
+        builder.setPositiveButton("OK", okClickListener);
+        builder.setNegativeButton("Cancel", cancelClickListener);
+        builder.show();
     }
 }

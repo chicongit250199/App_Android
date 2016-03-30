@@ -1,6 +1,8 @@
 package antbuddy.htk.com.antbuddy2016.module.center.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
@@ -8,6 +10,9 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -39,5 +44,25 @@ public class CenterActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AndroidHelper.alertDialogShow(this, "Do you want to switch company?", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LogHtk.d("asdf", "OK!");
+
+                Intent myIntent = new Intent(CenterActivity.this, DomainActivity.class);
+                startActivity(myIntent);
+
+                finish();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LogHtk.d("asdf", "Cancel!");
+            }
+        });
     }
 }

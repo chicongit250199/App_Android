@@ -5,9 +5,23 @@ package antbuddy.htk.com.antbuddy2016.objects;
  */
 public class Domain {
     private String name;
+    private String domain;
+
+    public Domain(String domain, String name) {
+        this.domain = domain;
+        this.name = name;
+    }
 
     public Domain(String name) {
         this.name = name;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getName() {

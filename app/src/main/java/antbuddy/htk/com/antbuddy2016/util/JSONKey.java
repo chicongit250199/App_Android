@@ -7,4 +7,5 @@ public class JSONKey {
     public static final String token = "token";
     public static final String expires = "expires";
     public static final String name = "name";
+    public static final String domain = "domain";
 }

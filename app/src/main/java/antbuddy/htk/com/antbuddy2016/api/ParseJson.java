@@ -35,7 +35,9 @@ public class ParseJson {
             for (int i = 0; i < domainJsonArray.length(); i++) {
                 try {
                     JSONObject element = (JSONObject) domainJsonArray.get(i);
-                    Domain domain = new Domain(element.getString(JSONKey.name));
+                    String domainStr = element.getString(JSONKey.domain);
+                    String nameStr = element.getString(JSONKey.name);
+                    Domain domain = new Domain(domainStr, nameStr);
                     listDomains.add(domain);
 
                 } catch (Exception e) {
