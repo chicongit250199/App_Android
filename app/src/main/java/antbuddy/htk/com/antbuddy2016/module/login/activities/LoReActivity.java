@@ -45,7 +45,6 @@ public class LoReActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             int typeValue = extras.getInt(Constants.LOGIN_TYPE);
-            Log.d("DaiThanh", "Gia tri =" + typeValue);
 
             if (typeValue == 1) {
                 Intent myIntent = new Intent(LoReActivity.this, CreateAccountActivity.class);

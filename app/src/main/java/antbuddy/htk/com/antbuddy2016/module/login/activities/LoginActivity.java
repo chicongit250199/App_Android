@@ -3,6 +3,7 @@ package antbuddy.htk.com.antbuddy2016.module.login.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -61,6 +62,8 @@ public class LoginActivity extends Activity {
 
                     // Request
                     AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
+                    AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
+
                     LoginAPI.POSTLogin("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
                         @Override
@@ -72,12 +75,16 @@ public class LoginActivity extends Activity {
                             startActivity(myIntent);
 
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
                         }
 
                         @Override
                         public void onError(String error) {
                             Log.d("DaiThanh", "That bai: " + error);
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
+
+                            AndroidHelper.showToast("Please try again!", LoginActivity.this);
                         }
                     });
                 } catch (Exception e) {

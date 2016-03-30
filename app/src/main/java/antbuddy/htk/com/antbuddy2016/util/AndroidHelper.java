@@ -9,8 +9,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -36,6 +38,24 @@ public class AndroidHelper {
             @Override
             public void run() {
                 progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public static void setEnabledWithView(Activity activity, final View view, final boolean enabled) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                view.setEnabled(enabled);
+            }
+        });
+    }
+
+    public static void showToast(final String message, final Activity activity) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
     }

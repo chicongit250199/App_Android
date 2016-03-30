@@ -34,18 +34,10 @@ public class DomainActivity extends Activity {
         setContentView(R.layout.activity_domain);
 
         progressBar_Domain = (ProgressBar) findViewById(R.id.progressBar_Domain);
-
-        // Init
         domainList = new ArrayList<Domain>();
-        domainList.add(new Domain("htkinc"));
-        domainList.add(new Domain("htk-dn"));
-        domainList.add(new Domain("htk-hcm"));
-
         domainAdapter = new DomainAdapter(this, R.layout.item_domain, domainList);
         domainListView = (ListView) findViewById(R.id.domain_ListView);
-
         domainListView.setAdapter(domainAdapter);
-
 
         // Request Data to show List organizations
         requestAPIToGetOrganizations();
@@ -57,12 +49,10 @@ public class DomainActivity extends Activity {
             return;
         }
 
-        //antbuddytesting1@gmail.com/111qqq111
         Thread thread = new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
-                    // Request
                     AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
                     LoginAPI.GETOrganizations(new HttpRequestReceiver() {
                         @Override
