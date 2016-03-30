@@ -1,14 +1,4 @@
 .gradle/
 .idea/
 build/
-
-.gradle/2.8/taskArtifacts/cache.properties.lock
-.gradle/2.8/taskArtifacts/fileHashes.bin
-.gradle/2.8/taskArtifacts/fileSnapshots.bin
-.gradle/2.8/taskArtifacts/taskArtifacts.bin
-.idea/workspace.xml
-build/intermediates/dex-cache/cache.xml
-.idea/gradle.xml
-.idea/libraries/support_annotations_23_2_1.xml
-.idea/workspace.xml
 app/app.iml
