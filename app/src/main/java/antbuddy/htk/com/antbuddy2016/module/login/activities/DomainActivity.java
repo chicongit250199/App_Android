@@ -39,7 +39,7 @@ public class DomainActivity extends Activity {
 
         progressBar_Domain = (ProgressBar) findViewById(R.id.progressBar_Domain);
         domainList = new ArrayList<Domain>();
-        domainAdapter = new DomainAdapter(this, R.layout.item_domain, domainList);
+        domainAdapter = new DomainAdapter(this, domainList);
         domainListView = (ListView) findViewById(R.id.domain_ListView);
         domainListView.setAdapter(domainAdapter);
 

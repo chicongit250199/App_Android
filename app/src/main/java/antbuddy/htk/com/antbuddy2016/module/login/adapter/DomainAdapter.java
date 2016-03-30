@@ -1,5 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.module.login.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,10 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 public class DomainAdapter extends ArrayAdapter<Domain> {
     DomainActivity context = null;
     ArrayList<Domain> myArray = null;
-    int layoutId;
 
-    public DomainAdapter(DomainActivity context, int layoutId, ArrayList<Domain> arr){
-        super(context, layoutId, arr);
+    public DomainAdapter(DomainActivity context, ArrayList<Domain> arr){
+        super(context, R.layout.item_domain);
         this.context = context;
-        this.layoutId = layoutId;
         this.myArray = arr;
     }
 
@@ -40,14 +39,29 @@ public class DomainAdapter extends ArrayAdapter<Domain> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        convertView = inflater.inflate(layoutId, null);
+        final Holder holder;
+        final View rowView;
+        LayoutInflater vi;
 
-        if (myArray.size() > 0 && position >= 0) {
-            Domain domainItem = myArray.get(position);
-            TextView name_TextView = (TextView) convertView.findViewById(R.id.name_TextView);
-            name_TextView.setText(domainItem.getName());
+        if (convertView == null) {
+            holder = new Holder();
+            vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = vi.inflate(R.layout.item_domain, null);
+
+            holder.name_TextView = (TextView) rowView.findViewById(R.id.name_TextView);
+            rowView.setTag(holder);
+        } else {
+            rowView = convertView;
+            holder = (Holder) rowView.getTag();
         }
-        return convertView;
+
+        Domain domainItem = myArray.get(position);
+        holder.name_TextView.setText(domainItem.getName());
+        return rowView;
+    }
+
+    public class Holder {
+        public TextView name_TextView;
     }
 }
+
