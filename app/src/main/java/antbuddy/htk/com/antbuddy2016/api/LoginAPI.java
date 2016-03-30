@@ -12,4 +12,8 @@ public class LoginAPI {
     public static void GETOrganizations(HttpRequestReceiver receiver) {
         Request.GETOrganizations(receiver);
     }
+
+    public static void GETOrganizationUserProfile(HttpRequestReceiver receiver) {
+        Request.GETOrganizationUserProfile(receiver);
+    }
 }

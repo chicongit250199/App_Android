@@ -2,6 +2,7 @@ package antbuddy.htk.com.antbuddy2016.util;
 
 import android.util.Log;
 
+import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity;
 
 /**
@@ -10,6 +11,7 @@ import antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity;
 public class LogHtk {
     private static String[] tags = {
             DomainActivity.TAG_THISCLASS,
+            CenterActivity.TAG_THISCLASS,
             "asdf",
 //           "Hoa debug",
 //            "Thanh",

@@ -72,8 +72,7 @@ public class AndroidHelper {
         return true;
     }
 
-    public static void alertDialogShow(Context context, String message, DialogInterface.OnClickListener okClickListener, DialogInterface.OnClickListener cancelClickListener)
-    {
+    public static void alertDialogShow(Context context, String message, DialogInterface.OnClickListener okClickListener, DialogInterface.OnClickListener cancelClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogStyle);
         builder.setTitle("Antbuddy");
         builder.setMessage(message);

@@ -11,4 +11,6 @@ public class Constants {
     // Tam thoi cho token static
     public static String token = "";
     public static String domain = "";
+    public static String USERNAME_XMPP = "";
+    public static String PASSWORD_XMPP = "";
 }

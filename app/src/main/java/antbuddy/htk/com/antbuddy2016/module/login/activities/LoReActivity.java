@@ -1,15 +1,22 @@
 package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
+import antbuddy.htk.com.antbuddy2016.service.LocalService;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -20,11 +27,32 @@ public class LoReActivity extends Activity {
     private Button login_LoRe_Button;
     private Button createNewAccount_LoRe_Button;
 
+    private boolean mBounded;
+    private LocalService mService;
+
+    ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = ((LocalBinder<LocalService>) service).getService();
+            mBounded = true;
+            LogHtk.d("asdf", "onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mBounded = false;
+            LogHtk.d("asdf", "onServiceDisconnected");
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_loreactivity);
+
+        doBindService();
 
         reset();
 
@@ -35,6 +63,12 @@ public class LoReActivity extends Activity {
         // Button listner
         login_LoRe_Button.setOnClickListener(welcomeListener);
         createNewAccount_LoRe_Button.setOnClickListener(welcomeListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //doUnbindService();
     }
 
     void initViews() {
@@ -79,9 +113,26 @@ public class LoReActivity extends Activity {
         }
     };
 
+    void doBindService() {
+        bindService(new Intent(this, LocalService.class), mConnection,
+                Context.BIND_AUTO_CREATE);
+    }
+
+    void doUnbindService() {
+        if (mConnection != null) {
+            unbindService(mConnection);
+        }
+    }
+
+    public LocalService getmService() {
+        return mService;
+    }
+
     // Reset
     private void reset() {
         Constants.token = "";
         Constants.domain = "";
+        Constants.USERNAME_XMPP = "";
+        Constants.PASSWORD_XMPP = "";
     }
 }
