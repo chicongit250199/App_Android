@@ -2,9 +2,13 @@ package antbuddy.htk.com.antbuddy2016.util;
 
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -29,7 +33,7 @@ public class AndroidHelper {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressBar.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }

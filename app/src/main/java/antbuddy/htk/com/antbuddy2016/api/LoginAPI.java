@@ -5,7 +5,11 @@ package antbuddy.htk.com.antbuddy2016.api;
  */
 public class LoginAPI {
 
-    public static void login(String email, String password, HttpRequestReceiver receiver) {
-        Request.login(email, password, receiver);
+    public static void POSTLogin(String email, String password, HttpRequestReceiver receiver) {
+        Request.POSTLogin(email, password, receiver);
+    }
+
+    public static void GETOrganizations(HttpRequestReceiver receiver) {
+        Request.GETOrganizations(receiver);
     }
 }

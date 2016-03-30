@@ -10,6 +10,14 @@
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal" />
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar_Domain"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/domain_ListView"
         android:layout_width="match_parent"

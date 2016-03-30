@@ -11,9 +11,12 @@ import android.widget.ProgressBar;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
+import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.api.Request;
 import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
@@ -48,13 +51,14 @@ public class LoginActivity extends Activity {
 
                     // Request
                     AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
-                    LoginAPI.login("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
+                    LoginAPI.POSTLogin("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
                         @Override
                         public void onSuccess(String result) {
-                            Log.d("DaiThanh", "Thanh Cong: " + result);
-//                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
-                            Intent myIntent = new Intent(LoginActivity.this, CenterActivity.class);
+                            Constants.token = "Bearer " + ParseJson.getStringWithKey(result, JSONKey.token);
+                            Log.d("DaiThanh", "Thanh Cong/ Token: " + Constants.token);
+
+                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                             startActivity(myIntent);
 
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);

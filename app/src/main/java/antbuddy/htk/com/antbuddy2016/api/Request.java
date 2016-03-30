@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
+import antbuddy.htk.com.antbuddy2016.util.Constants;
+
 //import org.apache.http.entity.mime.content.ContentBody;
 
 public class Request {
@@ -163,7 +165,7 @@ public class Request {
 //        return result;
 //    }
 
-    protected static void login(String email, String password, HttpRequestReceiver receiver) {
+    protected static void POSTLogin(String email, String password, HttpRequestReceiver receiver) {
         String responseStr = "";
 
         try {
@@ -196,6 +198,58 @@ public class Request {
                 //clean up
                 os.flush();
             }
+
+            //get response
+            int sc = httpCon.getResponseCode();
+            if (sc == 200 || sc == 201) {
+                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
+                InputStream is = httpCon.getInputStream();
+                responseStr = readResponse(is);
+                is.close();
+
+                receiver.onSuccess(responseStr);
+            } else {
+                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+                receiver.onError(responseStr);
+                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
+            }
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
+            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+            receiver.onError(responseStr);
+        } catch (MalformedURLException e) {
+            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
+            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+            receiver.onError(responseStr);
+        } catch (IOException e) {
+            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
+            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+            receiver.onError(responseStr);
+        } catch (Exception e) {
+            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
+            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+            receiver.onError(responseStr);
+        }
+    }
+
+    protected static void GETOrganizations(HttpRequestReceiver receiver) {
+        String responseStr = "";
+
+        try {
+            String urlFull = "https://antbuddy.com/api/organizations/";
+            URL url = new URL(urlFull);
+            HttpURLConnection httpCon;
+            httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            httpCon.setRequestProperty("authorization", Constants.token);
+            httpCon.setRequestMethod("GET");
+
+            // set timeout
+            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
+            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
+
+            // request to server
+            httpCon.connect();
 
             //get response
             int sc = httpCon.getResponseCode();

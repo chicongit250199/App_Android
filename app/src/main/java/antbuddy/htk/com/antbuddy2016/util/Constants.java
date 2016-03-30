@@ -7,4 +7,7 @@ public class Constants {
     // 1: Login status
     // 2: Create new account status
     public static final String LOGIN_TYPE = "LOGIN_TYPE";
+
+    // Tam thoi cho token static
+    public static String token = "";
 }
