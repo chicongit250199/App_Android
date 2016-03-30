@@ -2,7 +2,6 @@ package antbuddy.htk.com.antbuddy2016.module.login.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class DomainActivity extends Activity {
     ListView domainListView;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_domain);
