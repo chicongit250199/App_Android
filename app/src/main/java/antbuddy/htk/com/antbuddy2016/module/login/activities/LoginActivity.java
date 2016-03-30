@@ -44,13 +44,13 @@ public class LoginActivity extends Activity {
         });
 
         if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
-            Toast.makeText(this, "No network connection available!", Toast.LENGTH_SHORT).show();
+            AndroidHelper.showToast("No network connection available!", LoginActivity.this);
         }
     }
 
     private void requestAPI() {
         if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
-            Toast.makeText(this, "No network connection available!", Toast.LENGTH_SHORT).show();
+            AndroidHelper.showToast("No network connection available!", LoginActivity.this);
             return;
         }
 
@@ -80,7 +80,6 @@ public class LoginActivity extends Activity {
 
                         @Override
                         public void onError(String error) {
-                            Log.d("DaiThanh", "That bai: " + error);
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                             AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
 

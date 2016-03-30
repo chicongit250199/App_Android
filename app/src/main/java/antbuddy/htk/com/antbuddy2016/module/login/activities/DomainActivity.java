@@ -15,11 +15,14 @@ import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.module.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.objects.Domain;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
  */
 public class DomainActivity extends Activity {
+
+    public static final String TAG_THISCLASS = "DomainActivity";
 
     ArrayList<Domain> domainList;
     DomainAdapter domainAdapter;
@@ -57,13 +60,12 @@ public class DomainActivity extends Activity {
                     LoginAPI.GETOrganizations(new HttpRequestReceiver() {
                         @Override
                         public void onSuccess(String result) {
-                            Log.d("DaiThanh", "requestAPIToGetOrganizations success!");
+                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!");
                             AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                         }
 
                         @Override
                         public void onError(String error) {
-                            Log.d("DaiThanh", "requestAPIToGetOrganizations ERROR!");
                             AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                         }
                     });
