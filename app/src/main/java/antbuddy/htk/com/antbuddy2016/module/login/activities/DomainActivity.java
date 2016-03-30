@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -48,10 +49,14 @@ public class DomainActivity extends Activity {
 
         // Request Data to show List organizations
         requestAPIToGetOrganizations();
-
     }
 
     private void requestAPIToGetOrganizations() {
+        if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //antbuddytesting1@gmail.com/111qqq111
         Thread thread = new Thread(new Runnable(){
             @Override

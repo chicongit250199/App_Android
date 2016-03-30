@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
@@ -40,9 +41,18 @@ public class LoginActivity extends Activity {
                 requestAPI();
             }
         });
+
+        if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            Toast.makeText(this, "No network connection available!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void requestAPI() {
+        if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            Toast.makeText(this, "No network connection available!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //antbuddytesting1@gmail.com/111qqq111
         Thread thread = new Thread(new Runnable(){
             @Override
