@@ -10,6 +10,7 @@ import antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity;
 public class LogHtk {
     private static String[] tags = {
             DomainActivity.TAG_THISCLASS,
+            "asdf",
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

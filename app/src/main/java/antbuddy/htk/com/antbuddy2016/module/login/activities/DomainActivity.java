@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
+import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.module.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.objects.Domain;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -60,7 +61,18 @@ public class DomainActivity extends Activity {
                     LoginAPI.GETOrganizations(new HttpRequestReceiver() {
                         @Override
                         public void onSuccess(String result) {
-                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!");
+                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!: " + result);
+
+                            domainList.clear();
+                            domainList.addAll(ParseJson.parseToListDomains(result));
+                            LogHtk.d(TAG_THISCLASS, "domainList.count: " + domainList.size());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    domainAdapter.notifyDataSetChanged();
+                                }
+                            });
+
                             AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                         }
 

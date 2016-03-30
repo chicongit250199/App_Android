@@ -6,4 +6,5 @@ package antbuddy.htk.com.antbuddy2016.util;
 public class JSONKey {
     public static final String token = "token";
     public static final String expires = "expires";
+    public static final String name = "name";
 }
