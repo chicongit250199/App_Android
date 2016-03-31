@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 
@@ -15,8 +16,11 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.provider.AdHocCommandDataProvider;
 import java.util.HashMap;
@@ -27,6 +31,7 @@ import java.util.regex.Pattern;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 public class AntbuddyXmppConnection {
 	public static final String TAG = "AntbuddyXmppConnection";
@@ -43,9 +48,9 @@ public class AntbuddyXmppConnection {
 	public static final int PORT = 5222; // Default: 5222
 
 	// Used when connect to XMPP Server successful or unsuccessful.
-	public static final String SERVICE_START_SUCCESS = "SERVICE_START_SUCCESS";
-	public static final String SERVICE_START_ERROR = "SERVICE_START_ERROR";
-	public static final String SERVICE_ALREADY_START = "SERVICE_ALREADY_START";
+	public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
+	public static final String SERVICE_START_ERROR = "XMPP_START_ERROR";
+	public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
 
 	//private static Map<String, List<ChatMessage>> historyMessages;
 	private static Context mContext;
@@ -75,7 +80,7 @@ public class AntbuddyXmppConnection {
 	 * mConnection: should be accessed only from _xmpp thread or from a thread where this variable is already guaranteed to be non null (for example, from the thread where smack listeners are
 	 * invoked). null checks on this variable in non _xmpp thread are unsafe and meaningless.
 	 */
-	private XMPPConnection mConnection;
+	private XMPPConnection xmppConnection;
 
 	//AntbuddyService antbuddyService;
 
@@ -146,7 +151,7 @@ public class AntbuddyXmppConnection {
 	 * should be called from _xmpp thread only
 	 */
 	public XMPPConnection getConnection() {
-		return mConnection;
+		return xmppConnection;
 	}
 
 	/**
@@ -154,12 +159,13 @@ public class AntbuddyXmppConnection {
 	 * @param connection
 	 */
 	public void setConnection(XMPPConnection connection) {
-		mConnection = connection;
+		xmppConnection = connection;
 	}
 
 	public void connectXMPP(final Context context, final String username, final String pass , final XMPPReceiver receiver) {
-		if (mConnection != null) {
+		if (xmppConnection != null) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
+			return;
 		}
 
 		mContext = context;
@@ -169,8 +175,9 @@ public class AntbuddyXmppConnection {
 			connection.connect();
 		} catch (XMPPException ex) {
             ex.printStackTrace();
-			mConnection = null;
+			xmppConnection = null;
 			receiver.onError("Failed to connect to " + connection.getHost());
+			return;
 		}
 
 		ProviderManager pm = ProviderManager.getInstance();
@@ -183,7 +190,7 @@ public class AntbuddyXmppConnection {
 
 			// After connect successful
 			// set connectionXmpp
-			mConnection = connection;
+			xmppConnection = connection;
 
 			// Register: MessageListener, ConnectionListener, PresenceListener
 			addMessageListener();
@@ -196,11 +203,11 @@ public class AntbuddyXmppConnection {
 			receiver.onSuccess(SERVICE_START_SUCCESS);
 		} catch (XMPPException ex) {
             ex.printStackTrace();
-			mConnection = null;
+			xmppConnection = null;
 			receiver.onError(SERVICE_START_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
-			mConnection = null;
+			xmppConnection = null;
 			receiver.onError(SERVICE_START_ERROR);
 		}
 	}
@@ -230,9 +237,9 @@ public class AntbuddyXmppConnection {
             }
         };
         // register packet listener
-		mConnection.addPacketListener(chatListener, messageFilter);
-        mConnection.addPacketListener(deleteListener, messageDelete);
-		mConnection.addPacketListener(groupChatListener, groupChatFilter);
+		xmppConnection.addPacketListener(chatListener, messageFilter);
+		xmppConnection.addPacketListener(deleteListener, messageDelete);
+		xmppConnection.addPacketListener(groupChatListener, groupChatFilter);
 	}
 
 
@@ -246,7 +253,9 @@ public class AntbuddyXmppConnection {
 	 * @param packet
 	 */
 	private void processMessageReceived(Packet packet) {
-//		Message message = (Message) packet;
+
+		Message message = (Message) packet;
+		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
 //        boolean isDeleteMessage = false;
 //		if (message.getBody() != null) {
 //
@@ -289,66 +298,68 @@ public class AntbuddyXmppConnection {
 	 * Add connection listener
 	 */
 	private void addConnectionListener() {
-//		mConnectionListener = new ConnectionListener() {
-//
-//			@Override
-//			public void reconnectionSuccessful() {
+		mConnectionListener = new ConnectionListener() {
+
+			@Override
+			public void reconnectionSuccessful() {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectionSuccessful");
 //				sendPresenceOutFromOpeningRooms();
-//			}
-//
-//			@Override
-//			public void reconnectionFailed(Exception e) {
+			}
+
+			@Override
+			public void reconnectionFailed(Exception e) {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_FAIL_MESSAGE);
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectionFailed");
-//			}
-//
-//			@Override
-//			public void reconnectingIn(int seconds) {
+			}
+
+			@Override
+			public void reconnectingIn(int seconds) {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_RECONNECTING_MESSAGE + seconds + " seconds");
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectingIn " + seconds);
-//			}
-//
-//			@Override
-//			public void connectionClosedOnError(Exception e) {
-//				System.out.println("connectionClosedOnError");
-//			}
-//
-//			@Override
-//			public void connectionClosed() {
+			}
+
+			@Override
+			public void connectionClosedOnError(Exception e) {
+				System.out.println("connectionClosedOnError");
+			}
+
+			@Override
+			public void connectionClosed() {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_CLOSED_MESSAGE);
 //				mContext.sendBroadcast(intent);
 //				System.out.println("connectionClosed");
-//			}
-//		};
-//		mConnection.addConnectionListener(mConnectionListener);
+			}
+		};
+		xmppConnection.addConnectionListener(mConnectionListener);
 	}
 
 	/**
 	 * Add presence listener
 	 */
 	private void addPresenceListener() {
-//		PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
-//		presenceListener = new PacketListener() {
-//			public void processPacket(Packet packet) {
-//				Presence presence = (Presence) packet;
-//                LogHtk.i(TAG, "IN/PRESENCE: " + presence.toXML());
+		PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
+		presenceListener = new PacketListener() {
+			public void processPacket(Packet packet) {
+				Presence presence = (Presence) packet;
+                LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+
+
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_PRESENCE);
 //				intent.putExtra(AntbuddyConstant.PRESENCE_FROM, presence.getFrom());
 //				intent.putExtra(AntbuddyConstant.PRESENCE_TYPE, presence.getType());
 //				intent.putExtra(AntbuddyConstant.PRESENCE_MODE, presence.getMode());
 //				mContext.sendBroadcast(intent);
-//			}
-//		};
-//		mConnection.addPacketListener(presenceListener, presenceFilter);
+			}
+		};
+		xmppConnection.addPacketListener(presenceListener, presenceFilter);
 	}
 
 	/**
@@ -608,13 +619,13 @@ public class AntbuddyXmppConnection {
      * Handle disconnect
      */
 	public void disconnect() {
-//		mConnection.removeConnectionListener(mConnectionListener);
-//		mConnection.removePacketListener(chatListener);
-//        mConnection.removePacketListener(deleteListener);
-//		mConnection.removePacketListener(groupChatListener);
-//		mConnection.removePacketListener(presenceListener);
-//		mConnection.disconnect();
-//		mConnection = null;
+		xmppConnection.removeConnectionListener(mConnectionListener);
+		xmppConnection.removePacketListener(chatListener);
+		xmppConnection.removePacketListener(deleteListener);
+		xmppConnection.removePacketListener(groupChatListener);
+		xmppConnection.removePacketListener(presenceListener);
+		xmppConnection.disconnect();
+		xmppConnection = null;
 //		setmUserInfo(null);
 //		setListRoom(null);
 //		setListUser(null);

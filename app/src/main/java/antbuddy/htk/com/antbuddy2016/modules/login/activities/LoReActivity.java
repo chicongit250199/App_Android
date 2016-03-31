@@ -136,10 +136,20 @@ public class LoReActivity extends Activity {
     }
 
     // Reset
-    private void reset() {
+    public static void reset() {
         Constants.token = "";
         Constants.domain = "";
         Constants.USERNAME_XMPP = "";
         Constants.PASSWORD_XMPP = "";
+        Constants.HOST_XMPP = "";
+        Constants.DOMAIN_XMPP = "";
+    }
+
+    public static void resetXMPP() {
+        Constants.domain = "";
+        Constants.USERNAME_XMPP = "";
+        Constants.PASSWORD_XMPP = "";
+        Constants.HOST_XMPP = "";
+        Constants.DOMAIN_XMPP = "";
     }
 }

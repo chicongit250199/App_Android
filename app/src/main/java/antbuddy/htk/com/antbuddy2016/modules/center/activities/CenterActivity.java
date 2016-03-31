@@ -19,6 +19,7 @@ import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
+import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
@@ -98,6 +99,15 @@ public class CenterActivity extends FragmentActivity {
         AndroidHelper.alertDialogShow(this, "Do you want to switch company?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LoReActivity.resetXMPP();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIRemoteService.resetXMPP();
+                    }
+                }).start();
+
                 Intent myIntent = new Intent(CenterActivity.this, DomainActivity.class);
                 startActivity(myIntent);
                 finish();
@@ -136,6 +146,7 @@ public class CenterActivity extends FragmentActivity {
                             // LOGIN XMPP
                             mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
 
+                            LogHtk.d(TAG_THISCLASS, "result = " + result);
                             LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }

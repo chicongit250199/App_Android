@@ -135,6 +135,11 @@ public class AntbuddyService extends Service {
 
 	}
 
+	public void resetXMPP() {
+		mXmppConnection = AntbuddyXmppConnection.getInstance();
+		mXmppConnection.disconnect();
+	}
+
 //	public String logout() throws RemoteException {
 //		AntbuddyConfig.COOKIE = null;
 //		saveSevice();
