@@ -16,4 +16,5 @@ public class Constants {
 
     public static final int PORT_XMPP = 5222;                   // Default: 5222
     public static String HOST_XMPP = "";  // wss://chat.htk.me/chatserver
+    public static String DOMAIN_XMPP = "";  // wss://chat.htk.me/chatserver
 }

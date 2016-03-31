@@ -97,15 +97,15 @@ public class AntbuddyService extends Service {
 
 	public void loginXMPP(String usernameXMPP, String passwordXMPP) {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
-		mXmppConnection.connect(AntbuddyService.this, usernameXMPP, passwordXMPP, new XMPPReceiver() {
+		mXmppConnection.connectXMPP(AntbuddyService.this, usernameXMPP, passwordXMPP, new XMPPReceiver() {
 			@Override
 			public void onSuccess(String result) {
-
+				LogHtk.d(LogHtk.XMPP_TAG, "OnSuccess/ result = " + result);
 			}
 
 			@Override
 			public void onError(String error) {
-
+				LogHtk.e(LogHtk.XMPP_TAG, "OnSuccess/ error = " + error);
 			}
 		});
 

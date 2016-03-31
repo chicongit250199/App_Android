@@ -157,36 +157,33 @@ public class AntbuddyXmppConnection {
 		mConnection = connection;
 	}
 
-	public String connect(final Context context, final String username, final String pass , final XMPPReceiver receiver) {
+	public void connectXMPP(final Context context, final String username, final String pass , final XMPPReceiver receiver) {
 		if (mConnection != null) {
-			return SERVICE_ALREADY_START;
+			receiver.onSuccess(SERVICE_ALREADY_START);
 		}
 
 		mContext = context;
-
-//		ConnectionConfiguration connConfig = new ConnectionConfiguration(HOST_XMPP, PORT, DOMAIN);
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(Constants.HOST_XMPP, Constants.PORT_XMPP);
+		ConnectionConfiguration connConfig = new ConnectionConfiguration(Constants.HOST_XMPP, Constants.PORT_XMPP, Constants.DOMAIN_XMPP);
 		XMPPConnection connection = new XMPPConnection(connConfig);
 		try {
 			connection.connect();
 		} catch (XMPPException ex) {
             ex.printStackTrace();
-			setConnection(null);
-			return "Failed to connect to " + connection.getHost();
+			mConnection = null;
+			receiver.onError("Failed to connect to " + connection.getHost());
 		}
 
 		ProviderManager pm = ProviderManager.getInstance();
 		pm.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
 
 		try {
-
 			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
             connection.login(username, pass, android_id);
 
 			// After connect successful
 			// set connectionXmpp
-			setConnection(connection);
+			mConnection = connection;
 
 			// Register: MessageListener, ConnectionListener, PresenceListener
 			addMessageListener();
@@ -197,16 +194,13 @@ public class AntbuddyXmppConnection {
 			sendPresenceOutFromOpeningRooms();
 
 			receiver.onSuccess(SERVICE_START_SUCCESS);
-			return SERVICE_START_SUCCESS;
 		} catch (XMPPException ex) {
             ex.printStackTrace();
-			setConnection(null);
-			return "Failed to log in as " + username;
+			mConnection = null;
+			receiver.onError(SERVICE_START_ERROR);
 		} catch (Exception e) {
-            e.printStackTrace();
-			setConnection(null);
-			return "Failed to log in as " + username;
-		} finally {
+			e.printStackTrace();
+			mConnection = null;
 			receiver.onError(SERVICE_START_ERROR);
 		}
 	}

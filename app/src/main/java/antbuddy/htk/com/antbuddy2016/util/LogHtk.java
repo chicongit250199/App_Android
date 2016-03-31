@@ -11,6 +11,7 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
  */
 public class LogHtk {
     public static String SERVICE_TAG = "AntbuddyService";
+    public static String XMPP_TAG = "XMPP";
 
     private static String[] tags = {
             DomainActivity.TAG_THISCLASS,
@@ -18,6 +19,7 @@ public class LogHtk {
             AntbuddyApplication.TAG,
             "asdf",
             SERVICE_TAG,
+            XMPP_TAG,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

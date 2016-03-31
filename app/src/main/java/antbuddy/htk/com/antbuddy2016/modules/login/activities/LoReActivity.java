@@ -35,13 +35,13 @@ public class LoReActivity extends Activity {
             AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
             mService = (AntbuddyService) binder.getService();
             isBindService = true;
-            LogHtk.d(LogHtk.SERVICE_TAG, "onServiceConnected");
+            LogHtk.d(LogHtk.SERVICE_TAG, "LoReActivity/onServiceConnected");
         }
 
         public void onServiceDisconnected(ComponentName className) {
             mService = null;
             isBindService = false;
-            LogHtk.d(LogHtk.SERVICE_TAG, "onServiceDisconnected");
+            LogHtk.e(LogHtk.SERVICE_TAG, "LoReActivity/onServiceDisconnected");
         }
     };
 

@@ -1,8 +1,12 @@
 package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.widget.ProgressBar;
@@ -15,6 +19,7 @@ import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
@@ -30,10 +35,33 @@ public class CenterActivity extends FragmentActivity {
     private FragmentTabHost mTabHost;
     private ProgressBar progressBar_Center;
 
+    // Work with service
+    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
+    private boolean mBound;
+    private final ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
+            mIRemoteService = binder.getService();
+            mBound = true;
+            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mIRemoteService = null;
+            mBound = false;
+            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_center);
+
+        boolean isConnectService = connectServiceInAndroid();
+        if (!isConnectService) {
+            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
+        }
 
         //init
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
@@ -59,6 +87,9 @@ public class CenterActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
+        if(mBound) {
+            unbindService(mConnection);
+        }
         super.onDestroy();
     }
 
@@ -91,6 +122,7 @@ public class CenterActivity extends FragmentActivity {
                         public void onSuccess(String result) {
                             String chatToken = ParseJson.getStringWithKey(result, JSONKey.chatToken);
                             String chatURLXMPP = ParseJson.getStringWithKey(result, JSONKey.chatUrl);
+                            Constants.DOMAIN_XMPP = ParseJson.getStringWithKey(result, JSONKey.chatDomain);
                             String[] fields = chatToken.split(":");
                             Constants.USERNAME_XMPP = fields[0];
                             Constants.PASSWORD_XMPP = fields[1];
@@ -102,7 +134,7 @@ public class CenterActivity extends FragmentActivity {
                             }
 
                             // LOGIN XMPP
-
+                            mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
 
                             LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
@@ -120,5 +152,17 @@ public class CenterActivity extends FragmentActivity {
             }
         });
         thread.start();
+    }
+
+    private boolean connectServiceInAndroid() {
+        if(AntbuddyService.mAntbuddyService == null) {
+            Intent intent = new Intent(this, AntbuddyService.class);
+            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+        }
+        else
+        {
+            mIRemoteService = AntbuddyService.mAntbuddyService;
+        }
+        return mIRemoteService != null;
     }
 }
