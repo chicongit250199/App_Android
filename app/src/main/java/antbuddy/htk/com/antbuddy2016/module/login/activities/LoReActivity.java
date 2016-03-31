@@ -28,13 +28,9 @@ public class LoReActivity extends Activity {
     // Buttons
     private Button login_LoRe_Button;
     private Button createNewAccount_LoRe_Button;
-    int a = 2;
 
     private boolean mBounded;
     private LocalService mService;
-
-
-
 
     ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -55,9 +51,7 @@ public class LoReActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_loreactivity);
-
 
         // set the default uncaught exception handler
         // whenever any crash occurs which you haven't caught then a user
@@ -65,18 +59,13 @@ public class LoReActivity extends Activity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
         doBindService();
-
         reset();
-
         initViews();
-
         getBunldeAndProcess();
 
         // Button listner
         login_LoRe_Button.setOnClickListener(welcomeListener);
         createNewAccount_LoRe_Button.setOnClickListener(welcomeListener);
-
-        System.out.println(a/0);
     }
 
     @Override
