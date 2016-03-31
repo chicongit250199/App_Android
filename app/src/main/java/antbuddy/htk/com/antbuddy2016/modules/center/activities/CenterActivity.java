@@ -103,6 +103,7 @@ public class CenterActivity extends FragmentActivity {
 
                             // LOGIN XMPP
 
+
                             LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }

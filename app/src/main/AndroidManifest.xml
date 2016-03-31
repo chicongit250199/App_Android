@@ -61,7 +61,8 @@
             android:label="@string/app_name" >
         </activity>
 
-        <service android:name="antbuddy.htk.com.antbuddy2016.service.LocalService">
+        <!-- Service -->
+        <service android:name="antbuddy.htk.com.antbuddy2016.service.AntbuddyService">
             <intent-filter>
                 <action android:name="com.htk.antbuddy.services.AntbuddyService.BIND" />
                 <action android:name="com.htk.antbuddy.services.AntbuddyService.UNBIND" />
