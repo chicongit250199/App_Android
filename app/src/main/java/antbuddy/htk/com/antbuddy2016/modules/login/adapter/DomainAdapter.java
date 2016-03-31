@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.login.adapter;
+package antbuddy.htk.com.antbuddy2016.modules.login.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,9 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity;
+import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 import antbuddy.htk.com.antbuddy2016.objects.Domain;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 29/03/2016.

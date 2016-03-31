@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.center.activities;
+package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,12 +12,12 @@ import antbuddy.htk.com.antbuddy2016.R;
 /**
  * Created by thanhnguyen on 30/03/2016.
  */
-public class ProfileFragment extends Fragment {
+public class GroupsFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView_LobbyFragment = inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView_LobbyFragment = inflater.inflate(R.layout.fragment_groups, container, false);
 
 
         return rootView_LobbyFragment;

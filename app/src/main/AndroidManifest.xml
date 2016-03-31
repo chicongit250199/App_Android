@@ -13,7 +13,7 @@
 
         <!-- Splash screen -->
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.SplashScreenActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.SplashScreenActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme ="@style/WelcomeTheme" >
@@ -24,40 +24,40 @@
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.WalkThroughActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.WalkThroughActivity"
             android:label="@string/app_name"
             android:theme ="@style/WelcomeTheme">
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.LoReActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity"
             android:label="@string/app_name"
             android:theme ="@style/WelcomeTheme">
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.CreateAccountActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.CreateAccountActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.LoginActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.ForgotPasswordActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.ForgotPasswordActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="antbuddy.htk.com.antbuddy2016.module.login.activities.DomainActivity"
+            android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity"
             android:label="@string/app_name" >
         </activity>
 
         <!-- Chat -->
         <activity
-            android:name=".module.center.activities.CenterActivity"
+            android:name=".modules.center.activities.CenterActivity"
             android:label="@string/app_name" >
         </activity>
 

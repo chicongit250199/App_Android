@@ -1,21 +1,17 @@
-package antbuddy.htk.com.antbuddy2016.module.login.activities;
+package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.HandlerThread;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
-import antbuddy.htk.com.antbuddy2016.api.Request;
-import antbuddy.htk.com.antbuddy2016.module.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;

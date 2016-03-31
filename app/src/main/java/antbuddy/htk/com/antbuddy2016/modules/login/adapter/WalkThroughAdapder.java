@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.login.adapter;
+package antbuddy.htk.com.antbuddy2016.modules.login.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

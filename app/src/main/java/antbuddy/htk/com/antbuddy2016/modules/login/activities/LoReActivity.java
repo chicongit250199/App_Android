@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.login.activities;
+package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -8,11 +8,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
-import com.tgmcians.crashhandler.ExceptionHandler;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
@@ -52,11 +49,6 @@ public class LoReActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loreactivity);
-
-        // set the default uncaught exception handler
-        // whenever any crash occurs which you haven't caught then a user
-        // can report to developer about that exception
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
         doBindService();
         reset();

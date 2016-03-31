@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.login.activities;
+package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 
-import antbuddy.htk.com.antbuddy2016.module.login.adapter.WalkThroughAdapder;
+import antbuddy.htk.com.antbuddy2016.modules.login.adapter.WalkThroughAdapder;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 /**

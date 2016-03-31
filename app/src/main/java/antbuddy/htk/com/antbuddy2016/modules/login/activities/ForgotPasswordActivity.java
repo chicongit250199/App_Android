@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.module.login.activities;
+package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
 
