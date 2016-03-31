@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tgmcians.crashhandler"
+    android:versionCode="2"
+    android:versionName="2.0" >
+
+    <!-- Add this permission in your project because we are writing crash logs in the SD card -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="15" />
+
+    <application >
+        <activity
+            android:name="com.tgmcians.crashhandler.HelloWorld"
+            android:label="@string/title_activity_hello_world" >
+        </activity>
+		
+        <!-- Crash Activity that will appears when app crashes -->
+        <activity android:name="com.tgmcians.crashhandler.CrashActivity" />
+    </application>
+
+</manifest>

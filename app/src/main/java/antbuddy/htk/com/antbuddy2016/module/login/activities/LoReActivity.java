@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.tgmcians.crashhandler.ExceptionHandler;
+
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
 import antbuddy.htk.com.antbuddy2016.service.LocalService;
@@ -26,9 +28,13 @@ public class LoReActivity extends Activity {
     // Buttons
     private Button login_LoRe_Button;
     private Button createNewAccount_LoRe_Button;
+    int a = 2;
 
     private boolean mBounded;
     private LocalService mService;
+
+
+
 
     ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -52,6 +58,12 @@ public class LoReActivity extends Activity {
 
         setContentView(R.layout.activity_loreactivity);
 
+
+        // set the default uncaught exception handler
+        // whenever any crash occurs which you haven't caught then a user
+        // can report to developer about that exception
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
         doBindService();
 
         reset();
@@ -63,6 +75,8 @@ public class LoReActivity extends Activity {
         // Button listner
         login_LoRe_Button.setOnClickListener(welcomeListener);
         createNewAccount_LoRe_Button.setOnClickListener(welcomeListener);
+
+        System.out.println(a/0);
     }
 
     @Override
