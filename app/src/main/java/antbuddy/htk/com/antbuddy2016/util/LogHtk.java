@@ -10,11 +10,14 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
  * Created by htk on 16/04/2015.
  */
 public class LogHtk {
+    public static String SERVICE_TAG = "AntbuddyService";
+
     private static String[] tags = {
             DomainActivity.TAG_THISCLASS,
             CenterActivity.TAG_THISCLASS,
             AntbuddyApplication.TAG,
             "asdf",
+            SERVICE_TAG,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,
@@ -30,6 +33,7 @@ public class LogHtk {
 //            AntbuddyXmppConnection.TAG,
 //            ChatMessage.TAG,
     };
+
     private static boolean isShow = true;
 
     public static void setIsShow(boolean isShow) {

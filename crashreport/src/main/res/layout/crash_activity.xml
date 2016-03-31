@@ -12,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/btn"
         />
-    
+
     
      <Button
         android:id="@+id/btn"
@@ -22,9 +22,9 @@
         android:text="Send Error"
         android:layout_marginTop="10dp"
         />
-     
-     
-    
-    
+
+
+
+
 
 </RelativeLayout>

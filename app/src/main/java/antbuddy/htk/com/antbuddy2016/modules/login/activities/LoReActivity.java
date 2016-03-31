@@ -1,6 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
 import antbuddy.htk.com.antbuddy2016.service.LocalService;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
@@ -26,22 +28,20 @@ public class LoReActivity extends Activity {
     private Button login_LoRe_Button;
     private Button createNewAccount_LoRe_Button;
 
-    private boolean mBounded;
-    private LocalService mService;
-
-    ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mService = ((LocalBinder<LocalService>) service).getService();
-            mBounded = true;
-            LogHtk.d("asdf", "onServiceConnected");
+    private boolean isBindService = false;
+    AntbuddyService mService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
+            mService = (AntbuddyService) binder.getService();
+            isBindService = true;
+            LogHtk.d(LogHtk.SERVICE_TAG, "onServiceConnected");
         }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(ComponentName className) {
             mService = null;
-            mBounded = false;
-            LogHtk.d("asdf", "onServiceDisconnected");
+            isBindService = false;
+            LogHtk.d(LogHtk.SERVICE_TAG, "onServiceDisconnected");
         }
     };
 
@@ -50,7 +50,6 @@ public class LoReActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loreactivity);
 
-        doBindService();
         reset();
         initViews();
         getBunldeAndProcess();
@@ -61,9 +60,20 @@ public class LoReActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        bindService();
+    }
+
+    @Override
     protected void onDestroy() {
+        if (isBindService) {
+            unbindService(mConnection);
+        }
+        mService = null;
+
+        //unregisterReceiver(bcWifiReceiver);
         super.onDestroy();
-        //doUnbindService();
     }
 
     void initViews() {
@@ -108,19 +118,21 @@ public class LoReActivity extends Activity {
         }
     };
 
-    void doBindService() {
-        bindService(new Intent(this, LocalService.class), mConnection,
-                Context.BIND_AUTO_CREATE);
-    }
-
-    void doUnbindService() {
-        if (mConnection != null) {
-            unbindService(mConnection);
+    // Service process
+    private void bindService() {
+        try {
+            if(AntbuddyService.mAntbuddyService == null) {
+                startService(new Intent(this, AntbuddyService.class));
+                Intent intent = new Intent(this, Class.forName(AntbuddyService.class.getName()));
+                // binding to remote service
+                bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+            } else {
+                mService = AntbuddyService.mAntbuddyService;
+            }
+        } catch (ClassNotFoundException e) {
+            LogHtk.e(LogHtk.SERVICE_TAG, "Bind service ERROR!");
+            e.printStackTrace();
         }
-    }
-
-    public LocalService getmService() {
-        return mService;
     }
 
     // Reset

@@ -1,4 +1,4 @@
-package antbuddy.htk.com.antbuddy2016.api;
+package antbuddy.htk.com.antbuddy2016.interfaces;
 
 /**
  * Created by thanhnguyen on 29/03/2016.

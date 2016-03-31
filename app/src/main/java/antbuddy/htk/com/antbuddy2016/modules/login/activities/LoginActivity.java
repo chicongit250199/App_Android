@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;

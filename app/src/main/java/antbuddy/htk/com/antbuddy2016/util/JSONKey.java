@@ -9,5 +9,7 @@ public class JSONKey {
     public static final String name = "name";
     public static final String domain = "domain";
     public static final String chatToken = "chatToken";
+    public static final String chatUrl = "chatUrl";
+
 
 }

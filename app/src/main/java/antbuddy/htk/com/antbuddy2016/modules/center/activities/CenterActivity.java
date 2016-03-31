@@ -7,8 +7,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.widget.ProgressBar;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.api.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
@@ -87,12 +90,20 @@ public class CenterActivity extends FragmentActivity {
                         @Override
                         public void onSuccess(String result) {
                             String chatToken = ParseJson.getStringWithKey(result, JSONKey.chatToken);
+                            String chatURLXMPP = ParseJson.getStringWithKey(result, JSONKey.chatUrl);
                             String[] fields = chatToken.split(":");
                             Constants.USERNAME_XMPP = fields[0];
                             Constants.PASSWORD_XMPP = fields[1];
 
-                            // Connect XMPP
+                            Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
+                            Matcher m = p.matcher(chatURLXMPP);
+                            if (m.matches()) {
+                                Constants.HOST_XMPP = m.group(1);
+                            }
 
+                            // LOGIN XMPP
+
+                            LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }
 

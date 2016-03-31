@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+
 /**
  * Created by thanhnguyen on 30/03/2016.
  */
