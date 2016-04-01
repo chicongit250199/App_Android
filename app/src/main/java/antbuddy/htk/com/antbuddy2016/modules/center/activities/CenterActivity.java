@@ -11,6 +11,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.widget.ProgressBar;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,10 +132,10 @@ public class CenterActivity extends FragmentActivity {
                     LoginAPI.GETOrganizationUserProfile(new HttpRequestReceiver() {
 
                         @Override
-                        public void onSuccess(String result) {
-                            String chatToken = ParseJson.getStringWithKey(result, JSONKey.chatToken);
-                            String chatURLXMPP = ParseJson.getStringWithKey(result, JSONKey.chatUrl);
-                            Constants.DOMAIN_XMPP = ParseJson.getStringWithKey(result, JSONKey.chatDomain);
+                        public void onSuccess(Object response) {
+                            String chatToken = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatToken);
+                            String chatURLXMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatUrl);
+                            Constants.DOMAIN_XMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatDomain);
                             String[] fields = chatToken.split(":");
                             Constants.USERNAME_XMPP = fields[0];
                             Constants.PASSWORD_XMPP = fields[1];
@@ -146,7 +149,7 @@ public class CenterActivity extends FragmentActivity {
                             // LOGIN XMPP
                             mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
 
-                            LogHtk.d(TAG_THISCLASS, "result = " + result);
+                            LogHtk.d(TAG_THISCLASS, "result = " + response.toString());
                             LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }

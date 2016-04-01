@@ -9,20 +9,20 @@ import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
  */
 public class LoginAPI {
 
-    public static void POSTLogin(String email, String password, HttpRequestReceiver receiver, Context context) {
-        Request.POSTLogin(email, password, receiver, context);
+    public static void POSTLogin(String email, String password, HttpRequestReceiver receiver) {
+        ABRequest.POSTLogin(email, password, receiver);
     }
 
     public static void GETOrganizations(HttpRequestReceiver receiver) {
-        Request.GETOrganizations(receiver);
+        ABRequest.GETOrganizations(receiver);
     }
 
     public static void GETOrganizationUserProfile(HttpRequestReceiver receiver) {
-        Request.GETOrganizationUserProfile(receiver);
+        ABRequest.GETOrganizationUserProfile(receiver);
     }
 
     public static void POSTCheckExistOrganizations(HttpRequestReceiver receiver) {
-        //Request.POSTCheckExistOrganizations(receiver);
+        //ABRequest.POSTCheckExistOrganizations(receiver);
     }
 
 //    // Check su ton tai Domain

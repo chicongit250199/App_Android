@@ -10,7 +10,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
@@ -88,11 +91,11 @@ public class DomainActivity extends Activity {
                     AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
                     LoginAPI.GETOrganizations(new HttpRequestReceiver() {
                         @Override
-                        public void onSuccess(String result) {
-                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!: " + result);
+                        public void onSuccess(Object response) {
+                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!: " + response.toString());
 
                             domainList.clear();
-                            domainList.addAll(ParseJson.parseToListDomains(result));
+                            domainList.addAll(ParseJson.parseToListDomains((JSONArray) response));
                             LogHtk.d(TAG_THISCLASS, "domainList.count: " + domainList.size());
                             runOnUiThread(new Runnable() {
                                 @Override

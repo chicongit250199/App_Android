@@ -8,9 +8,13 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
@@ -26,14 +30,16 @@ import java.util.Map;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.util.API;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 
 //import org.apache.http.entity.mime.content.ContentBody;
 
-public class Request {
-    public static final String TAG_THISCLASS = "Request";
+public class ABRequest {
+    public static final String TAG_THISCLASS = "ABRequest";
 
     //private static final String URL_SEND_MESSAGE_OUT = "http://" + AntbuddyXmppConnection.HOST + "/api/messages";
    // private static final String URL_DELETE_OPENING_CHAT_ROOM = "http://" + AntbuddyXmppConnection.HOST + "/api/users/me/openingChatRoom/";
@@ -46,21 +52,6 @@ public class Request {
 //        POST, GET, DELETE
 //    }
 
-    /**
-     * Supported request methods.
-     */
-    public interface Method {
-        int DEPRECATED_GET_OR_POST = -1;
-        int GET = 0;
-        int POST = 1;
-        int PUT = 2;
-        int DELETE = 3;
-        int HEAD = 4;
-        int OPTIONS = 5;
-        int TRACE = 6;
-        int PATCH = 7;
-    }
-
     public static enum RESPONSE_RESULT {
         OK, Created, EMPTY_RESPONSE, ERROR_REQUEST
     }
@@ -70,7 +61,7 @@ public class Request {
     }
 
     public static void setCookie(String cookie) {
-        Request.cookie = cookie;
+        ABRequest.cookie = cookie;
     }
 
 //    public static String connect(String urlString) {
@@ -192,15 +183,24 @@ public class Request {
 //        return result;
 //    }
 
-    protected static void POSTLogin(String email, String password, final HttpRequestReceiver receiver, Context context) {
+    protected static void POSTLogin(String email, String password, final HttpRequestReceiver receiver) {
         final String emailStr = email.trim();
         final String passwordStr = password.trim();
 
-        String LOGIN_URL = "https://antbuddy.com/users/session/";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN_URL,
-                new Response.Listener<String>() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(RequestKey.email, emailStr);
+            jsonObject.put(RequestKey.password, passwordStr);
+        } catch (JSONException e) {
+            receiver.onError("Can not create Json Object!");
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(com.android.volley.Request.Method.POST, API.LOGIN_URL, jsonObject,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(JSONObject response) {
                         receiver.onSuccess(response);
                     }
                 },
@@ -209,121 +209,86 @@ public class Request {
                     public void onErrorResponse(VolleyError error) {
                         receiver.onError(error.toString());
                     }
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
-                map.put(RequestKey.email, emailStr);
-                map.put(RequestKey.password, passwordStr);
-                return map;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
+                });
+
+        // Adding request to request queue
+        AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
-    protected static void GETOrganizations(HttpRequestReceiver receiver) {
-        String responseStr = "";
-
-        try {
-            String urlFull = "https://antbuddy.com/api/organizations/";
-            URL url = new URL(urlFull);
-            HttpURLConnection httpCon;
-            httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            httpCon.setRequestProperty("authorization", Constants.token);
-            httpCon.setRequestMethod("GET");
-
-            // set timeout
-            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
-            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
-
-            // request to server
-            httpCon.connect();
-
-            //get response
-            int sc = httpCon.getResponseCode();
-            if (sc == 200 || sc == 201) {
-                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
-                InputStream is = httpCon.getInputStream();
-                responseStr = readResponse(is);
-                is.close();
-
-                receiver.onSuccess(responseStr);
-            } else {
-                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-                receiver.onError(responseStr);
-                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
+    protected static void GETOrganizations(final HttpRequestReceiver receiver) {
+        JsonArrayRequest req = new JsonArrayRequest(com.android.volley.Request.Method.GET, API.API_ORGANIZATIONS_URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        receiver.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        receiver.onError(error.toString());
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("authorization", Constants.token);
+                        return params;
             }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (MalformedURLException e) {
-            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (IOException e) {
-            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (Exception e) {
-            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        }
+        };
+        AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
     protected static void GETOrganizationUserProfile(HttpRequestReceiver receiver) {
-        String responseStr = "";
-
-        try {
-            String urlFull = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
-            URL url = new URL(urlFull);
-            HttpURLConnection httpCon;
-            httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            httpCon.setRequestProperty("authorization", Constants.token);
-            httpCon.setRequestMethod("GET");
-
-            // set timeout
-            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
-            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
-
-            // request to server
-            httpCon.connect();
-
-            //get response
-            int sc = httpCon.getResponseCode();
-            if (sc == 200 || sc == 201) {
-                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
-                InputStream is = httpCon.getInputStream();
-                responseStr = readResponse(is);
-                is.close();
-
-                receiver.onSuccess(responseStr);
-            } else {
-                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-                receiver.onError(responseStr);
-                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
-            }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (MalformedURLException e) {
-            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (IOException e) {
-            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (Exception e) {
-            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        }
+//        String responseStr = "";
+//
+//        try {
+//            String urlFull = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
+//            URL url = new URL(urlFull);
+//            HttpURLConnection httpCon;
+//            httpCon = (HttpURLConnection) url.openConnection();
+//            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+//            httpCon.setRequestProperty("authorization", Constants.token);
+//            httpCon.setRequestMethod("GET");
+//
+//            // set timeout
+//            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
+//            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
+//
+//            // request to server
+//            httpCon.connect();
+//
+//            //get response
+//            int sc = httpCon.getResponseCode();
+//            if (sc == 200 || sc == 201) {
+//                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
+//                InputStream is = httpCon.getInputStream();
+//                responseStr = readResponse(is);
+//                is.close();
+//
+//                receiver.onSuccess(responseStr);
+//            } else {
+//                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//                receiver.onError(responseStr);
+//                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
+//            }
+//        } catch (IllegalArgumentException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//            receiver.onError(responseStr);
+//        } catch (MalformedURLException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//            receiver.onError(responseStr);
+//        } catch (IOException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//            receiver.onError(responseStr);
+//        } catch (Exception e) {
+//            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//            receiver.onError(responseStr);
+//        }
     }
 
 //    private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {

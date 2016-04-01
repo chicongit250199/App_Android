@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
@@ -62,10 +65,10 @@ public class LoginActivity extends Activity {
                     LoginAPI.POSTLogin("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
 
                         @Override
-                        public void onSuccess(String result) {
-                            LogHtk.d(LogHtk.API_TAG, "onSuccess: " + result);
+                        public void onSuccess(Object response) {
+                            LogHtk.d(LogHtk.API_TAG, "onSuccess: " + response.toString());
 
-                            Constants.token = "Bearer " + ParseJson.getStringWithKey(result, JSONKey.token);
+                            Constants.token = "Bearer " + ParseJson.getStringWithKey((JSONObject)response, JSONKey.token);
                             Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                             startActivity(myIntent);
                             finish();
@@ -76,13 +79,13 @@ public class LoginActivity extends Activity {
 
                         @Override
                         public void onError(String error) {
-                            LogHtk.e(LogHtk.API_TAG, "onSuccess: " + error);
+                            LogHtk.e(LogHtk.API_TAG, "onError: " + error);
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                             AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
 
                             AndroidHelper.showToast("Please try again!", LoginActivity.this);
                         }
-                    }, getApplicationContext());
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
