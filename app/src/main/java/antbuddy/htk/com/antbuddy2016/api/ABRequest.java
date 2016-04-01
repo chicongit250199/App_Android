@@ -1,39 +1,26 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
 
-import android.content.Context;
-import android.util.Log;
-
 import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.Request;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
-import antbuddy.htk.com.antbuddy2016.util.API;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 
 //import org.apache.http.entity.mime.content.ContentBody;
@@ -197,7 +184,7 @@ public class ABRequest {
             return;
         }
 
-        JsonObjectRequest req = new JsonObjectRequest(com.android.volley.Request.Method.POST, API.LOGIN_URL, jsonObject,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, API.LOGIN_URL, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -216,7 +203,7 @@ public class ABRequest {
     }
 
     protected static void GETOrganizations(final HttpRequestReceiver receiver) {
-        JsonArrayRequest req = new JsonArrayRequest(com.android.volley.Request.Method.GET, API.API_ORGANIZATIONS_URL,
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API.API_ORGANIZATIONS_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -239,56 +226,28 @@ public class ABRequest {
         AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
-    protected static void GETOrganizationUserProfile(HttpRequestReceiver receiver) {
-//        String responseStr = "";
-//
-//        try {
-//            String urlFull = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
-//            URL url = new URL(urlFull);
-//            HttpURLConnection httpCon;
-//            httpCon = (HttpURLConnection) url.openConnection();
-//            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-//            httpCon.setRequestProperty("authorization", Constants.token);
-//            httpCon.setRequestMethod("GET");
-//
-//            // set timeout
-//            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
-//            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
-//
-//            // request to server
-//            httpCon.connect();
-//
-//            //get response
-//            int sc = httpCon.getResponseCode();
-//            if (sc == 200 || sc == 201) {
-//                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
-//                InputStream is = httpCon.getInputStream();
-//                responseStr = readResponse(is);
-//                is.close();
-//
-//                receiver.onSuccess(responseStr);
-//            } else {
-//                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-//                receiver.onError(responseStr);
-//                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
-//            }
-//        } catch (IllegalArgumentException e) {
-//            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
-//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-//            receiver.onError(responseStr);
-//        } catch (MalformedURLException e) {
-//            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
-//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-//            receiver.onError(responseStr);
-//        } catch (IOException e) {
-//            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
-//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-//            receiver.onError(responseStr);
-//        } catch (Exception e) {
-//            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
-//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-//            receiver.onError(responseStr);
-//        }
+    protected static void GETOrganizationUserProfile(final HttpRequestReceiver receiver) {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, API.API_USERS_ME_URL,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        receiver.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        receiver.onError(error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", Constants.token);
+                return params;
+            }
+        };
+        AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
 //    private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {

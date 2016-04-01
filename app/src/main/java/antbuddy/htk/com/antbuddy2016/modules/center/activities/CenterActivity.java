@@ -75,18 +75,12 @@ public class CenterActivity extends AppCompatActivity {
             LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
         }
 
-//        View v = getActionBar().getCustomView();
-//        LayoutParams lp = (LayoutParams) v.getLayoutParams();
-//        lp.width = ActionBar.LayoutParams.MATCH_PARENT;
-//        v.setLayoutParams(lp);
-        //init
-//        progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
-
-        // Load data
-//        loadData();
         initView();
+        loadData();
     }
     protected void initView() {
+        progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
+
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         tabBarView = (TabBarView) findViewById(R.id.change_color_tab);
 
@@ -103,14 +97,6 @@ public class CenterActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString(TabFragment.TITLE, title);
-//        tabFragment.setArguments(bundle);
-
-
-
 
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -169,6 +155,7 @@ public class CenterActivity extends AppCompatActivity {
 
                         @Override
                         public void onSuccess(Object response) {
+                            LogHtk.d(LogHtk.API_TAG, "Center/response = " + response.toString());
                             String chatToken = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatToken);
                             String chatURLXMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatUrl);
                             Constants.DOMAIN_XMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatDomain);
@@ -183,7 +170,12 @@ public class CenterActivity extends AppCompatActivity {
                             }
 
                             // LOGIN XMPP
-                            mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
+                                }
+                            }).start();;
 
                             LogHtk.d(TAG_THISCLASS, "result = " + response.toString());
                             LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
@@ -192,7 +184,7 @@ public class CenterActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(String error) {
-                            LogHtk.d(TAG_THISCLASS, TAG_THISCLASS + " ERROR!");
+                            LogHtk.d(LogHtk.API_TAG, "Center ERROR!");
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }
                     });
@@ -208,9 +200,7 @@ public class CenterActivity extends AppCompatActivity {
         if(AntbuddyService.mAntbuddyService == null) {
             Intent intent = new Intent(this, AntbuddyService.class);
             bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-        }
-        else
-        {
+        } else {
             mIRemoteService = AntbuddyService.mAntbuddyService;
         }
         return mIRemoteService != null;
