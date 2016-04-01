@@ -24,5 +24,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile project(':crashreport')
-    compile 'com.mcxiaoke.volley:library:1.0.19'
+	compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.github.orangegangsters:swipy:1.2.0@aar'
+    compile project(':emojiconmaster')
+    compile 'com.squareup.picasso:picasso:2.3.2'
+    compile 'com.lapism:searchview:2.2'
 }

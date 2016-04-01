@@ -211,7 +211,7 @@ public class ABRequest {
                     }
                 });
 
-        // Adding request to request queue
+        // Adding request to request queueca tca tuan
         AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 

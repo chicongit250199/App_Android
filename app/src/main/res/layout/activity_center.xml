@@ -1,65 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.app.FragmentTabHost xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@android:id/tabhost"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v4.view.ViewPager
+            android:id="@+id/id_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <antbuddy.htk.com.antbuddy2016.customview.TabBarView
+            android:id="@+id/change_color_tab"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:translationZ="5dp"
+            >
 
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:orientation="horizontal"/>
-
-            <FrameLayout
-                android:id="@android:id/tabcontent"
+            <antbuddy.htk.com.antbuddy2016.customview.TabBarItem
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="0" />
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:padding="5dp"
+                app:item_color="@color/color_green"
+                app:item_icon="@drawable/ic_recent"
+                app:item_text="Recent"
+                app:item_text_size="12sp" />
 
-            <FrameLayout
-                android:id="@+id/realtabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+            <antbuddy.htk.com.antbuddy2016.customview.TabBarItem
+                android:id="@+id/id_indicator_two"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:padding="5dp"
+                app:item_color="@color/color_green"
+                app:item_icon="@drawable/ic_members"
+                app:item_text="Members"
+                app:item_text_size="12sp" />
 
-            <!--<FrameLayout-->
-                <!--android:id="@+id/recentFragment"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="0" />-->
+            <antbuddy.htk.com.antbuddy2016.customview.TabBarItem
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:padding="5dp"
+                app:item_color="@color/color_green"
+                app:item_icon="@drawable/ic_group"
+                app:item_text="Groups"
+                app:item_text_size="12sp" />
 
-            <!--<FrameLayout-->
-                <!--android:id="@+id/membersFragment"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="1" />-->
+            <antbuddy.htk.com.antbuddy2016.customview.TabBarItem
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:padding="5dp"
+                app:item_color="@color/color_green"
+                app:item_icon="@drawable/ic_profile"
+                app:item_text="Profile"
+                app:item_text_size="12sp" />
+        </antbuddy.htk.com.antbuddy2016.customview.TabBarView>
 
-            <!--<FrameLayout-->
-                <!--android:id="@+id/groupsFragment"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="1" />-->
-
-            <!--<FrameLayout-->
-                <!--android:id="@+id/profileFragment"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="1" />-->
-        </LinearLayout>
+    </LinearLayout>
 
     <ProgressBar
+        android:id="@+id/progressBar_Center"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar_Center"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:indeterminate="false" />
-
-</android.support.v4.app.FragmentTabHost>
+        android:indeterminate="false"
+        android:visibility="gone" />
+</RelativeLayout>

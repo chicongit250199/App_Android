@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
+        android:id="@+id/swipyrefreshlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:direction="top">
+
+        <ListView
+            android:id="@+id/lv_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animationCache="false"
+            android:scrollingCache="false"
+            android:smoothScrollbar="false"
+            android:transcriptMode="disabled" />
+    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:paddingBottom="4dip">
+
+        <ImageButton
+            android:id="@+id/btn_smile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@color/transparent"
+            android:contentDescription="@string/send"
+            android:drawablePadding="0dip"
+            android:padding="10dp"
+            android:src="@drawable/bt_attachment" />
+
+        <github.ankushsachdeva.emojicon.EmojiconEditText
+            android:padding="5dp"
+            android:id="@+id/text_send"
+            android:background="@drawable/bg_rounded_corners"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:hint="@string/type_message"
+            android:imeOptions="actionSend"
+            android:inputType="text|textMultiLine"
+            android:maxLines="4"
+            android:minHeight="48dip"
+            android:nextFocusRight="@+id/btn_send"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:textSize="16sp"
+            android:textColor="@color/black">
+            <requestFocus />
+        </github.ankushsachdeva.emojicon.EmojiconEditText>
+
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:background="@null"
+            android:id="@+id/btn_send"/>
+    </LinearLayout>
+</LinearLayout>

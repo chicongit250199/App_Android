@@ -2,12 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Members"
-        android:id="@+id/textView6"
-        android:layout_gravity="center_horizontal" />
+    <SearchView
+        android:id="@+id/searchView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </SearchView>
+    <ListView
+        android:id="@+id/lv_member"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animationCache="false"
+        android:scrollingCache="false"
+        android:smoothScrollbar="false"
+        android:transcriptMode="disabled" />
 </LinearLayout>

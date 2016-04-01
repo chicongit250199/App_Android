@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingBottom="5dp"
+    android:paddingTop="0dp"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/singleMessageContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:orientation="vertical"/>
+
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="top"
+                android:paddingLeft="4dp"
+                android:paddingRight="5dp"
+                android:paddingTop="2dp"
+                android:src="@drawable/ic_avatar_defaul"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_message"
+            android:orientation="vertical"
+            >
+            <github.ankushsachdeva.emojicon.EmojiconTextView
+                android:id="@+id/textMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff000000"
+                android:textSize="14sp"
+                android:autoLink="web"
+                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"/>
+                android:freezesText="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

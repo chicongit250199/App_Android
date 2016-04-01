@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Antbuddy2016</string>
+    <string name="type_message">Type a message...</string>
+    <string name="send">Send</string>
 </resources>

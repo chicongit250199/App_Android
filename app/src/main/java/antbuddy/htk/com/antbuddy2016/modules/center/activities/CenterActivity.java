@@ -7,39 +7,47 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTabHost;
 import android.widget.ProgressBar;
 
-import org.json.JSONArray;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
+import antbuddy.htk.com.antbuddy2016.customview.TabBarView;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
+
+import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import antbuddy.htk.com.antbuddy2016.modules.center.activities.RecentFragment;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
  */
-public class CenterActivity extends FragmentActivity {
+public class CenterActivity extends AppCompatActivity {
 
     public static final String TAG_THISCLASS = "CenterActivity";
-
-    private FragmentTabHost mTabHost;
     private ProgressBar progressBar_Center;
+    private ViewPager mViewPager;
+    private List<Fragment> mTabFragments = new ArrayList<>();
+    private TabBarView tabBarView;
 
-    // Work with service
+	// Work with service
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
     private boolean mBound;
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -62,31 +70,59 @@ public class CenterActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_center);
 
-        boolean isConnectService = connectServiceInAndroid();
+		boolean isConnectService = connectServiceInAndroid();
         if (!isConnectService) {
             LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
         }
 
+//        View v = getActionBar().getCustomView();
+//        LayoutParams lp = (LayoutParams) v.getLayoutParams();
+//        lp.width = ActionBar.LayoutParams.MATCH_PARENT;
+//        v.setLayoutParams(lp);
         //init
-        progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
+//        progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
 
         // Load data
-        loadData();
+//        loadData();
+        initView();
+    }
+    protected void initView() {
+        mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+        tabBarView = (TabBarView) findViewById(R.id.change_color_tab);
 
+        RecentFragment recentFragment = new RecentFragment();
+        mTabFragments.add(recentFragment);
+        MembersFragment membersFragment = new MembersFragment();
+        mTabFragments.add(membersFragment);
+        GroupsFragment groupsFragment = new GroupsFragment();
+        mTabFragments.add(groupsFragment);
+        ProfileFragment profileFragment = new ProfileFragment();
+        mTabFragments.add(profileFragment);
 
-        //tabHost = new FragmentTabHost(getActivity());
-        if (mTabHost == null) {
-            mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-
-            // Create the tabs in main_fragment.xml
-            mTabHost.setup(CenterActivity.this, getSupportFragmentManager(), R.id.realtabcontent);
-
-            mTabHost.addTab(mTabHost.newTabSpec("RecentTab").setIndicator("Recent"), RecentFragment.class, null);
-            mTabHost.addTab(mTabHost.newTabSpec("MembersTab").setIndicator("Members"), MembersFragment.class, null);
-            mTabHost.addTab(mTabHost.newTabSpec("GroupsTab").setIndicator("Groups"), GroupsFragment.class, null);
-            mTabHost.addTab(mTabHost.newTabSpec("ProfileTab").setIndicator("Profile"), ProfileFragment.class, null);
-            mTabHost.setCurrentTab(0);
+        tabBarView.setViewpager(mViewPager);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
+
+
+//        Bundle bundle = new Bundle();
+//        bundle.putString(TabFragment.TITLE, title);
+//        tabFragment.setArguments(bundle);
+
+
+
+
+        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public int getCount() {
+                return mTabFragments.size();
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return mTabFragments.get(position);
+            }
+        });
     }
 
     @Override
