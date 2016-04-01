@@ -6,7 +6,7 @@ package antbuddy.htk.com.antbuddy2016.interfaces;
 
 public interface HttpRequestReceiver {
     //public void onBegin();
-    public void onSuccess(String result);
+    public void onSuccess(String response);
     public void onError(String error);
     //public void onFinish();
 }

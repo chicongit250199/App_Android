@@ -1,7 +1,15 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
 
+import android.content.Context;
 import android.util.Log;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
@@ -13,9 +21,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 
 //import org.apache.http.entity.mime.content.ContentBody;
 
@@ -29,8 +42,23 @@ public class Request {
     private static String cookie = "";
     public static final int TIMEOUT_SECOND = 10;
 
-    public static enum METHOD_URL {
-        POST, GET, DELETE
+//    public static enum METHOD_URL {
+//        POST, GET, DELETE
+//    }
+
+    /**
+     * Supported request methods.
+     */
+    public interface Method {
+        int DEPRECATED_GET_OR_POST = -1;
+        int GET = 0;
+        int POST = 1;
+        int PUT = 2;
+        int DELETE = 3;
+        int HEAD = 4;
+        int OPTIONS = 5;
+        int TRACE = 6;
+        int PATCH = 7;
     }
 
     public static enum RESPONSE_RESULT {
@@ -164,71 +192,34 @@ public class Request {
 //        return result;
 //    }
 
-    protected static void POSTLogin(String email, String password, HttpRequestReceiver receiver) {
-        String responseStr = "";
+    protected static void POSTLogin(String email, String password, final HttpRequestReceiver receiver, Context context) {
+        final String emailStr = email.trim();
+        final String passwordStr = password.trim();
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("email", email);
-            jsonObject.put("password", password);
-
-
-            String urlFull = "https://antbuddy.com/users/session/";
-            URL url = new URL(urlFull);
-            HttpURLConnection httpCon;
-            httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            httpCon.setRequestMethod("POST");
-
-            // set timeout
-            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
-            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
-
-            // request to server
-            httpCon.connect();
-
-            // if have para/json
-            if (jsonObject != null) {
-                String message = jsonObject.toString();
-                Log.d(TAG_THISCLASS, ".....Json Request: " + message);
-                //setup send
-                OutputStream os = new BufferedOutputStream(httpCon.getOutputStream());
-                os.write(message.getBytes());
-                //clean up
-                os.flush();
+        String LOGIN_URL = "https://antbuddy.com/users/session/";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        receiver.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        receiver.onError(error.toString());
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put(RequestKey.email, emailStr);
+                map.put(RequestKey.password, passwordStr);
+                return map;
             }
-
-            //get response
-            int sc = httpCon.getResponseCode();
-            if (sc == 200 || sc == 201) {
-                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
-                InputStream is = httpCon.getInputStream();
-                responseStr = readResponse(is);
-                is.close();
-
-                receiver.onSuccess(responseStr);
-            } else {
-                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-                receiver.onError(responseStr);
-                Log.e(TAG_THISCLASS, "DTgetResponseCode: " + sc);
-            }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (MalformedURLException e) {
-            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (IOException e) {
-            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        } catch (Exception e) {
-            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-            receiver.onError(responseStr);
-        }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
     }
 
     protected static void GETOrganizations(HttpRequestReceiver receiver) {
@@ -335,65 +326,65 @@ public class Request {
         }
     }
 
-    private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {
-        String responseStr = "";
-
-        //POST, GET, DELETE, ...
-        String methodStr = methodRequest.toString();
-        try {
-            Log.d(TAG_THISCLASS, "URL request: " + urlFull + ", Method: " + methodStr);
-            URL url = new URL(urlFull);
-            HttpURLConnection httpCon;
-            httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            httpCon.setRequestProperty("Cookie", cookie);
-            httpCon.setRequestMethod(methodStr);
-
-            // set timeout
-            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
-            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
-
-            // request to server
-            httpCon.connect();
-            // if have para/json
-            if (jsonObject != null) {
-                String message = jsonObject.toString();
-                Log.d(TAG_THISCLASS, ".....Json Request: " + message);
-                //setup send
-                OutputStream os = new BufferedOutputStream(httpCon.getOutputStream());
-                os.write(message.getBytes());
-                //clean up
-                os.flush();
-            }
-            //get response
-            int sc = httpCon.getResponseCode();
-            if (sc == 200 || sc == 201) {
-                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
-                InputStream is = httpCon.getInputStream();
-                responseStr = readResponse(is);
-                if (responseStr.equals("")) {
-                    responseStr = RESPONSE_RESULT.EMPTY_RESPONSE + "";
-                }
-                is.close();
-            } else {
-                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-                Log.e(TAG_THISCLASS, "getResponseCode: " + sc);
-            }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-        } catch (MalformedURLException e) {
-            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-        } catch (IOException e) {
-            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-        } catch (Exception e) {
-            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
-            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
-        }
-        return responseStr;
-    }
+//    private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {
+//        String responseStr = "";
+//
+//        //POST, GET, DELETE, ...
+//        String methodStr = methodRequest.toString();
+//        try {
+//            Log.d(TAG_THISCLASS, "URL request: " + urlFull + ", Method: " + methodStr);
+//            URL url = new URL(urlFull);
+//            HttpURLConnection httpCon;
+//            httpCon = (HttpURLConnection) url.openConnection();
+//            httpCon.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+//            httpCon.setRequestProperty("Cookie", cookie);
+//            httpCon.setRequestMethod(methodStr);
+//
+//            // set timeout
+//            httpCon.setConnectTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 10
+//            httpCon.setReadTimeout(TIMEOUT_SECOND * 1000); //TIMEOUT_SECOND * 1000
+//
+//            // request to server
+//            httpCon.connect();
+//            // if have para/json
+//            if (jsonObject != null) {
+//                String message = jsonObject.toString();
+//                Log.d(TAG_THISCLASS, ".....Json Request: " + message);
+//                //setup send
+//                OutputStream os = new BufferedOutputStream(httpCon.getOutputStream());
+//                os.write(message.getBytes());
+//                //clean up
+//                os.flush();
+//            }
+//            //get response
+//            int sc = httpCon.getResponseCode();
+//            if (sc == 200 || sc == 201) {
+//                Log.d(TAG_THISCLASS, "getResponseCode: " + sc);
+//                InputStream is = httpCon.getInputStream();
+//                responseStr = readResponse(is);
+//                if (responseStr.equals("")) {
+//                    responseStr = RESPONSE_RESULT.EMPTY_RESPONSE + "";
+//                }
+//                is.close();
+//            } else {
+//                responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//                Log.e(TAG_THISCLASS, "getResponseCode: " + sc);
+//            }
+//        } catch (IllegalArgumentException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! Connect Server Timeout/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//        } catch (MalformedURLException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! MalformedURLException/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//        } catch (IOException e) {
+//            Log.e(TAG_THISCLASS, "ERROR! IOException/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//        } catch (Exception e) {
+//            Log.e(TAG_THISCLASS, "ERROR! Exception/ " + e.toString());
+//            responseStr = RESPONSE_RESULT.ERROR_REQUEST + "";
+//        }
+//        return responseStr;
+//    }
 
     /**
      * Reads the response from the input stream and returns it as a string.

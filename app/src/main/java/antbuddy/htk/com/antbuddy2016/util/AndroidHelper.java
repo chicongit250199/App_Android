@@ -80,4 +80,10 @@ public class AndroidHelper {
         builder.setNegativeButton("Cancel", cancelClickListener);
         builder.show();
     }
+
+    public static void warningInternetConnection(Activity activity) {
+        if (!AndroidHelper.isInternetAvailable(activity.getApplicationContext())) {
+            AndroidHelper.showToast("No network connection available!", activity);
+        }
+    }
 }

@@ -15,6 +15,7 @@ import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
@@ -39,9 +40,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
-            AndroidHelper.showToast("No network connection available!", LoginActivity.this);
-        }
+        AndroidHelper.warningInternetConnection(this);
     }
 
     private void requestAPI() {
@@ -64,9 +63,9 @@ public class LoginActivity extends Activity {
 
                         @Override
                         public void onSuccess(String result) {
-                            Constants.token = "Bearer " + ParseJson.getStringWithKey(result, JSONKey.token);
-                            Log.d("DaiThanh", "Thanh Cong/ Token: " + Constants.token);
+                            LogHtk.d(LogHtk.API_TAG, "onSuccess: " + result);
 
+                            Constants.token = "Bearer " + ParseJson.getStringWithKey(result, JSONKey.token);
                             Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                             startActivity(myIntent);
                             finish();
@@ -77,12 +76,13 @@ public class LoginActivity extends Activity {
 
                         @Override
                         public void onError(String error) {
+                            LogHtk.e(LogHtk.API_TAG, "onSuccess: " + error);
                             AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                             AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
 
                             AndroidHelper.showToast("Please try again!", LoginActivity.this);
                         }
-                    });
+                    }, getApplicationContext());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
