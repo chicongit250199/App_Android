@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 
 import java.util.List;
@@ -38,16 +39,22 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
             holder = new Holder();
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = vi.inflate(R.layout.grid_item, null);
+
+            holder.room_button = (Button) rowView.findViewById(R.id.room_button);
+
             rowView.setTag(holder);
         } else {
             rowView = convertView;
             holder = (Holder) rowView.getTag();
         }
+
+        holder.room_button.setText(listRooms.get(position).getName());
+
         return rowView;
     }
 
     public class Holder {
-
+        Button room_button;
     }
 
     @Override

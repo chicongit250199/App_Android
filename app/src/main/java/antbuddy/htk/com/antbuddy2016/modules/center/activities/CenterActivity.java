@@ -254,7 +254,6 @@ public class CenterActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Object response) {
                             LogHtk.i(LogHtk.API_TAG, "List Groups: " + response.toString());
-
                             ObjectManager.getInstance().parseRooms((JSONArray) response);
                         }
 

@@ -22,6 +22,7 @@ public class ObjectManager {
     private boolean isUserMeLoaded;
     private boolean isUsersLoaded;
     private boolean isGroupsLoaded;
+    private boolean groupsNeedToReload;
 
     private List<Room> listRooms;
     private List<User> listUsers;
@@ -40,8 +41,7 @@ public class ObjectManager {
     }
 
     public static ObjectManager getInstance() {
-        if (objectManager == null)
-        {
+        if (objectManager == null) {
             objectManager = new ObjectManager();
         }
         return objectManager;
@@ -107,6 +107,10 @@ public class ObjectManager {
         this.isGroupsLoaded = isGroupsLoaded;
     }
 
+    public boolean isGroupsNeedToReload() {
+        return groupsNeedToReload;
+    }
+
     public void parseUserMe(JSONObject jsonObject) {
         try {
             userMe = UserMe.parse(jsonObject);
@@ -149,12 +153,15 @@ public class ObjectManager {
                 if (room != null) {
                     listRooms.add(room);
                 }
+
+                groupsNeedToReload = false;
             } catch (JSONException e) {
                 e.printStackTrace();
+                groupsNeedToReload = true;
             }
         }
 
-        if (listRooms.size() > 0) {
+        if (listRooms.size() >= 0) {
             isGroupsLoaded = true;
         } else {
             isGroupsLoaded = false;
