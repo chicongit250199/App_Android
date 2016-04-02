@@ -619,16 +619,30 @@ public class AntbuddyXmppConnection {
      * Handle disconnect
      */
 	public void disconnect() {
-		if (mConnectionListener != null || chatListener != null || deleteListener != null || groupChatListener != null || presenceListener != null ) {
-			xmppConnection.removeConnectionListener(mConnectionListener);
-			xmppConnection.removePacketListener(chatListener);
-			xmppConnection.removePacketListener(deleteListener);
-			xmppConnection.removePacketListener(groupChatListener);
-			xmppConnection.removePacketListener(presenceListener);
-			xmppConnection.disconnect();
+		if (xmppConnection != null) {
+			if (mConnectionListener != null) {
+				xmppConnection.removeConnectionListener(mConnectionListener);
+			}
+
+			if (chatListener != null) {
+				xmppConnection.removePacketListener(chatListener);
+			}
+
+			if (deleteListener != null) {
+				xmppConnection.removePacketListener(deleteListener);
+			}
+
+			if (groupChatListener != null) {
+				xmppConnection.removePacketListener(groupChatListener);
+			}
+
+			if (presenceListener != null) {
+				xmppConnection.removePacketListener(presenceListener);
+			}
+
+			xmppConnection = null;
 		}
 
-		xmppConnection = null;
 //		setmUserInfo(null);
 //		setListRoom(null);
 //		setListUser(null);

@@ -31,6 +31,7 @@ import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
@@ -130,6 +131,8 @@ public class CenterActivity extends AppCompatActivity {
 
                 // Reset Object Manager
                 ObjectManager.getInstance().clear();
+
+                AntbuddyApplication.getInstance().cancelPendingRequests(AntbuddyApplication.TAG);
 
                 new Thread(new Runnable() {
                     @Override
