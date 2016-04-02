@@ -43,6 +43,9 @@ public class LoginActivity extends Activity {
             }
         });
 
+        LoReActivity.reset();
+        LoReActivity.resetXMPP();
+
         AndroidHelper.warningInternetConnection(this);
     }
 

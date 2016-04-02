@@ -3,6 +3,8 @@ package antbuddy.htk.com.antbuddy2016.api;
 import android.content.Context;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -17,10 +19,19 @@ public class LoginAPI {
         ABRequest.GETOrganizations(receiver);
     }
 
-    public static void GETOrganizationUserProfile(HttpRequestReceiver receiver) {
+    public static void GETUserProfile(HttpRequestReceiver receiver) {
         ABRequest.GETOrganizationUserProfile(receiver);
     }
 
+    public static void GETListUsers(HttpRequestReceiver receiver) {
+        ABRequest.GETListUsers(receiver);
+    }
+
+    public static void GETListGroups(HttpRequestReceiver receiver) {
+        ABRequest.GETListGroups(receiver);
+    }
+
+    // Create new account
     public static void POSTCheckExistOrganizations(HttpRequestReceiver receiver) {
         //ABRequest.POSTCheckExistOrganizations(receiver);
     }

@@ -74,68 +74,68 @@ public class ChatMessage implements Parcelable {
         this.s_datetime = "" + datetime;
     }
 
-    public static List<ChatMessage> parseListHistoryMessages(JSONArray arrayJsonObjects, List<User> listUser) throws JSONException {
-        List<ChatMessage> listChatMessageHistory = new ArrayList<ChatMessage>();
-
-        for (int i = 0; i < arrayJsonObjects.length(); i++) {
-            JSONObject elementObject = arrayJsonObjects.getJSONObject(i);
-
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setId(elementObject.getString("id"));
-            chatMessage.setSenderId(elementObject.getString("senderId"));
-            chatMessage.setSenderJid(elementObject.getString("senderId").toString() + "@htklabs.com");
-            chatMessage.setSenderName("");
-            chatMessage.setFromId(elementObject.getString("fromId"));
-            for (User user : listUser) {
-                if (user.get_id().equals(chatMessage.getSenderId())) {
-                    chatMessage.setSenderName(user.getName());
-                    break;
-                }
-            }
-
-            chatMessage.setBody(elementObject.getString("body"));
-
-            if (elementObject.has("expandBody")) {
-                chatMessage.setExpandBody(elementObject.getString("expandBody").toString());
-            }
-
-            if (elementObject.has("file") == false) {
-                chatMessage.setFileAntBuddy(null);
-            } else {
-                try {
-                    JSONArray fileObject = elementObject.getJSONArray("file");
-                    chatMessage.setFileAntBuddy(new FileAntBuddy(fileObject.getJSONObject(0).getString("name"), fileObject.getJSONObject(0).getInt("size"), fileObject.getJSONObject(0).getString("fileUrl"), fileObject.getJSONObject(0).getString("mimeType"), fileObject.getJSONObject(0).getString("thumbnailUrl")));
-                } catch (JSONException e) {
-                    // TODO: file can be return object
-                    try {
-                        JSONObject fileObject = elementObject.getJSONObject("file");
-                        chatMessage.setFileAntBuddy(new FileAntBuddy(fileObject.getString("name"), fileObject.getInt("size"), fileObject.getString("fileUrl"), fileObject.getString("mimeType"), fileObject.getString("thumbnailUrl")));
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-
-            if(elementObject.has("receiverId")) {
-                chatMessage.setReceiverId(elementObject.getString("receiverId"));
-                chatMessage.setReceiverJid(elementObject.getString("receiverId").toString() + "@htklabs.com");
-                chatMessage.setReceiverName(""); // process later
-            }
-
-            chatMessage.setModified(elementObject.getBoolean("isModified"));
-            chatMessage.setType(elementObject.getString("type"));
-            if(chatMessage.getType().equals("chat")) {
-                chatMessage.setFromId(null);
-            }
-            chatMessage.setSubType(elementObject.getString("subtype"));
-
-            String utcTime = elementObject.getString("time");
-            chatMessage.setDatetime(NationalTime.convertUTCTimeToCurrentTimeDateInLong(utcTime));
-
-            listChatMessageHistory.add(0,chatMessage);
-        }
-        return listChatMessageHistory;
-    }
+//    public static List<ChatMessage> parseListHistoryMessages(JSONArray arrayJsonObjects, List<User> listUser) throws JSONException {
+//        List<ChatMessage> listChatMessageHistory = new ArrayList<ChatMessage>();
+//
+//        for (int i = 0; i < arrayJsonObjects.length(); i++) {
+//            JSONObject elementObject = arrayJsonObjects.getJSONObject(i);
+//
+//            ChatMessage chatMessage = new ChatMessage();
+//            chatMessage.setId(elementObject.getString("id"));
+//            chatMessage.setSenderId(elementObject.getString("senderId"));
+//            chatMessage.setSenderJid(elementObject.getString("senderId").toString() + "@htklabs.com");
+//            chatMessage.setSenderName("");
+//            chatMessage.setFromId(elementObject.getString("fromId"));
+//            for (User user : listUser) {
+//                if (user.get_id().equals(chatMessage.getSenderId())) {
+//                    chatMessage.setSenderName(user.getName());
+//                    break;
+//                }
+//            }
+//
+//            chatMessage.setBody(elementObject.getString("body"));
+//
+//            if (elementObject.has("expandBody")) {
+//                chatMessage.setExpandBody(elementObject.getString("expandBody").toString());
+//            }
+//
+//            if (elementObject.has("file") == false) {
+//                chatMessage.setFileAntBuddy(null);
+//            } else {
+//                try {
+//                    JSONArray fileObject = elementObject.getJSONArray("file");
+//                    chatMessage.setFileAntBuddy(new FileAntBuddy(fileObject.getJSONObject(0).getString("name"), fileObject.getJSONObject(0).getInt("size"), fileObject.getJSONObject(0).getString("fileUrl"), fileObject.getJSONObject(0).getString("mimeType"), fileObject.getJSONObject(0).getString("thumbnailUrl")));
+//                } catch (JSONException e) {
+//                    // TODO: file can be return object
+//                    try {
+//                        JSONObject fileObject = elementObject.getJSONObject("file");
+//                        chatMessage.setFileAntBuddy(new FileAntBuddy(fileObject.getString("name"), fileObject.getInt("size"), fileObject.getString("fileUrl"), fileObject.getString("mimeType"), fileObject.getString("thumbnailUrl")));
+//                    } catch (Exception e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            if(elementObject.has("receiverId")) {
+//                chatMessage.setReceiverId(elementObject.getString("receiverId"));
+//                chatMessage.setReceiverJid(elementObject.getString("receiverId").toString() + "@htklabs.com");
+//                chatMessage.setReceiverName(""); // process later
+//            }
+//
+//            chatMessage.setModified(elementObject.getBoolean("isModified"));
+//            chatMessage.setType(elementObject.getString("type"));
+//            if(chatMessage.getType().equals("chat")) {
+//                chatMessage.setFromId(null);
+//            }
+//            chatMessage.setSubType(elementObject.getString("subtype"));
+//
+//            String utcTime = elementObject.getString("time");
+//            chatMessage.setDatetime(NationalTime.convertUTCTimeToCurrentTimeDateInLong(utcTime));
+//
+//            listChatMessageHistory.add(0,chatMessage);
+//        }
+//        return listChatMessageHistory;
+//    }
 
     @Override
     public int describeContents() {

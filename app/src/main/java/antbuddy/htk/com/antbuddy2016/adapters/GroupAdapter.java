@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
+import java.util.List;
+
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 
@@ -17,11 +19,13 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
     
     private final Context ctx;
     private final GridView mGridView;
-    
-    public GroupAdapter(Context context, GridView gridView) {
+    private List<Room> listRooms;
+
+    public GroupAdapter(Context context, GridView gridView, List<Room> listRooms) {
         super(context, R.layout.grid_item);
         this.ctx = context;
         mGridView = gridView;
+        this.listRooms = listRooms;
     }
 
     @Override
@@ -29,6 +33,7 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
         final Holder holder;
         final View rowView;
         LayoutInflater vi;
+
         if (convertView == null) {
             holder = new Holder();
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -42,11 +47,20 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
     }
 
     public class Holder {
+
     }
 
     @Override
     public int getCount() {
-        return 10;
+        return listRooms.size();
+    }
+
+    public List<Room> getListRooms() {
+        return listRooms;
+    }
+
+    public void setListRooms(List<Room> listRooms) {
+        this.listRooms = listRooms;
     }
 
 }

@@ -26,7 +26,6 @@ public class RecentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
-//        list_recent.ex
         ArrayList<String> groupNames = new ArrayList<String>();
         groupNames.add("GROUPS");
         groupNames.add("MEMBERS");

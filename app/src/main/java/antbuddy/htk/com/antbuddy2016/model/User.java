@@ -3,53 +3,192 @@ package antbuddy.htk.com.antbuddy2016.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class User {
-	private String _id;  //"5370848992cf74b9043cc24e"
-	private String name;  //"ThanhNguyen"
-	private boolean active;  //true
+import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 
-	/**
-	 * @return the _id
-	 */
-	public String get_id() {
-		return _id;
+public class User {
+	private String avatar;
+	private String username;
+	private String key;
+	private String name;
+	private String email;
+	private String nonce;
+	private String bio;
+	private String phone;
+	private String role;
+	private boolean active;
+	private boolean isFavorite;
+
+	private String user; 	// The same "key", This field used in list users of Room
+
+	public String getUser() {
+		return user;
 	}
-	/**
-	 * @param _id the _id to set
-	 */
-	public void set_id(String _id) {
-		this._id = _id;
+
+	public void setUser(String user) {
+		this.user = user;
 	}
-	/**
-	 * @return the name
-	 */
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public String getName() {
 		return name;
 	}
-	/**
-	 * @param name the name to set
-	 */
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	/**
-	 * @return the active
-	 */
-	public Boolean getActive() {
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getNonce() {
+		return nonce;
+	}
+
+	public void setNonce(String nonce) {
+		this.nonce = nonce;
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public boolean isActive() {
 		return active;
 	}
-	/**
-	 * @param active the active to set
-	 */
-	public void setActive(Boolean active) {
+
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
-	public static User parse(JSONObject object) throws JSONException {
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+
+	public static User parse(JSONObject object) {
 		User user = new User();
-		user.set_id(object.getString("_id"));
-		user.setName(object.getString("name"));
-		user.setActive(object.getBoolean("active"));
-		return user;
+
+		try {
+			user.setAvatar(object.getString(JSONKey.avatar));
+		} catch (JSONException e) {
+			user.setAvatar("");
+		}
+
+		try {
+			user.setUsername(object.getString(JSONKey.username));
+		} catch (JSONException e) {
+			user.setUsername("");
+		}
+
+		try {
+			user.setKey(object.getString(JSONKey.key));
+		} catch (JSONException e) {
+			user.setKey("");
+		}
+
+		try {
+			user.setName(object.getString(JSONKey.name));
+		} catch (JSONException e) {
+			user.setName("");
+		}
+
+		try {
+			user.setEmail(object.getString(JSONKey.email));
+		} catch (JSONException e) {
+			user.setEmail("");
+		}
+
+		try {
+			user.setNonce(object.getString(JSONKey.nonce));
+		} catch (JSONException e) {
+			user.setNonce("");
+		}
+
+		try {
+			user.setBio(object.getString(JSONKey.bio));
+		} catch (JSONException e) {
+			user.setBio("");
+		}
+
+		try {
+			user.setPhone(object.getString(JSONKey.phone));
+		} catch (JSONException e) {
+			user.setPhone("");
+		}
+
+		try {
+			user.setRole(object.getString(JSONKey.role));
+		} catch (JSONException e) {
+			user.setRole("");
+		}
+
+		try {
+			user.setActive(object.getBoolean(JSONKey.active));
+		} catch (JSONException e) {
+			user.setActive(false);
+		}
+
+		try {
+			user.setIsFavorite(object.getBoolean(JSONKey.isFavorite));
+		} catch (JSONException e) {
+			user.setIsFavorite(false);
+		}
+
+		if (user.getKey().length() > 0) {
+			return user;
+		} else {
+			return  null;
+		}
 	}
 }

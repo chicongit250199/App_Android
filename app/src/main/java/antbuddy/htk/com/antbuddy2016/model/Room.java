@@ -4,189 +4,248 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import antbuddy.htk.com.antbuddy2016.api.ParseJson;
+import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+
 public class Room {
 
-    private static final String TAG_THISCLASS = "Room";
-    private String _id;
-	private String name;
-	private String topic;
-	private String pinMessage;
-	private String status;
-	private boolean isPublic;
 	private String createdBy;
-	private long countMessages;
-	private long countFiles;
+	private String org;
+	private String key;
+	private List<User> users;
+	private int countFiles;
+	private int	countMessages;
+	private boolean isPublic;
+	private String status;
+	private String pinMessage;
+	private String topic;
+	private String name;
+	private String created;
+	private boolean isFavorite;
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return the topic
-	 */
-	public String getTopic() {
-		return topic;
-	}
-
-	/**
-	 * @param topic
-	 *            the topic to set
-	 */
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
-
-	/**
-	 * @return the pinMessage
-	 */
-	public String getPinMessage() {
-		return pinMessage;
-	}
-
-	/**
-	 * @param pinMessage
-	 *            the pinMessage to set
-	 */
-	public void setPinMessage(String pinMessage) {
-		this.pinMessage = pinMessage;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the isPublic
-	 */
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	/**
-	 * @param isPublic
-	 *            the isPublic to set
-	 */
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	/**
-	 * @return the createdBy
-	 */
 	public String getCreatedBy() {
 		return createdBy;
 	}
 
-	/**
-	 * @param createdBy
-	 *            the createdBy to set
-	 */
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	/**
-	 * @return the _id
-	 */
-	public String get_id() {
-		return _id;
+	public String getOrg() {
+		return org;
 	}
 
-	/**
-	 * @param _id
-	 *            the _id to set
-	 */
-	public void set_id(String _id) {
-		this._id = _id;
+	public void setOrg(String org) {
+		this.org = org;
 	}
 
-	/**
-	 * @return the countMessages
-	 */
-	public long getCountMessages() {
-		return countMessages;
+	public String getKey() {
+		return key;
 	}
 
-	/**
-	 * @param countMessages
-	 *            the countMessages to set
-	 */
-	public void setCountMessages(long countMessages) {
-		this.countMessages = countMessages;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	/**
-	 * @return the countFiles
-	 */
-	public long getCountFiles() {
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	public int getCountFiles() {
 		return countFiles;
 	}
 
-	/**
-	 * @param countFiles
-	 *            the countFiles to set
-	 */
-	public void setCountFiles(long countFiles) {
+	public void setCountFiles(int countFiles) {
 		this.countFiles = countFiles;
 	}
 
-	public static Room parse(JSONObject object) throws JSONException {
-		Room room = new Room();
-		room.setName(object.getString("name"));
-		room.setTopic(object.getString("topic"));
-		room.setPinMessage(object.getString("pinMessage"));
-		room.setStatus(object.getString("status"));
-		room.setPublic(object.getBoolean("isPublic"));
-		room.setCountMessages(object.getLong("countMessages"));
-		room.setCountFiles(object.getLong("countFiles"));
-		room.set_id(object.getString("_id"));
-		room.setCreatedBy(object.getString("createdBy"));
+	public int getCountMessages() {
+		return countMessages;
+	}
 
-		JSONArray userArray = object.getJSONArray("users");
+	public void setCountMessages(int countMessages) {
+		this.countMessages = countMessages;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getPinMessage() {
+		return pinMessage;
+	}
+
+	public void setPinMessage(String pinMessage) {
+		this.pinMessage = pinMessage;
+	}
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCreated() {
+		return created;
+	}
+
+	public void setCreated(String created) {
+		this.created = created;
+	}
+
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+
+	public static Room parse(JSONObject object) {
+		Room room = new Room();
+		try {
+			room.setCreatedBy(object.getString(JSONKey.createdBy));
+		} catch (JSONException e) {
+			room.setCreatedBy("");
+		}
+
+		try {
+			room.setOrg(object.getString(JSONKey.org));
+		} catch (JSONException e) {
+			room.setOrg("");
+		}
+
+		try {
+			room.setKey(object.getString(JSONKey.key));
+		} catch (JSONException e) {
+			room.setKey("");
+		}
+
+		try {
+			room.setCountFiles(object.getInt(JSONKey.countFiles));
+		} catch (JSONException e) {
+			room.setCountFiles(0);
+		}
+
+		try {
+			room.setCountMessages(object.getInt(JSONKey.countMessages));
+		} catch (JSONException e) {
+			room.setCountMessages(0);
+		}
+
+		try {
+			room.setIsPublic(object.getBoolean(JSONKey.isPublic));
+		} catch (JSONException e) {
+			room.setIsPublic(false);
+		}
+
+		try {
+			room.setStatus(object.getString(JSONKey.status));
+		} catch (JSONException e) {
+			room.setStatus("");
+		}
+
+		try {
+			room.setPinMessage(object.getString(JSONKey.pinMessage));
+		} catch (JSONException e) {
+			room.setPinMessage("");
+		}
+
+		try {
+			room.setTopic(object.getString(JSONKey.topic));
+		} catch (JSONException e) {
+			room.setTopic("");
+		}
+
+		try {
+			room.setName(object.getString(JSONKey.name));
+		} catch (JSONException e) {
+			room.setName("");
+		}
+
+		try {
+			room.setCreated(object.getString(JSONKey.created));
+		} catch (JSONException e) {
+			room.setCreated("");
+		}
+
+		try {
+			room.setIsFavorite(object.getBoolean(JSONKey.isFavorite));
+		} catch (JSONException e) {
+			room.setIsFavorite(false);
+		}
+
+		JSONArray userArray = null;
+		try {
+			userArray = object.getJSONArray(JSONKey.users);
+		} catch (JSONException e) {
+			userArray = new JSONArray();
+		}
+
+		List<User> listUsers = new ArrayList<>();
 		for (int i = 0; i < userArray.length(); i++) {
 			try {
+				JSONObject rowObject = (JSONObject) userArray.get(i);
+				User user = new User();
 
-                JSONObject rowObject = (JSONObject) userArray.get(i);
-                String id = rowObject.getString("_id");
+				try {
+					user.setUser(rowObject.getString(JSONKey.user));
+					user.setKey(rowObject.getString(JSONKey.user));
+				} catch (JSONException e) {
+					user.setUser("");
+					user.setKey("");
+				}
 
-                String t = rowObject.getString("role");
-                int role;
-                if (t.equals("null")) {
-                    role = -1;
-                } else {
-                    role = rowObject.getInt("role");
-                }
-                String user = rowObject.getString("user");
+				try {
+					user.setRole(rowObject.getString(JSONKey.role));
+				} catch (JSONException e) {
+					user.setRole("");
+				}
 
-                // save list user in room into database
-                //DatabaseManager.getInstance().addUserToRoom(userRoom);
+				// Check user exist
+				if (user.getKey().length() > 0) {
+					listUsers.add(user);
+				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return room;
+
+		room.setUsers(listUsers);
+		if (room.getKey().length() > 0) {
+			return room;
+		} else {
+			return null;
+		}
 	}
 }

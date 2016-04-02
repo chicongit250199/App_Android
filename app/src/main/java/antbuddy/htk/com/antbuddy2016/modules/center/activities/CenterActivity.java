@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.customview.TabBarView;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 
 import antbuddy.htk.com.antbuddy2016.R;
@@ -78,7 +80,7 @@ public class CenterActivity extends AppCompatActivity {
         initView();
         loadData();
     }
-    protected void initView() {
+    private void initView() {
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
 
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
@@ -126,6 +128,9 @@ public class CenterActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 LoReActivity.resetXMPP();
 
+                // Reset Object Manager
+                ObjectManager.getInstance().clear();
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -150,15 +155,16 @@ public class CenterActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
                     AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-                    LoginAPI.GETOrganizationUserProfile(new HttpRequestReceiver() {
+                    LoginAPI.GETUserProfile(new HttpRequestReceiver() {
 
                         @Override
                         public void onSuccess(Object response) {
-                            LogHtk.d(LogHtk.API_TAG, "Center/response = " + response.toString());
-                            String chatToken = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatToken);
-                            String chatURLXMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatUrl);
-                            Constants.DOMAIN_XMPP = ParseJson.getStringWithKey((JSONObject)response, JSONKey.chatDomain);
+
+                            String chatToken = ParseJson.getStringWithKey((JSONObject) response, JSONKey.chatToken);
+                            String chatURLXMPP = ParseJson.getStringWithKey((JSONObject) response, JSONKey.chatUrl);
+                            Constants.DOMAIN_XMPP = ParseJson.getStringWithKey((JSONObject) response, JSONKey.chatDomain);
                             String[] fields = chatToken.split(":");
                             Constants.USERNAME_XMPP = fields[0];
                             Constants.PASSWORD_XMPP = fields[1];
@@ -175,17 +181,83 @@ public class CenterActivity extends AppCompatActivity {
                                 public void run() {
                                     mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
                                 }
-                            }).start();;
+                            }).start();
+                            ;
 
-                            LogHtk.d(TAG_THISCLASS, "result = " + response.toString());
-                            LogHtk.d(TAG_THISCLASS, "Host = " + Constants.HOST_XMPP);
+                            LogHtk.d(LogHtk.API_TAG, "chatURLXMPP = " + chatURLXMPP);
+
+                            // Load List Users
+                            requestAPIGetListUsers();
+
+                            // Save data into single ton
+                            ObjectManager.getInstance().parseUserMe((JSONObject) response);
+
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                         }
 
                         @Override
                         public void onError(String error) {
-                            LogHtk.d(LogHtk.API_TAG, "Center ERROR!");
+                            LogHtk.d(LogHtk.API_TAG, "Center ERROR!" + error);
                             AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    private void requestAPIGetListUsers() {
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    AndroidHelper.showToast("Loading users...", CenterActivity.this);
+                    LoginAPI.GETListUsers(new HttpRequestReceiver() {
+
+                        @Override
+                        public void onSuccess(Object response) {
+                            LogHtk.i(LogHtk.API_TAG, "List Users: " + response.toString());
+
+                            // Get List Groups
+                            requestAPIGetListGroups();
+
+                            ObjectManager.getInstance().parseUsers((JSONArray) response);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            LogHtk.e(LogHtk.API_TAG, "Can not get list Users!");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    private void requestAPIGetListGroups() {
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    AndroidHelper.showToast("Loading groups...", CenterActivity.this);
+                    LoginAPI.GETListGroups(new HttpRequestReceiver() {
+
+                        @Override
+                        public void onSuccess(Object response) {
+                            LogHtk.i(LogHtk.API_TAG, "List Groups: " + response.toString());
+
+                            ObjectManager.getInstance().parseRooms((JSONArray) response);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            LogHtk.e(LogHtk.API_TAG, "Can not get list Groups!");
                         }
                     });
                 } catch (Exception e) {

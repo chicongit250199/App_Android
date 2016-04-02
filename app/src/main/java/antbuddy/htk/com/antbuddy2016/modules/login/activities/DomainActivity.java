@@ -71,6 +71,9 @@ public class DomainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                LoReActivity.reset();
+                LoReActivity.resetXMPP();
+
                 Intent myIntent = new Intent(DomainActivity.this, LoginActivity.class);
                 startActivity(myIntent);
                 finish();

@@ -21,16 +21,25 @@ import java.util.Map;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 
 //import org.apache.http.entity.mime.content.ContentBody;
 
 public class ABRequest {
     public static final String TAG_THISCLASS = "ABRequest";
+    // AUTH
+   // public static final String LOGIN_URL = "https://antbuddy.com/users/session";
+   // public static final String API_ORGANIZATIONS_URL = "https://antbuddy.com/api/organizations/";
+    //public  String API_USERS_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
 
-    //private static final String URL_SEND_MESSAGE_OUT = "http://" + AntbuddyXmppConnection.HOST + "/api/messages";
-   // private static final String URL_DELETE_OPENING_CHAT_ROOM = "http://" + AntbuddyXmppConnection.HOST + "/api/users/me/openingChatRoom/";
-    //private static final String URL_OPEN_OPENING_CHAT_ROOM = "http://" + AntbuddyXmppConnection.HOST + "/api/users/me/openingChatRooms";
+    // get list of users
+    //public String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
+
+    // Get list rooms
+    //public String API_GROUPS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
+
+
 
     private static String cookie = "";
     public static final int TIMEOUT_SECOND = 10;
@@ -184,7 +193,8 @@ public class ABRequest {
             return;
         }
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, API.LOGIN_URL, jsonObject,
+        String LOGIN_URL = "https://antbuddy.com/users/session";
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, LOGIN_URL, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -203,7 +213,8 @@ public class ABRequest {
     }
 
     protected static void GETOrganizations(final HttpRequestReceiver receiver) {
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API.API_ORGANIZATIONS_URL,
+        String API_ORGANIZATIONS_URL = "https://antbuddy.com/api/organizations/";
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_ORGANIZATIONS_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -227,7 +238,8 @@ public class ABRequest {
     }
 
     protected static void GETOrganizationUserProfile(final HttpRequestReceiver receiver) {
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, API.API_USERS_ME_URL,
+        String API_USERS_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, API_USERS_ME_URL,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -249,6 +261,59 @@ public class ABRequest {
         };
         AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
+
+    protected static void GETListUsers(final HttpRequestReceiver receiver) {
+        String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_USERS_URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        receiver.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        receiver.onError(error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", Constants.token);
+                return params;
+            }
+        };
+        AntbuddyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    protected static void GETListGroups(final HttpRequestReceiver receiver) {
+
+        String API_GROUPS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_GROUPS_URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        receiver.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        receiver.onError(error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("authorization", Constants.token);
+                return params;
+            }
+        };
+        AntbuddyApplication.getInstance().addToRequestQueue(req);
+    }
+
+
 
 //    private static String requestURL(String urlFull, METHOD_URL methodRequest, JSONObject jsonObject) {
 //        String responseStr = "";
