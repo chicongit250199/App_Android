@@ -32,6 +32,8 @@ public class UserMe {
     private String avatar = null; // avatar url
     private String username; // thanh.nguyen@htklabs.com
     private String provider; // google
+    private String chatUrl; // google
+
     //private List<OpeningChatRoom> listRoomsOpeningChat;
 
 //    public UserInfo() {
@@ -41,6 +43,14 @@ public class UserMe {
 //        readFromParcel(in);
 //    }
 
+
+    public String getChatUrl() {
+        return chatUrl;
+    }
+
+    public void setChatUrl(String chatUrl) {
+        this.chatUrl = chatUrl;
+    }
 
     public String getKey() {
         return key;

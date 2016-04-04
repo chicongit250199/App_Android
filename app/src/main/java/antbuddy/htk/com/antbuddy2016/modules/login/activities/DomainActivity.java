@@ -10,21 +10,20 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
-import antbuddy.htk.com.antbuddy2016.api.ParseJson;
+import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.modules.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.DomainAdapter;
-import antbuddy.htk.com.antbuddy2016.objects.Domain;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -33,7 +32,7 @@ public class DomainActivity extends Activity {
 
     public static final String TAG_THISCLASS = "DomainActivity";
 
-    ArrayList<Domain> domainList;
+    List<Organization> domainList;
     DomainAdapter domainAdapter;
     ListView domainListView;
 
@@ -46,7 +45,7 @@ public class DomainActivity extends Activity {
         setContentView(R.layout.activity_domain);
 
         progressBar_Domain = (ProgressBar) findViewById(R.id.progressBar_Domain);
-        domainList = new ArrayList<Domain>();
+        domainList = new ArrayList<>();
         domainAdapter = new DomainAdapter(this, domainList);
         domainListView = (ListView) findViewById(R.id.domain_ListView);
         domainListView.setAdapter(domainAdapter);
@@ -58,9 +57,12 @@ public class DomainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Constants.domain = domainList.get(position).getDomain();
-                Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
-                startActivity(myIntent);
-                finish();
+                if (Constants.domain.length() > 0) {
+                    AntbuddyApplication.getInstance().restartAPIServiceWithDomain(Constants.domain);
+                    Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
+                    startActivity(myIntent);
+                    finish();
+                }
             }
         });
     }
@@ -87,39 +89,32 @@ public class DomainActivity extends Activity {
             return;
         }
 
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
-                    LoginAPI.GETOrganizations(new HttpRequestReceiver() {
+        if (Constants.token.length() > 0) {
+            AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
+            Call<List<Organization>> call = AntbuddyApplication.getInstance().getApiService().GETOrganizations(Constants.token);
+            call.enqueue(new Callback<List<Organization>>() {
+                @Override
+                public void onResponse(Response<List<Organization>> response) {
+                    LogHtk.d(TAG_THISCLASS, "Domain response !: " + response.body());
+
+                    domainList.clear();
+                    domainList.addAll(response.body());
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onSuccess(Object response) {
-                            LogHtk.d(TAG_THISCLASS, "requestAPIToGetOrganizations success!: " + response.toString());
-
-                            domainList.clear();
-                            domainList.addAll(ParseJson.parseToListDomains((JSONArray) response));
-                            LogHtk.d(TAG_THISCLASS, "domainList.count: " + domainList.size());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    domainAdapter.notifyDataSetChanged();
-                                }
-                            });
-
-                            AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
+                        public void run() {
+                            domainAdapter.notifyDataSetChanged();
                         }
                     });
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                 }
-            }
-        });
-        thread.start();
+
+                @Override
+                public void onFailure(Throwable t) {
+                    LogHtk.e(TAG_THISCLASS, "Domain onFailure!: " + t.toString());
+                    AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
+                }
+            });
+        }
     }
 }

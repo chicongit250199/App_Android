@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import antbuddy.htk.com.antbuddy2016.objects.Domain;
+import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 
 /**
@@ -24,19 +24,19 @@ public class ParseJson {
         return data;
     }
 
-    public static List<Domain> parseToListDomains(JSONArray jsonArray) {
-        List<Domain> listDomains = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject element = (JSONObject) jsonArray.get(i);
-                String domainStr = element.getString(JSONKey.domain);
-                String nameStr = element.getString(JSONKey.name);
-                Domain domain = new Domain(domainStr, nameStr);
-                listDomains.add(domain);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return listDomains;
-    }
+//    public static List<Organization> parseToListDomains(JSONArray jsonArray) {
+//        List<Organization> listDomains = new ArrayList<>();
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            try {
+//                JSONObject element = (JSONObject) jsonArray.get(i);
+//                String domainStr = element.getString(JSONKey.domain);
+//                String nameStr = element.getString(JSONKey.name);
+//                Organization org = new Organization(domainStr, nameStr);
+//                listDomains.add(org);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return listDomains;
+//    }
 }

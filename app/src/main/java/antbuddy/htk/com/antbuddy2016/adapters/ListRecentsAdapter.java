@@ -109,11 +109,11 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
             holder = (Holder) rowView.getTag();
         }
 
-        Picasso.with(context).load("https://abs1.antbuddy.com/antbuddy-bucket/1455784435927_avatar.png").
-                resize(60, 60).
-//                error(R.drawable.empty_avatar).
-        transform(new RoundedTransformation(5, 5)).
-                into(holder.imgAvatar);
+//        Picasso.with(context).load("https://abs1.antbuddy.com/antbuddy-bucket/1455784435927_avatar.png").
+//                resize(60, 60).
+////                error(R.drawable.empty_avatar).
+//        transform(new RoundedTransformation(5, 5)).
+//                into(holder.imgAvatar);
 
         return rowView;
     }

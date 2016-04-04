@@ -15,10 +15,15 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
+import antbuddy.htk.com.antbuddy2016.model.Token;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
@@ -55,45 +60,35 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        //antbuddytesting1@gmail.com/111qqq111
-        Thread thread = new Thread(new Runnable(){
+        AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
+        AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
+        Call<Token> call = AntbuddyApplication.getInstance().getApiService().getToken("thanh.nguyen@htklabs.com", "doipasshoairuatroi");
+        call.enqueue(new Callback<Token>() {
             @Override
-            public void run() {
-                try {
+            public void onResponse(Response<Token> response) {
+                LogHtk.d(LogHtk.API_TAG, "onSuccess: " + response.toString());
 
-                    // Request
-                    AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
-                    AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
+//                Constants.token = "Bearer " + ParseJson.getStringWithKey((JSONObject)response, JSONKey.token);
+                Constants.token = "Bearer " + response.body().getToken();
 
-                    LoginAPI.POSTLogin("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
-
-                        @Override
-                        public void onSuccess(Object response) {
-                            LogHtk.d(LogHtk.API_TAG, "onSuccess: " + response.toString());
-
-                            Constants.token = "Bearer " + ParseJson.getStringWithKey((JSONObject)response, JSONKey.token);
-                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
-                            startActivity(myIntent);
-                            finish();
-
-                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
-                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            LogHtk.e(LogHtk.API_TAG, "onError: " + error);
-                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
-                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
-
-                            AndroidHelper.showToast("Please try again!", LoginActivity.this);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (Constants.token.length() > 0) {
+                    Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
+                    startActivity(myIntent);
+                    finish();
                 }
+
+                AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LogHtk.e(LogHtk.API_TAG, "Login error: " + t.toString());
+                AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
+
+                AndroidHelper.showToast("Please try again!", LoginActivity.this);
             }
         });
-        thread.start();
     }
 }

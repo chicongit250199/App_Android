@@ -10,6 +10,8 @@ import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
@@ -20,11 +22,13 @@ import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
 public class UserAdapter extends ArrayAdapter<User> {
     private final Context ctx;
     private final ListView mGridView;
+    private List<User> listUsers;
     
-    public UserAdapter(Context context, ListView listView) {
+    public UserAdapter(Context context, ListView listView, List<User> listUsers) {
         super(context, R.layout.row_member);
         this.ctx = context;
         mGridView = listView;
+        this.listUsers = listUsers;
     }
 
     @Override
@@ -32,6 +36,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         final Holder holder;
         final View rowView;
         LayoutInflater vi;
+
         if (convertView == null) {
             holder = new Holder();
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -42,6 +47,7 @@ public class UserAdapter extends ArrayAdapter<User> {
             rowView = convertView;
             holder = (Holder) rowView.getTag();
         }
+
         Picasso.with(ctx).load("https://abs1.antbuddy.com/antbuddy-bucket/1455784435927_avatar.png").
                 resize(60, 60).
 //                error(R.drawable.empty_avatar).
@@ -57,7 +63,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 
     @Override
     public int getCount() {
-        return 10;
+        return listUsers.size();
     }
 
 }

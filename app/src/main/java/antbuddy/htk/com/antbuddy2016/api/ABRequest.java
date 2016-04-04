@@ -4,6 +4,7 @@ package antbuddy.htk.com.antbuddy2016.api;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.Request;
@@ -15,6 +16,12 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,16 +35,8 @@ import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 
 public class ABRequest {
     public static final String TAG_THISCLASS = "ABRequest";
-    // AUTH
-   // public static final String LOGIN_URL = "https://antbuddy.com/users/session";
-   // public static final String API_ORGANIZATIONS_URL = "https://antbuddy.com/api/organizations/";
-    //public  String API_USERS_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
 
-    // get list of users
-    //public String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
-
-    // Get list rooms
-    //public String API_GROUPS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
+    public static final String BASE_URL = "https://antbuddy.com";
 
 
 
@@ -214,7 +213,8 @@ public class ABRequest {
 
     protected static void GETOrganizations(final HttpRequestReceiver receiver) {
         String API_ORGANIZATIONS_URL = "https://antbuddy.com/api/organizations/";
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_ORGANIZATIONS_URL,
+
+        JsonArrayRequest req = new JsonArrayRequest(API_ORGANIZATIONS_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -238,8 +238,9 @@ public class ABRequest {
     }
 
     protected static void GETOrganizationUserProfile(final HttpRequestReceiver receiver) {
-        String API_USERS_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, API_USERS_ME_URL,
+        final String API_USERS_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/me/";
+
+        JsonObjectRequest req = new JsonObjectRequest(API_USERS_ME_URL, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -251,10 +252,11 @@ public class ABRequest {
                     public void onErrorResponse(VolleyError error) {
                         receiver.onError(error.toString());
                     }
-                }) {
+                }){
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("authorization", Constants.token);
                 return params;
             }
@@ -264,7 +266,7 @@ public class ABRequest {
 
     protected static void GETListUsers(final HttpRequestReceiver receiver) {
         String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_USERS_URL,
+        JsonArrayRequest req = new JsonArrayRequest(API_USERS_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -290,7 +292,7 @@ public class ABRequest {
     protected static void GETListGroups(final HttpRequestReceiver receiver) {
 
         String API_GROUPS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, API_GROUPS_URL,
+        JsonArrayRequest req = new JsonArrayRequest(API_GROUPS_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

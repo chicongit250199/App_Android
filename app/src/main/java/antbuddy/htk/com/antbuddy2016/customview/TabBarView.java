@@ -21,6 +21,7 @@ public class TabBarView extends LinearLayout {
             clickTab(v);
         }
     };
+    private OnPageSelectedListener mOnPageSelectedListener = null;
 
     public TabBarView(Context context) {
         this(context, null);
@@ -64,7 +65,9 @@ public class TabBarView extends LinearLayout {
 
             @Override
             public void onPageSelected(int position) {
-
+                if (mOnPageSelectedListener != null) {
+                    mOnPageSelectedListener.onPageSelected(position);
+                }
             }
 
             @Override
@@ -72,6 +75,10 @@ public class TabBarView extends LinearLayout {
 
             }
         });
+    }
+
+    public void setOnPageSelectedListener(OnPageSelectedListener listener) {
+        mOnPageSelectedListener = listener;
     }
 
     private void clickTab(View v) {
@@ -86,5 +93,8 @@ public class TabBarView extends LinearLayout {
         for (int i = 0; i < children.size(); i++) {
             children.get(i).setIconAlpha(0);
         }
+    }
+    public interface OnPageSelectedListener {
+        public void onPageSelected(int position);
     }
 }

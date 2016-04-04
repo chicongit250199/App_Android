@@ -7,33 +7,33 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
-import antbuddy.htk.com.antbuddy2016.objects.Domain;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
  */
-public class DomainAdapter extends ArrayAdapter<Domain> {
+public class DomainAdapter extends ArrayAdapter<Organization> {
     DomainActivity context = null;
-    ArrayList<Domain> myArray = null;
+    List<Organization> listOrganizations = null;
 
-    public DomainAdapter(DomainActivity context, ArrayList<Domain> arr){
+    public DomainAdapter(DomainActivity context, List<Organization> listOrganizations){
         super(context, R.layout.item_domain);
         this.context = context;
-        this.myArray = arr;
+        this.listOrganizations = listOrganizations;
     }
 
     @Override
     public int getCount() {
-        return myArray.size();
+        return listOrganizations.size();
     }
 
     @Override
-    public Domain getItem(int position) {
-        return myArray.get(position);
+    public Organization getItem(int position) {
+        return listOrganizations.get(position);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class DomainAdapter extends ArrayAdapter<Domain> {
             holder = (Holder) rowView.getTag();
         }
 
-        Domain domainItem = myArray.get(position);
-        holder.name_TextView.setText(domainItem.getName());
+        Organization orgItem = listOrganizations.get(position);
+        holder.name_TextView.setText(orgItem.getName());
         return rowView;
     }
 

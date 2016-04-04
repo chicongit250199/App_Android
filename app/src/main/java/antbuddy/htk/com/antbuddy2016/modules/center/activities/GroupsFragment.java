@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -17,6 +18,9 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.GroupAdapter;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -39,6 +43,13 @@ public class GroupsFragment extends Fragment {
         adapter = new GroupAdapter(getContext(), groupsView, ObjectManager.getInstance().getListRooms());
         groupsView.setAdapter(adapter);
 
+        groupsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AndroidHelper.gotoActivity(getActivity(), ChatActivity.class);
+            }
+        });
+
         checkRooms();
         return rootView;
     }
@@ -60,6 +71,7 @@ public class GroupsFragment extends Fragment {
         if (listRooms.size() == 0) {
             // show ra giao dien Empty
             empty_groups_TextView.setVisibility(View.VISIBLE);
+
         } if (listRooms.size() > 0) {
             empty_groups_TextView.setVisibility(View.GONE);
             adapter.setListRooms(ObjectManager.getInstance().getListRooms());

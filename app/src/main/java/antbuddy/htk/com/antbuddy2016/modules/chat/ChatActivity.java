@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ChatAdapter;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -63,6 +64,7 @@ public class ChatActivity extends Activity {
 //                }
             }
         });
+        AndroidHelper.hideSoftKeyboard(this);
     }
     
     //goi len webservice lay tin nhan cua room / uses

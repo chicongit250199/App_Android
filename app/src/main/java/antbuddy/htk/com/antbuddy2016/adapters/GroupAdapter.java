@@ -1,17 +1,21 @@
 package antbuddy.htk.com.antbuddy2016.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -19,13 +23,13 @@ import antbuddy.htk.com.antbuddy2016.model.Room;
 public class GroupAdapter  extends ArrayAdapter<Room> {
     
     private final Context ctx;
-    private final GridView mGridView;
+    private final GridView roomGridView;
     private List<Room> listRooms;
 
-    public GroupAdapter(Context context, GridView gridView, List<Room> listRooms) {
+    public GroupAdapter(Context context, GridView roomGridView, List<Room> listRooms) {
         super(context, R.layout.grid_item);
         this.ctx = context;
-        mGridView = gridView;
+        this.roomGridView = roomGridView;
         this.listRooms = listRooms;
     }
 
@@ -40,7 +44,7 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = vi.inflate(R.layout.grid_item, null);
 
-            holder.room_button = (Button) rowView.findViewById(R.id.room_button);
+            holder.tv_NameRoom = (TextView) rowView.findViewById(R.id.tv_NameRoom);
 
             rowView.setTag(holder);
         } else {
@@ -48,13 +52,13 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
             holder = (Holder) rowView.getTag();
         }
 
-        holder.room_button.setText(listRooms.get(position).getName());
+        holder.tv_NameRoom.setText(listRooms.get(position).getName());
 
         return rowView;
     }
 
     public class Holder {
-        Button room_button;
+        TextView tv_NameRoom;
     }
 
     @Override

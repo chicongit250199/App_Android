@@ -7,7 +7,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import antbuddy.htk.com.antbuddy2016.api.ABRequest;
+import antbuddy.htk.com.antbuddy2016.api.API;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 public class AntbuddyApplication extends Application {
 	public static final String TAG = AntbuddyApplication.class.getSimpleName();
@@ -15,11 +20,20 @@ public class AntbuddyApplication extends Application {
 	private RequestQueue mRequestQueue;
 	private static AntbuddyApplication mInstance;
 
+	private Retrofit retrofit;
+	private API apiService;
+
 	@Override
 	public void onCreate() {
         super.onCreate();
 		mInstance = this;
 		LogHtk.e(TAG, "Created AntbuddyApplication!");
+
+		retrofit = new Retrofit.Builder()
+				.baseUrl(ABRequest.BASE_URL)			//"https://antbuddy.com"
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+		apiService = retrofit.create(API.class);
 	}
 
 	@Override
@@ -31,6 +45,22 @@ public class AntbuddyApplication extends Application {
 	public static synchronized AntbuddyApplication getInstance() {
 		return mInstance;
 	}
+
+	public API getApiService() {
+		return apiService;
+	}
+
+	public API restartAPIServiceWithDomain(String domain) {
+		final String URLWithDomain = "https://" + Constants.domain + ".antbuddy.com";
+		retrofit = new Retrofit.Builder()
+				.baseUrl(URLWithDomain)			//"https://antbuddy.com"
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+		apiService = retrofit.create(API.class);
+		return apiService;
+	}
+
+
 
 	public RequestQueue getRequestQueue() {
 		if (mRequestQueue == null) {

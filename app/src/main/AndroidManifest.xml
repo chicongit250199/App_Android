@@ -60,7 +60,7 @@
         <!-- Center -->
         <activity
             android:name=".modules.center.activities.CenterActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:label="@string/app_name" >
         </activity>
 

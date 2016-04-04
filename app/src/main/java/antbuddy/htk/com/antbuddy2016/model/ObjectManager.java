@@ -1,17 +1,11 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import antbuddy.htk.com.antbuddy2016.api.ParseJson;
-import antbuddy.htk.com.antbuddy2016.objects.Domain;
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 
 /**
  * Created by thanhnguyen on 01/04/2016.
@@ -34,6 +28,7 @@ public class ObjectManager {
         isUserMeLoaded = false;
         isUsersLoaded = false;
         isGroupsLoaded = false;
+        groupsNeedToReload = true;
 
         userMe = new UserMe();
         listRooms  = new ArrayList<>();
@@ -51,7 +46,8 @@ public class ObjectManager {
         isUserMeLoaded = false;
         isUsersLoaded = false;
         isGroupsLoaded = false;
-        userMe = new UserMe();
+        groupsNeedToReload = true;
+        userMe = null;
         listRooms.clear();
         listUsers.clear();
     }

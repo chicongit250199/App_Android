@@ -5,13 +5,16 @@
               android:gravity="center|top"
               android:orientation="vertical">
 
-    <Button
-        android:id="@+id/room_button"
+
+    <TextView
+        android:id="@+id/tv_NameRoom"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:background="@drawable/bg_round"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:padding="5dp"
-        android:text="Group name"
-        />
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:text="Room name"/>
 
 </LinearLayout>

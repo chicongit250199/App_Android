@@ -3,11 +3,15 @@ package antbuddy.htk.com.antbuddy2016.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,7 +24,10 @@ public class AndroidHelper {
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        if(activity.getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            clearFocus(activity.getCurrentFocus());
+        }
     }
 
     public static void showProgressBar(Activity activity, final ProgressBar progressBar) {
@@ -84,6 +91,66 @@ public class AndroidHelper {
     public static void warningInternetConnection(Activity activity) {
         if (!AndroidHelper.isInternetAvailable(activity.getApplicationContext())) {
             AndroidHelper.showToast("No network connection available!", activity);
+        }
+    }
+
+    //goto activity
+    public static void gotoActivity(Activity currentActivity, Activity activity, Class<?> cls,
+                             boolean isFinish, Bundle bundle) {
+        gotoActivity(currentActivity, cls, isFinish, bundle, false);
+    }
+
+    public static void gotoActivity(Activity currentActivity, Class<?> cls,
+                              boolean isFinish, Bundle bundle, Boolean isTop) {
+        Intent riIntent = new Intent(currentActivity, cls);
+        if (isTop) {
+            riIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        }
+        if (bundle != null)
+            riIntent.putExtras(bundle);
+        currentActivity.startActivity(riIntent);
+        if (isFinish)
+            currentActivity.finish();
+        // activity.overridePendingTransition(R.anim.in_from_right,
+        // R.anim.out_to_left);
+    }
+
+    public static void gotoActivity(Activity currentActivity, Class<?> cls,
+                             boolean isFinish, Boolean isTop) {
+        gotoActivity(currentActivity, cls, isFinish, null, isTop);
+    }
+
+    public static void gotoActivity(Activity currentActivity, Class<?> cls,
+                             boolean isFinish) {
+        gotoActivity(currentActivity, cls, isFinish, null, false);
+    }
+
+    public static void gotoActivity(Activity currentActivity, Class<?> cls) {
+        gotoActivity(currentActivity, cls, false);
+    }
+
+    public static void gotoActivity(Activity currentActivity, Class<?> cls,
+                              Bundle bundle) {
+        gotoActivity(currentActivity, cls, false, bundle, false);
+    }
+
+    //clear forcus
+    public static void clearFocus(View view)
+    {
+        if (view instanceof EditText) {
+            view.clearFocus();
+        }
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                clearFocus(innerView);
+            }
         }
     }
 }
