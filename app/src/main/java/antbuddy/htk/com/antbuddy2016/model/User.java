@@ -1,11 +1,28 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import java.util.ArrayList;
+
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 public class User {
+	private static final String key_avatar = "avatar";
+	private static final String key_username = "username";
+	private static final String key_key = "key";
+	private static final String key_email = "email";
+	private static final String key_name = "name";
+	private static final String key_bio = "bio";
+	private static final String key_nonce = "nonce";
+	private static final String key_phone = "phone";
+	private static final String key_role = "role";
+	private static final String key_active = "active";
+	private static final String key_isFavorite = "isFavorite";
+	
+	
 	private String avatar;
 	private String username;
 	private String key;
@@ -116,79 +133,39 @@ public class User {
 		this.isFavorite = isFavorite;
 	}
 
-	public static User parse(JSONObject object) {
-		User user = new User();
-
-		try {
-			user.setAvatar(object.getString(JSONKey.avatar));
-		} catch (JSONException e) {
-			user.setAvatar("");
+	public static ArrayList<User> parseArray(JSONArray jsonArray) {
+		String lastTime = "";
+		ArrayList<User> users = new ArrayList<>();
+		for(int i=0; i<jsonArray.length(); i++){
+			try {
+				JSONObject json = jsonArray.getJSONObject(i);
+				String idMessage = AndroidHelper.getString(json, key_key, null);
+				if(!idMessage.isEmpty()) {
+					User user = new User(json);
+					users.add(user);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
+		return users;
+	}
 
-		try {
-			user.setUsername(object.getString(JSONKey.username));
-		} catch (JSONException e) {
-			user.setUsername("");
+	public User(JSONObject json) {
+		avatar = AndroidHelper.getString(json, key_avatar, null);
+		//fix avatar defaul
+		if (!avatar.startsWith("http")) {
+			avatar = "https://" + Constants.domain + ".antbuddy.com/"+avatar;
 		}
-
-		try {
-			user.setKey(object.getString(JSONKey.key));
-		} catch (JSONException e) {
-			user.setKey("");
-		}
-
-		try {
-			user.setName(object.getString(JSONKey.name));
-		} catch (JSONException e) {
-			user.setName("");
-		}
-
-		try {
-			user.setEmail(object.getString(JSONKey.email));
-		} catch (JSONException e) {
-			user.setEmail("");
-		}
-
-		try {
-			user.setNonce(object.getString(JSONKey.nonce));
-		} catch (JSONException e) {
-			user.setNonce("");
-		}
-
-		try {
-			user.setBio(object.getString(JSONKey.bio));
-		} catch (JSONException e) {
-			user.setBio("");
-		}
-
-		try {
-			user.setPhone(object.getString(JSONKey.phone));
-		} catch (JSONException e) {
-			user.setPhone("");
-		}
-
-		try {
-			user.setRole(object.getString(JSONKey.role));
-		} catch (JSONException e) {
-			user.setRole("");
-		}
-
-		try {
-			user.setActive(object.getBoolean(JSONKey.active));
-		} catch (JSONException e) {
-			user.setActive(false);
-		}
-
-		try {
-			user.setIsFavorite(object.getBoolean(JSONKey.isFavorite));
-		} catch (JSONException e) {
-			user.setIsFavorite(false);
-		}
-
-		if (user.getKey().length() > 0) {
-			return user;
-		} else {
-			return  null;
-		}
+		username = AndroidHelper.getString(json, key_username, null);
+		key = AndroidHelper.getString(json, key_key, null);
+		name = AndroidHelper.getString(json, key_name, null);
+		email = AndroidHelper.getString(json, key_email, null);
+		bio = AndroidHelper.getString(json, key_bio, null);
+		nonce = AndroidHelper.getString(json, key_nonce, null);
+		phone = AndroidHelper.getString(json, key_phone, null);
+		role = AndroidHelper.getString(json, key_role, null);
+		active = AndroidHelper.getBoolean(json, key_active, false);
+		isFavorite =  AndroidHelper.getBoolean(json, key_isFavorite, false);
 	}
 }

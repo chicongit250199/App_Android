@@ -1,38 +1,46 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
+import android.util.Log;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import antbuddy.htk.com.antbuddy2016.api.API;
+import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 01/04/2016.
  */
 
 public class ObjectManager {
-    // Check all data loaded
-    private boolean isUserMeLoaded;
-    private boolean isUsersLoaded;
-    private boolean isGroupsLoaded;
-    private boolean groupsNeedToReload;
-
-    private List<Room> listRooms;
-    private List<User> listUsers;
+    private List<Room> listRooms = new ArrayList<>();
+    private List<User> listUsers = new ArrayList<>();
     private UserMe userMe;
+
+    private HashMap<String, OnListenerUser> mListenerUser = new HashMap<>();
+    private HashMap<String, OnListenerGroup> mListenerRoom = new HashMap<>();
 
     private static ObjectManager objectManager;
 
     private ObjectManager() {
-        isUserMeLoaded = false;
-        isUsersLoaded = false;
-        isGroupsLoaded = false;
-        groupsNeedToReload = true;
-
-        userMe = new UserMe();
         listRooms  = new ArrayList<>();
-        listUsers  = new ArrayList<>();
     }
 
     public static ObjectManager getInstance() {
@@ -43,11 +51,6 @@ public class ObjectManager {
     }
 
     public void clear() {
-        isUserMeLoaded = false;
-        isUsersLoaded = false;
-        isGroupsLoaded = false;
-        groupsNeedToReload = true;
-        userMe = null;
         listRooms.clear();
         listUsers.clear();
     }
@@ -56,111 +59,179 @@ public class ObjectManager {
         return userMe;
     }
 
-    public void setUserMe(UserMe userMe) {
-        isUserMeLoaded = true;
-        this.userMe = userMe;
-    }
-
     public List<Room> getListRooms() {
         return listRooms;
-    }
-
-    public void setListRooms(List<Room> listRooms) {
-        isGroupsLoaded = true;
-        this.listRooms = listRooms;
     }
 
     public List<User> getListUsers() {
         return listUsers;
     }
 
+    public User findUsers(String senderKey) {
+        for (User user : listUsers) {
+            if (user.getKey().equals(senderKey)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void setOnListenerUser(Class<?> cls, OnListenerUser listener) {
+        new Exception().printStackTrace();
+        LogHtk.d(LogHtk.API_TAG, "Co goi ko?");
+        mListenerUser.put(cls.getName(), listener);
+        LogHtk.d(LogHtk.API_TAG, "Co goi ko? listUsers.size() : " + listUsers.size());
+        if (listUsers.size() == 0) {
+            String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
+            JsonArrayRequest req = new JsonArrayRequest(API_USERS_URL,
+                    new Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            LogHtk.d(LogHtk.API_TAG, "1111 " + response.length());
+                            listUsers.addAll(User.parseArray(response));
+                            for (String key: mListenerUser.keySet()) {
+                                if(mListenerUser.get(key) != null) {
+                                    mListenerUser.get(key).onResponse(listUsers);
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LogHtk.d(LogHtk.API_TAG, "222 " + error.toString());
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("authorization", Constants.token);
+                    return params;
+                }
+            };
+            AntbuddyApplication.getInstance().addToRequestQueue(req);
+        }else {
+            LogHtk.d(LogHtk.API_TAG, "333 ");
+            listener.onResponse(listUsers);
+        }
+    }
+
+    public void removeOnListenerUser(Class<?> cls) {
+        mListenerUser.remove(cls.getName());
+    }
+
+
+    public void setOnListenerRoom(Class<?> cls, OnListenerGroup onListenerGroup) {
+        mListenerRoom.put(cls.getName(), onListenerGroup);
+        if (listRooms.size() == 0) {
+            String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
+            JsonArrayRequest req = new JsonArrayRequest(API_USERS_URL,
+                    new Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            listRooms.addAll(Room.parseArray(response));
+                            for (String key: mListenerRoom.keySet()) {
+                                if(mListenerRoom.get(key) != null) {
+                                    mListenerRoom.get(key).onResponse(listRooms);
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("authorization", Constants.token);
+                    return params;
+                }
+            };
+            AntbuddyApplication.getInstance().addToRequestQueue(req);
+        }else {
+            onListenerGroup.onResponse(listRooms);
+        }
+    }
+    public void removeOnListenerRoom(Class<?> cls) {
+        mListenerRoom.remove(cls.getName());
+    }
+
+    public void getUserMe(final OnListenerUserMe onListenerUserMe) {
+        if (userMe == null) {
+            String API_USER_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/me/";
+
+            LoginAPI.GETUserMe(new HttpRequestReceiver<UserMe>() {
+                @Override
+                public void onSuccess(UserMe me) {
+                    LogHtk.d(LogHtk.API_TAG, "Error 11");
+                    Log.i("Hoa debug", "ObjectManager:JsonObjectRequest:  OK = ");
+                    if (onListenerUserMe != null) {
+                        onListenerUserMe.onResponse(me);
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                    LogHtk.d(LogHtk.API_TAG, "Error 12");
+                }
+            });
+        } else {
+            onListenerUserMe.onResponse(userMe);
+        }
+    }
+
+    public void parseUserMe(JSONObject response) {
+        userMe = new UserMe(response);
+    }
+
+
+    public interface OnListenerUser {
+        public void onResponse(List<User> listUsers);
+    }
+
+    public interface OnListenerGroup {
+        public void onResponse(List<Room> listRooms);
+    }
+
+    public interface OnListenerUserMe {
+        public void onResponse(UserMe userMe);
+    }
+
+    public void setListRooms(List<Room> listRooms) {
+        this.listRooms = listRooms;
+    }
+
     public void setListUsers(List<User> listUsers) {
-        isUsersLoaded = true;
         this.listUsers = listUsers;
     }
 
-    public boolean isUserMeLoaded() {
-        return isUserMeLoaded;
+    public void setUserMe(UserMe userMe) {
+        this.userMe = userMe;
     }
 
-    public void setIsUserMeLoaded(boolean isUserMeLoaded) {
-        this.isUserMeLoaded = isUserMeLoaded;
+    public HashMap<String, OnListenerUser> getmListenerUser() {
+        return mListenerUser;
     }
 
-    public boolean isUsersLoaded() {
-        return isUsersLoaded;
+    public void setmListenerUser(HashMap<String, OnListenerUser> mListenerUser) {
+        this.mListenerUser = mListenerUser;
     }
 
-    public void setIsUsersLoaded(boolean isUsersLoaded) {
-        this.isUsersLoaded = isUsersLoaded;
+    public HashMap<String, OnListenerGroup> getmListenerRoom() {
+        return mListenerRoom;
     }
 
-    public boolean isGroupsLoaded() {
-        return isGroupsLoaded;
+    public void setmListenerRoom(HashMap<String, OnListenerGroup> mListenerRoom) {
+        this.mListenerRoom = mListenerRoom;
     }
 
-    public void setIsGroupsLoaded(boolean isGroupsLoaded) {
-        this.isGroupsLoaded = isGroupsLoaded;
+    public static ObjectManager getObjectManager() {
+        return objectManager;
     }
 
-    public boolean isGroupsNeedToReload() {
-        return groupsNeedToReload;
-    }
-
-    public void parseUserMe(JSONObject jsonObject) {
-        try {
-            userMe = UserMe.parse(jsonObject);
-            isUserMeLoaded = true;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            isUserMeLoaded = false;
-        }
-    }
-
-    public void parseUsers(JSONArray jsonArray) {
-        listUsers.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject element = null;
-            try {
-                element = (JSONObject) jsonArray.get(i);
-                User user = User.parse(element);
-                if (user != null) {
-                    listUsers.add(user);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (listUsers.size() > 0) {
-            isUsersLoaded = true;
-        } else {
-            isUsersLoaded = false;
-        }
-    }
-
-    public void parseRooms(JSONArray jsonArray) {
-        listRooms.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject element = null;
-            try {
-                element = (JSONObject) jsonArray.get(i);
-                Room room = Room.parse(element);
-                if (room != null) {
-                    listRooms.add(room);
-                }
-
-                groupsNeedToReload = false;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                groupsNeedToReload = true;
-            }
-        }
-
-        if (listRooms.size() >= 0) {
-            isGroupsLoaded = true;
-        } else {
-            isGroupsLoaded = false;
-        }
+    public static void setObjectManager(ObjectManager objectManager) {
+        ObjectManager.objectManager = objectManager;
     }
 }

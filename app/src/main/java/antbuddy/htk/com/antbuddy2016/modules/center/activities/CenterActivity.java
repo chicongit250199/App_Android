@@ -171,7 +171,7 @@ public class CenterActivity extends AppCompatActivity {
         }, null);
     }
 
-    void loadData() {
+    protected void loadData() {
         if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
             AndroidHelper.showToast("No network connection available!", CenterActivity.this);
             return;
@@ -182,10 +182,10 @@ public class CenterActivity extends AppCompatActivity {
     private void getUserMe() {
         AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-        LoginAPI.GETUserMe(new HttpRequestReceiver() {
+        LoginAPI.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
-            public void onSuccess(Object object) {
-                UserMe me = (UserMe) object;
+            public void onSuccess(UserMe me) {
+                LogHtk.d(LogHtk.API_TAG, "onSuccess 12");
 
                 // Connect XMPP
                 connectXMPP(me);
@@ -200,7 +200,7 @@ public class CenterActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Load UserMe Error!!");
+                LogHtk.e(LogHtk.API_TAG, "Load UserMe Error!!" + error);
             }
         });
     }
@@ -232,7 +232,7 @@ public class CenterActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Can not get list Groups!");
+                LogHtk.e(LogHtk.API_TAG, "Can not get list Groups!" + error);
             }
         });
     }
@@ -246,6 +246,25 @@ public class CenterActivity extends AppCompatActivity {
         }
         return mIRemoteService != null;
     }
+
+	public void loadRoom() {
+        ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
+            @Override
+            public void onResponse(List<Room> listRooms) {
+                Log.i("Hoa debug", "CenterActivity:onResponse: Load ok listRooms = " + listRooms.size());
+            }
+        });
+    }
+
+    public void loadUsers() {
+        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
+            @Override
+            public void onResponse(List<User> listUsers) {
+                Log.i("Hoa debug", "CenterActivity:onResponse: Load ok listUsers = " + listUsers.size());
+            }
+        });
+    }
+
 
     private void connectXMPP(UserMe me) {
         LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());

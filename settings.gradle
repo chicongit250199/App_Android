@@ -1,2 +1,2 @@
-include ':app', ':emojiconmaster'
+include ':app', ':emojiconmaster', ':qsmack322'
 include ':crashreport'

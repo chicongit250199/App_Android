@@ -3,17 +3,18 @@ package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ListRecentsAdapter;
-import antbuddy.htk.com.antbuddy2016.model.RecentData;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
@@ -23,6 +24,8 @@ import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 public class RecentFragment extends Fragment {
     
     private ExpandableListView list_recent;
+    private ListRecentsAdapter listRecentsAdapter;
+    int steep = 0;
     
     @Nullable
     @Override
@@ -33,27 +36,29 @@ public class RecentFragment extends Fragment {
         groupNames.add("GROUPS");
         groupNames.add("MEMBERS");
 
-        ArrayList<ArrayList<RecentData>> recentsData = new ArrayList<>();
+        final ArrayList<ArrayList<UserMe.OpeningChatroom>> recentsData = new ArrayList<>();
+        recentsData.add(new ArrayList<UserMe.OpeningChatroom>());
+        recentsData.add(new ArrayList<UserMe.OpeningChatroom>());
 
-        ArrayList<RecentData> recentData = new ArrayList<>();
-        recentData.add(new RecentData());
-        recentData.add(new RecentData());
-        recentsData.add( recentData );
-
-        recentData = new ArrayList<>();
-        recentData.add(new RecentData());
-        recentData.add(new RecentData());
-        recentsData.add( recentData );
-
-        recentData = new ArrayList<>();
-        recentData.add(new RecentData());
-        recentData.add(new RecentData());
-        recentsData.add(recentData);
-
-        ListRecentsAdapter listRecentsAdapter = new ListRecentsAdapter(getContext(),groupNames, recentsData);
+        listRecentsAdapter = new ListRecentsAdapter(getContext(),groupNames, recentsData);
         list_recent.setAdapter(listRecentsAdapter);
         list_recent.expandGroup(1);
         list_recent.expandGroup(0);
+
+//        ObjectManager.getInstance().getUserMe(new ObjectManager.OnListenerUserMe() {
+//            @Override
+//            public void onResponse(UserMe userMe) {
+//                if (userMe != null && userMe.getOpeningChatrooms() != null) {
+//                    for (UserMe.OpeningChatroom openingChatroom : userMe.getOpeningChatrooms()) {
+//                        if (openingChatroom.getIsMuc()) {
+//                            recentsData.get(0).add(openingChatroom);
+//                        } else {
+//                            recentsData.get(1).add(openingChatroom);
+//                        }
+//                    }
+//                }
+//            }
+//        });
 
         //lock header
         list_recent.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -72,4 +77,6 @@ public class RecentFragment extends Fragment {
         });
         return rootView;
     }
+
+
 }

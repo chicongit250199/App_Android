@@ -13,27 +13,30 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.model.RecentData;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.User;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
 
 /**
  * Created by Micky on 3/31/2016.
  */
 public class ListRecentsAdapter extends BaseExpandableListAdapter {
-    private  final int GROUPS_POSITION = 0;
-    private  final int MEMBERS_POSITION = 1;
+    private final int GROUPS_POSITION = 0;
+    private final int MEMBERS_POSITION = 1;
     private Context context;
     private ArrayList<String> parents;
-    private ArrayList<ArrayList<RecentData>> childers;
+    private ArrayList<ArrayList<UserMe.OpeningChatroom>> childers;
     private LayoutInflater inflater;
 
     public ListRecentsAdapter(Context context,
                               ArrayList<String> parents,
-                              ArrayList<ArrayList<RecentData>> childers) {
+                              ArrayList<ArrayList<UserMe.OpeningChatroom>> childers) {
         this.context = context;
         this.parents = parents;
         this.childers = childers;
-        inflater = LayoutInflater.from( context );
+        inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        ArrayList<RecentData> parent = childers.get(groupPosition);
+        ArrayList<UserMe.OpeningChatroom> parent = childers.get(groupPosition);
         if (parent != null) {
             return parent.size();
         } else {
@@ -78,13 +81,13 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         View v = null;
-        if( convertView != null )
+        if (convertView != null)
             v = convertView;
         else
             v = inflater.inflate(R.layout.parent_view, parent, false);
-        String gt = (String)getGroup(groupPosition);
-        TextView tv_title = (TextView)v.findViewById(R.id.tv_title);
-        if( tv_title != null )
+        String gt = (String) getGroup(groupPosition);
+        TextView tv_title = (TextView) v.findViewById(R.id.tv_title);
+        if (tv_title != null)
             tv_title.setText(parents.get(groupPosition));
         return v;
     }
@@ -94,32 +97,47 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
         View rowView = null;
         final Holder holder;
 
-        if( convertView == null && groupPosition == GROUPS_POSITION) {
+        if (convertView == null ){
             holder = new Holder();
             rowView = inflater.inflate(R.layout.row_member, parent, false);
-            holder.imgAvatar = (ImageView)rowView.findViewById(R.id.imgAvatar);
-            rowView.setTag(holder);
-        } else if( convertView == null && groupPosition == MEMBERS_POSITION) {
-            holder = new Holder();
-            rowView = inflater.inflate(R.layout.row_member, parent, false);
-            holder.imgAvatar = (ImageView)rowView.findViewById(R.id.imgAvatar);
+            holder.imgAvatar = (ImageView) rowView.findViewById(R.id.imgAvatar);
+            holder.tv_user_name = (TextView) rowView.findViewById(R.id.tv_user_name);
             rowView.setTag(holder);
         } else {
             rowView = convertView;
             holder = (Holder) rowView.getTag();
         }
 
-//        Picasso.with(context).load("https://abs1.antbuddy.com/antbuddy-bucket/1455784435927_avatar.png").
-//                resize(60, 60).
-////                error(R.drawable.empty_avatar).
-//        transform(new RoundedTransformation(5, 5)).
-//                into(holder.imgAvatar);
-
+        final UserMe.OpeningChatroom openingChatroom = (UserMe.OpeningChatroom) getChild(groupPosition, childPosition);
+        if (groupPosition == 0) {
+            for (Room room : ObjectManager.getInstance().getListRooms()) {
+                if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
+                    if (room.getIsPublic()) {
+                        Picasso.with(context).load(R.drawable.ic_global);
+                    } else {
+                        Picasso.with(context).load(R.drawable.ic_lock);
+                    }
+                    holder.tv_user_name.setText(room.getName());
+                    break;
+                }
+            }
+        } else {
+            for (User user : ObjectManager.getInstance().getListUsers()) {
+                if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
+                    Picasso.with(context).load(user.getAvatar()).
+                            resize(60, 60).error(R.drawable.ic_avatar_defaul).transform(new RoundedTransformation(5, 5)).
+                            into(holder.imgAvatar);
+                    holder.tv_user_name.setText(user.getName());
+                    break;
+                }
+            }
+        }
         return rowView;
     }
 
     public class Holder {
         public ImageView imgAvatar;
+        public TextView tv_user_name;
     }
 
     public boolean hasStableIds() {

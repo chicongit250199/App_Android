@@ -29,12 +29,11 @@ public class RoundedTransformation implements com.squareup.picasso.Transformatio
         paint.setAntiAlias(true);
         paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
 
-        Bitmap output = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Config.ARGB_8888);
+        int r = Math.min(source.getWidth(), source.getHeight()) / 2;
+        Bitmap output = Bitmap.createBitmap(r * 2, r * 2, Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
         canvas.drawCircle(source.getWidth() / 2, source.getHeight() / 2,
-                source.getWidth() / 2, paint);
-//        canvas.drawRoundRect(new RectF(margin, margin, source.getWidth() - margin, source.getHeight() - margin), radius, radius, paint);
-
+                r, paint);
         if (source != output) {
             source.recycle();
         }

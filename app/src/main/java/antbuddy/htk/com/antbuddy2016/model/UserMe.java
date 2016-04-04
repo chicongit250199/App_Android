@@ -1,7 +1,5 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -9,17 +7,44 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import github.ankushsachdeva.emojicon.EmojiconHandler;
 
 /**
  * Created by thanhnguyen on 01/04/2016.
  */
 public class UserMe {
+
+    private final static String key__id = "_id";
+    private final static String key_avatar = "avatar";
+    private final static String key_username = "username";
+    private final static String key_key = "key";
+    private final static String key_provider = "provider";
+    private final static String key_email = "email";
+    private final static String key_name = "name";
+    private final static String key_nonce = "nonce";
+    private final static String key_modified = "modified";
+    private final static String key_active = "active";
+    private final static String key_tourStep = "tourStep";
+    private final static String key_orgs = "orgs";
+    private final static String key_forceChangePassw = "forceChangePassw";
+    private final static String key_created = "created";
+    private final static String key_chatDomain = "chatDomain";
+    private final static String key_chatMucDomain = "chatMucDomain";
+    private final static String key_chatUrl = "chatUrl";
+    private final static String key_currentOrg = "currentOrg";
+    private final static String key_chatToken = "chatToken";
+    private final String nonce;
+    private final String modified;
+    private final Boolean active;
+    private final int tourStep;
+    private ArrayList<Org> orgs = null;
+    private final Boolean forceChangePassw;
+    private final String created;
+    private CurrentOrg currentOrg = null;
+
+
     private String key;
     private String chatToken; // 53893e8c497468d3453f6d5a:27f00feeeb03a35e5dd0b44f6ae7c9bebc43a045880c92d0d03e7b5bb05da02e06628b1c07f3a3f3
     private String xmppUsername;
@@ -32,17 +57,7 @@ public class UserMe {
     private String avatar = null; // avatar url
     private String username; // thanh.nguyen@htklabs.com
     private String provider; // google
-    private String chatUrl; // google
-
-    //private List<OpeningChatRoom> listRoomsOpeningChat;
-
-//    public UserInfo() {
-//    }
-//
-//    public UserInfo(Parcel in) {
-//        readFromParcel(in);
-//    }
-
+    private String chatUrl;
 
     public String getChatUrl() {
         return chatUrl;
@@ -52,9 +67,23 @@ public class UserMe {
         this.chatUrl = chatUrl;
     }
 
+    public ArrayList<OpeningChatroom> getOpeningChatrooms() {
+        String key = currentOrg.getKey();
+        for (Org org : orgs) {
+            if (org.getOrgKey().equals(key)) {
+                return org.getOpeningChatrooms();
+            }
+        }
+        return null;
+    }
+
     public String getKey() {
         return key;
     }
+
+//    public String getOrg() {
+//        return currentOrg;
+//    }
 
     public void setKey(String key) {
         this.key = key;
@@ -244,13 +273,190 @@ public class UserMe {
 //        }
 //    };
 
-    public static UserMe parse(JSONObject object) throws JSONException {
-        UserMe me = new UserMe();
-        me.setKey(object.getString(JSONKey.key));
-        me.setName(object.getString(JSONKey.name));
-        me.setEmail(object.getString(JSONKey.email));
-        me.setUsername(object.getString(JSONKey.username));
-        me.setAvatar(object.getString(JSONKey.avatar));
-        return me;
+//    public static UserMe parse(JSONObject object) throws JSONException {
+//        UserMe me = new UserMe();
+//        me.setKey(object.getString(JSONKey.key));
+//        me.setName(object.getString(JSONKey.name));
+//        me.setEmail(object.getString(JSONKey.email));
+//        me.setUsername(object.getString(JSONKey.username));
+//        me.setAvatar(object.getString(JSONKey.avatar));
+//        return me;
+//    }
+
+    public UserMe(JSONObject json){
+        _id = AndroidHelper.getString(json, key__id, null);
+        avatar = AndroidHelper.getString(json, key_avatar, null);
+        username = AndroidHelper.getString(json, key_username, null);
+        key = AndroidHelper.getString(json, key_key, null);
+        provider = AndroidHelper.getString(json, key_provider, null);
+        email = AndroidHelper.getString(json, key_email, null);
+        name = AndroidHelper.getString(json, key_name, null);
+        nonce = AndroidHelper.getString(json, key_nonce, null);
+        modified = AndroidHelper.getString(json, key_modified, null);
+        active = AndroidHelper.getBoolean(json, key_active, false);
+        tourStep = AndroidHelper.getInt(json, key_tourStep, 0);
+        if (json.has(key_orgs)) {
+            try {
+                orgs = Org.parse(json.getJSONArray(key_orgs));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        forceChangePassw = AndroidHelper.getBoolean(json, key_forceChangePassw, false);
+        created = AndroidHelper.getString(json, key_created, null);
+        chatDomain = AndroidHelper.getString(json, key_chatDomain, null);
+        chatMucDomain = AndroidHelper.getString(json, key_chatMucDomain, null);
+        chatUrl = AndroidHelper.getString(json, key_chatUrl, null);
+        if (json.has(key_currentOrg)) {
+            try {
+                currentOrg = new CurrentOrg(json.getJSONObject(key_currentOrg));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        chatToken = AndroidHelper.getString(json, key_chatToken, null);
+
+    }
+
+    public static class OpeningChatroom {
+        private final static String key_chatRoomKey = "chatRoomKey";
+        private final static String key__id = "_id";
+        private final static String key_lastTimeReadMessage = "lastTimeReadMessage";
+        private final static String key_headNavigatorStatus = "headNavigatorStatus";
+        private final static String key_lastReadMessage = "lastReadMessage";
+        private final static String key_isUnread = "isUnread";
+        private final static String key_isFavorite = "isFavorite";
+        private final static String key_isMuc = "isMuc";
+        private String chatRoomKey;
+        private String _id;
+        private double lastTimeReadMessage;
+        private String headNavigatorStatus;
+        private String lastReadMessage;
+        private Boolean isUnread;
+        private Boolean isFavorite;
+        private Boolean isMuc;
+    
+        public OpeningChatroom(JSONObject json) {
+            chatRoomKey = AndroidHelper.getString(json, key_chatRoomKey, null);
+            _id = AndroidHelper.getString(json, key__id, null);
+            lastTimeReadMessage = AndroidHelper.getInt(json, key_lastTimeReadMessage, 0);
+            headNavigatorStatus = AndroidHelper.getString(json, key_headNavigatorStatus, null);
+            lastReadMessage = AndroidHelper.getString(json, key_lastReadMessage, null);
+            isUnread = AndroidHelper.getBoolean(json, key_isUnread, false);
+            isFavorite = AndroidHelper.getBoolean(json, key_isFavorite, false);
+            isMuc = AndroidHelper.getBoolean(json, key_isMuc, false);
+        }
+
+        public static ArrayList<OpeningChatroom> parse(JSONArray jsonArray) {
+            ArrayList<OpeningChatroom> openingChatrooms = new ArrayList<>();
+            for(int i=0; i<jsonArray.length(); i++){
+                try {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    OpeningChatroom openingChatroom = new OpeningChatroom(json);
+                    openingChatrooms.add(openingChatroom);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return openingChatrooms;
+        }
+
+        public Boolean getIsMuc() {
+            return isMuc;
+        }
+
+        public String getChatRoomKey() {
+            return chatRoomKey;
+        }
+    }
+
+    public static class Org {
+
+        private final static String key_orgKey = "orgKey";
+        private final static String key_role = "role";
+        private final static String key__id = "_id";
+        private final static String key_openingChatrooms = "openingChatrooms";
+        private String orgKey;
+        private String role;
+        private String _id;
+        private ArrayList<OpeningChatroom> openingChatrooms = null;
+
+        public Org(JSONObject json) {
+            orgKey = AndroidHelper.getString(json, key_orgKey, null);
+            role = AndroidHelper.getString(json, key_role, null);
+            _id = AndroidHelper.getString(json, key__id, null);
+            if (json.has(key_openingChatrooms)) {
+                try {
+                    openingChatrooms = OpeningChatroom.parse(json.getJSONArray(key_openingChatrooms));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        public static ArrayList<Org> parse(JSONArray jsonArray) {
+            ArrayList<Org> orgs = new ArrayList<>();
+            for(int i=0; i<jsonArray.length(); i++){
+                try {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    Org org = new Org(json);
+                    orgs.add(org);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return orgs;
+        }
+
+        public String getOrgKey() {
+            return orgKey;
+        }
+
+        public ArrayList<OpeningChatroom> getOpeningChatrooms() {
+            return openingChatrooms;
+        }
+    }
+
+    public static class CurrentOrg {
+        private final static String key__id = "_id";
+        private final static String key_name = "name";
+        private final static String key_domain = "domain";
+        private final static String key_key = "key";
+        private final static String key_createdBy = "createdBy";
+        private final static String key_isDefaultLogo = "isDefaultLogo";
+        private final static String key_allowSelfRegister = "allowSelfRegister";
+        private final static String key_logo = "logo";
+        private final static String key_status = "status";
+        private final static String key_modified = "modified";
+        private final static String key_created = "created";
+        private String _id;
+        private String name;
+        private String domain;
+        private String key;
+        private String createdBy;
+        private Boolean isDefaultLogo;
+        private Boolean allowSelfRegister;
+        private String logo;
+        private String status;
+        private String modified;
+        private String created;
+
+        public CurrentOrg(JSONObject json) {
+            _id = AndroidHelper.getString(json, key__id, null);
+            name = AndroidHelper.getString(json, key_name, null);
+            domain = AndroidHelper.getString(json, key_domain, null);
+            key = AndroidHelper.getString(json, key_key, null);
+            createdBy = AndroidHelper.getString(json, key_createdBy, null);
+            isDefaultLogo = AndroidHelper.getBoolean(json, key_isDefaultLogo, false);
+            allowSelfRegister = AndroidHelper.getBoolean(json, key_allowSelfRegister, false);
+            logo = AndroidHelper.getString(json, key_logo, null);
+            status = AndroidHelper.getString(json, key_status, null);
+            modified = AndroidHelper.getString(json, key_modified, null);
+            created = AndroidHelper.getString(json, key_created, null);
+
+        }
+
+        public String getKey() {
+            return key;
+        }
     }
 }

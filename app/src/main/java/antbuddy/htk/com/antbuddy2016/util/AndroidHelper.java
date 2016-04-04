@@ -15,6 +15,15 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import antbuddy.htk.com.antbuddy2016.R;
 
 /**
@@ -151,6 +160,30 @@ public class AndroidHelper {
 
                 clearFocus(innerView);
             }
+        }
+    }
+
+    //parse json data
+    public static String getString(JSONObject json, String key, String sDefault) {
+        try {
+            return json.getString(key);
+        } catch (JSONException e) {
+            return sDefault;
+        }
+    }
+
+    public static Boolean getBoolean(JSONObject json, String key, Boolean sDefault) {
+        try {
+            return json.getBoolean(key);
+        } catch (JSONException e) {
+            return sDefault;
+        }
+    }
+    public static int getInt(JSONObject json, String key, int iDefault) {
+        try {
+            return json.getInt(key);
+        } catch (JSONException e) {
+            return iDefault;
         }
     }
 }

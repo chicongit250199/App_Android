@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -23,13 +24,18 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.provider.AdHocCommandDataProvider;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
+import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
+import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -256,6 +262,14 @@ public class AntbuddyXmppConnection {
 
 		Message message = (Message) packet;
 		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
+
+		if (message.getBody() != null) {
+			ChatMessage chatMessage = new ChatMessage(message);
+			Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT);
+			intent.putExtra(BroadcastConstant.MESSAGE_RECEIVE, chatMessage);
+			mContext.sendBroadcast(intent);
+		}
+
 //        boolean isDeleteMessage = false;
 //		if (message.getBody() != null) {
 //
@@ -305,8 +319,8 @@ public class AntbuddyXmppConnection {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
-//				System.out.println("reconnectionSuccessful");
-//				sendPresenceOutFromOpeningRooms();
+				System.out.println("reconnectionSuccessful");
+				sendPresenceOutFromOpeningRooms();
 			}
 
 			@Override
@@ -360,6 +374,14 @@ public class AntbuddyXmppConnection {
 			}
 		};
 		xmppConnection.addPacketListener(presenceListener, presenceFilter);
+	}
+
+	public void sendMessageOut(ChatMessage chatMessage) {
+		if(!xmppConnection.isConnected()) return;
+		Message msg = null;
+//		if (chatMessage.getType().equals(ChatMessage.TYPE.groupchat.toString())) {
+//			msg = new Message(chatMessage.getReceiverJid(), Message.Type.groupchat);
+//		}
 	}
 
 	/**
@@ -422,15 +444,24 @@ public class AntbuddyXmppConnection {
 	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
-//		List<OpeningChatRoom> listRoom = mUserInfo.getListRoomsOpeningChat();
-//		for (OpeningChatRoom room : listRoom) {
-//			if(room.getIsMuc()) {
-//				Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
-//				presence.setTo( room.getChatRoomId() + "@conference.htklabs.com/" + mUserInfo.get_id());
-//				mConnection.sendPacket(presence);
-//                LogHtk.i(TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-//			}
-//		}
+		ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
+			@Override
+			public void onResponse(List<Room> listRooms) {
+				for (Room room : listRooms) {
+					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
+					presence.setTo(room.getKey()+ "_475a400a-292b-440c-981a-57af0b3f9a2c" + "@conference.antbuddy.com/756651f0-9196-11e5-a569-fdc7cdc19515_475a400a-292b-440c-981a-57af0b3f9a2c");
+					xmppConnection.sendPacket(presence);
+					Log.i("Hoa debug", "AntbuddyXmppConnection:sendPresenceOutFromOpeningRooms: presence.toXML() = " + presence.toXML());
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					LogHtk.i(TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+				}
+			}
+		});
+//
 	}
 
 	/**

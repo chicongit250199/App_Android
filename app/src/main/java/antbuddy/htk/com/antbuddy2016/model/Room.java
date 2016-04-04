@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,245 +9,171 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import antbuddy.htk.com.antbuddy2016.api.ParseJson;
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 public class Room {
+	private final static String key__id = "_id";
+	private final static String key_createdBy = "createdBy";
+	private final static String key_org = "org";
+	private final static String key_key = "key";
+	private final static String key_anttel = "anttel";
+	private final static String key_dialplanId = "dialplanId";
+	private final static String key_confId = "confId";
+	private final static String key_anttelStep = "anttelStep";
+	private final static String key_users = "users";
+	private final static String key_countFiles = "countFiles";
+	private final static String key_countMessages = "countMessages";
+	private final static String key_isPublic = "isPublic";
+	private final static String key_status = "status";
+	private final static String key_pinMessage = "pinMessage";
+	private final static String key_topic = "topic";
+	private final static String key_name = "name";
+	private final static String key_created = "created";
+	private final static String key_isFavorite = "isFavorite";
 
+	private String _id;
 	private String createdBy;
 	private String org;
 	private String key;
-	private List<User> users;
+	//private String anttel;
+	private List<UserInRoom> users;
 	private int countFiles;
-	private int	countMessages;
-	private boolean isPublic;
+	private int countMessages;
+	private Boolean isPublic;
 	private String status;
 	private String pinMessage;
 	private String topic;
 	private String name;
 	private String created;
-	private boolean isFavorite;
+	private Boolean isFavorite;
 
-	public String getCreatedBy() {
-		return createdBy;
+	public String get_id() {
+		return _id;
 	}
 
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
+	public String getKey_createdBy() {
+		return createdBy;
 	}
 
 	public String getOrg() {
 		return org;
 	}
 
-	public void setOrg(String org) {
-		this.org = org;
-	}
-
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public List<User> getUsers() {
+	public List<UserInRoom> getUsers() {
 		return users;
-	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
 	}
 
 	public int getCountFiles() {
 		return countFiles;
 	}
 
-	public void setCountFiles(int countFiles) {
-		this.countFiles = countFiles;
-	}
-
 	public int getCountMessages() {
 		return countMessages;
-	}
-
-	public void setCountMessages(int countMessages) {
-		this.countMessages = countMessages;
-	}
-
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	public void setIsPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getPinMessage() {
-		return pinMessage;
-	}
-
-	public void setPinMessage(String pinMessage) {
-		this.pinMessage = pinMessage;
-	}
-
-	public String getTopic() {
-		return topic;
-	}
-
-	public void setTopic(String topic) {
-		this.topic = topic;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public String getPinMessage() {
+		return pinMessage;
+	}
+
+	public String getTopic() {
+		return topic;
 	}
 
 	public String getCreated() {
 		return created;
 	}
 
-	public void setCreated(String created) {
-		this.created = created;
-	}
-
-	public boolean isFavorite() {
+	public Boolean getIsFavorite() {
 		return isFavorite;
 	}
 
-	public void setIsFavorite(boolean isFavorite) {
-		this.isFavorite = isFavorite;
-	}
-
-	public static Room parse(JSONObject object) {
-		Room room = new Room();
-		try {
-			room.setCreatedBy(object.getString(JSONKey.createdBy));
-		} catch (JSONException e) {
-			room.setCreatedBy("");
-		}
-
-		try {
-			room.setOrg(object.getString(JSONKey.org));
-		} catch (JSONException e) {
-			room.setOrg("");
-		}
-
-		try {
-			room.setKey(object.getString(JSONKey.key));
-		} catch (JSONException e) {
-			room.setKey("");
-		}
-
-		try {
-			room.setCountFiles(object.getInt(JSONKey.countFiles));
-		} catch (JSONException e) {
-			room.setCountFiles(0);
-		}
-
-		try {
-			room.setCountMessages(object.getInt(JSONKey.countMessages));
-		} catch (JSONException e) {
-			room.setCountMessages(0);
-		}
-
-		try {
-			room.setIsPublic(object.getBoolean(JSONKey.isPublic));
-		} catch (JSONException e) {
-			room.setIsPublic(false);
-		}
-
-		try {
-			room.setStatus(object.getString(JSONKey.status));
-		} catch (JSONException e) {
-			room.setStatus("");
-		}
-
-		try {
-			room.setPinMessage(object.getString(JSONKey.pinMessage));
-		} catch (JSONException e) {
-			room.setPinMessage("");
-		}
-
-		try {
-			room.setTopic(object.getString(JSONKey.topic));
-		} catch (JSONException e) {
-			room.setTopic("");
-		}
-
-		try {
-			room.setName(object.getString(JSONKey.name));
-		} catch (JSONException e) {
-			room.setName("");
-		}
-
-		try {
-			room.setCreated(object.getString(JSONKey.created));
-		} catch (JSONException e) {
-			room.setCreated("");
-		}
-
-		try {
-			room.setIsFavorite(object.getBoolean(JSONKey.isFavorite));
-		} catch (JSONException e) {
-			room.setIsFavorite(false);
-		}
-
-		JSONArray userArray = null;
-		try {
-			userArray = object.getJSONArray(JSONKey.users);
-		} catch (JSONException e) {
-			userArray = new JSONArray();
-		}
-
-		List<User> listUsers = new ArrayList<>();
-		for (int i = 0; i < userArray.length(); i++) {
+	public static ArrayList<Room> parseArray(JSONArray jsonArray) {
+		String lastTime = "";
+		ArrayList<Room> rooms = new ArrayList<>();
+		for(int i=0; i<jsonArray.length(); i++){
 			try {
-				JSONObject rowObject = (JSONObject) userArray.get(i);
-				User user = new User();
-
-				try {
-					user.setUser(rowObject.getString(JSONKey.user));
-					user.setKey(rowObject.getString(JSONKey.user));
-				} catch (JSONException e) {
-					user.setUser("");
-					user.setKey("");
+				JSONObject json = jsonArray.getJSONObject(i);
+				String idMessage = AndroidHelper.getString(json, key_key, null);
+				if(!idMessage.isEmpty()) {
+					Room room = new Room(json);
+					rooms.add(room);
 				}
-
-				try {
-					user.setRole(rowObject.getString(JSONKey.role));
-				} catch (JSONException e) {
-					user.setRole("");
-				}
-
-				// Check user exist
-				if (user.getKey().length() > 0) {
-					listUsers.add(user);
-				}
-
-			} catch (Exception e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
+		return rooms;
+	}
 
-		room.setUsers(listUsers);
-		if (room.getKey().length() > 0) {
-			return room;
-		} else {
-			return null;
+	public Room(JSONObject json) {
+		_id = AndroidHelper.getString(json, key__id, null);
+		createdBy = AndroidHelper.getString(json, key_createdBy, null);
+		org = AndroidHelper.getString(json, key_org, null);
+		key = AndroidHelper.getString(json, key_key, null);
+		if (json.has(key_users)){
+			try {
+				users = UserInRoom.parseArray(json.getJSONArray(key_users));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		countFiles = AndroidHelper.getInt(json, key_countFiles, 0);
+		countMessages = AndroidHelper.getInt(json, key_countMessages, 0);
+		isPublic = AndroidHelper.getBoolean(json, key_isPublic, false);
+		status = AndroidHelper.getString(json, key_status, null);
+		pinMessage = AndroidHelper.getString(json, key_pinMessage, null);
+		topic = AndroidHelper.getString(json, key_topic, null);
+		name = AndroidHelper.getString(json, key_name, null);
+		created = AndroidHelper.getString(json, key_created, null);
+		isFavorite = AndroidHelper.getBoolean(json, key_isFavorite, false);
+	}
+
+	public static class UserInRoom {
+		private final static String key_user = "user";
+		private final static String key__id = "_id";
+		private final static String key_role = "role";
+		private String user;
+		private String _id;
+		private int role;
+
+		public static ArrayList<UserInRoom> parseArray(JSONArray jsonArray) {
+			ArrayList<UserInRoom> usersInRoom = new ArrayList<>();
+			for(int i=0; i<jsonArray.length(); i++){
+				try {
+					JSONObject json = jsonArray.getJSONObject(i);
+					Log.i("Hoa debug","UserInRoom:parseArray: json = "+json.toString());
+					String key = AndroidHelper.getString(json, key_user, null);
+					if(!key.isEmpty()) {
+						UserInRoom userInRoom = new UserInRoom(json);
+						usersInRoom.add(userInRoom);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			return usersInRoom;
+		}
+
+		public UserInRoom(JSONObject json) {
+			user = AndroidHelper.getString(json, key_user, null);
+			_id = AndroidHelper.getString(json, key__id, null);
+			role = AndroidHelper.getInt(json, key__id, 0);
 		}
 	}
 }

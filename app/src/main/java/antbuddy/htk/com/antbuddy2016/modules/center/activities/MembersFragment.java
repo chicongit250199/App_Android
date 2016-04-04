@@ -10,9 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import java.util.List;
+
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.UserAdapter;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
@@ -40,7 +43,32 @@ public class MembersFragment extends Fragment {
         lv_member.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AndroidHelper.gotoActivity(getActivity(), ChatActivity.class);
+                User user = ObjectManager.getInstance().getListUsers().get(position);
+                Bundle args = new Bundle();
+                args.putString(ChatActivity.key_key, user.getKey());
+                args.putBoolean(ChatActivity.key_type, false);
+                args.putString(ChatActivity.key_title, user.getName());
+                AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);
+            }
+        });
+        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
+            @Override
+            public void onResponse(List<User> listUsers) {
+//                mUserAdapter.notifyDataSetChanged();
+                mUserAdapter.filter(searchView.getQuery().toString());
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mUserAdapter.filter(newText);
+                return true;
             }
         });
 

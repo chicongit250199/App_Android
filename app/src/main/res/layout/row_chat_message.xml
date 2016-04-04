@@ -7,10 +7,12 @@
     android:paddingRight="5dp"
     android:paddingBottom="5dp"
     android:paddingTop="0dp"
+    android:clickable="true"
+    android:background="@drawable/bg_chat"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/singleMessageContainer"
+        android:id="@+id/ll_message_left"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -27,7 +29,7 @@
                 android:orientation="vertical"/>
 
             <ImageView
-                android:id="@+id/imgAvatar"
+                android:id="@+id/imgAvatarLeft"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
@@ -45,7 +47,7 @@
             android:orientation="vertical"
             >
             <github.ankushsachdeva.emojicon.EmojiconTextView
-                android:id="@+id/textMessage"
+                android:id="@+id/textMessage_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ff000000"
@@ -63,5 +65,66 @@
             >
         </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_message_right"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|right"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_weight="1"
+            android:gravity="right"
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+
+
+            <github.ankushsachdeva.emojicon.EmojiconTextView
+                android:id="@+id/textMessage_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff000000"
+                android:textSize="14sp"
+                android:autoLink="web"
+                android:background="@drawable/bg_message_right"
+                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"/>
+            android:freezesText="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:orientation="vertical"/>
+
+            <ImageView
+                android:id="@+id/imgAvatarRight"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="top"
+                android:paddingLeft="4dp"
+                android:paddingRight="5dp"
+                android:paddingTop="2dp"
+                android:src="@drawable/ic_avatar_defaul"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -1,14 +1,28 @@
 package antbuddy.htk.com.antbuddy2016.adapters;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.User;
+import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
+import github.ankushsachdeva.emojicon.EmojiconTextView;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -16,6 +30,8 @@ import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     private final Context ctx;
     private final ListView mListView;
+    private ArrayList<ChatMessage> mMessages = new ArrayList<>();
+    private String keyMe = ObjectManager.getInstance().getUserMe().getKey();
 
     public ChatAdapter(Context context, ListView listView) {
         super(context, R.layout.row_chat_message);
@@ -34,20 +50,139 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             holder = new Holder();
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = vi.inflate(R.layout.row_chat_message, null);
+            holder.ll_message_right = (LinearLayout) rowView.findViewById(R.id.ll_message_right);
+            holder.ll_message_left = (LinearLayout) rowView.findViewById(R.id.ll_message_left);
+            holder.textMessage_left = (EmojiconTextView) rowView.findViewById(R.id.textMessage_left);
+            holder.textMessage_right = (EmojiconTextView) rowView.findViewById(R.id.textMessage_right);
+            holder.imgAvatarLeft = (ImageView) rowView.findViewById(R.id.imgAvatarLeft);
+            holder.imgAvatarRight = (ImageView) rowView.findViewById(R.id.imgAvatarRight);
             rowView.setTag(holder);
         } else {
             rowView = convertView;
             holder = (Holder) rowView.getTag();
         }
+
+        ChatMessage message = mMessages.get(position);
+        //set data to GUI
+
+        String senderKey = message.getSenderKey();
+        Log.i("Hoa debug", "ChatMessage:ChatMessage:  => senderKey " + senderKey);
+        Log.i("Hoa debug", "ChatMessage:ChatMessage:  => message.getSubtype() " + message.getSubtype());
+        boolean isMe = TextUtils.isEmpty(message.getSubtype()) && senderKey.equals(keyMe);
+
+        if (isMe) {
+            holder.ll_message_left.setVisibility(View.GONE);
+            holder.ll_message_right.setVisibility(View.VISIBLE);
+            holder.textMessage_right.setText(message.getBody());
+        } else {
+            holder.ll_message_left.setVisibility(View.VISIBLE);
+            holder.ll_message_right.setVisibility(View.GONE);
+            holder.textMessage_left.setText(message.getBody());
+        }
+
+        if (!TextUtils.isEmpty(message.getSubtype()) && message.getSubtype().equals("bot-gitlab")) {
+            Picasso.with(ctx).load(R.drawable.gitlab_icon).
+                    resize(60, 60).
+                    transform(new RoundedTransformation(5, 5)).
+                    into(holder.imgAvatarLeft);
+        } else {
+            String url_avatar = "";
+            if (!senderKey.isEmpty()) {
+                User user = ObjectManager.getInstance().findUsers(senderKey);
+                if (user != null) {
+                    url_avatar = user.getAvatar();
+                }
+            }
+
+            Picasso.with(ctx).load(url_avatar).
+                    resize(60, 60).
+                    error(R.drawable.ic_avatar_defaul).
+                    transform(new RoundedTransformation(5, 5)).
+                    into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
+        }
+
+
         return rowView;
     }
 
     public class Holder {
+        public EmojiconTextView textMessage_left;
+        public EmojiconTextView textMessage_right;
+        public ImageView imgAvatarRight;
+        public ImageView imgAvatarLeft;
+        public LinearLayout ll_message_right;
+        public LinearLayout ll_message_left;
     }
 
     @Override
     public int getCount() {
-        return 10;
+        return mMessages.size();
     }
+
+    /****/
+    public void addMessages(ArrayList<ChatMessage> messages) {
+        addMessages(messages, true);
+    }
+
+    public void addMessages(ArrayList<ChatMessage> messages, boolean isGotoBottom) {
+        Rect corners = new Rect();
+        if (isGotoBottom == false) {
+            View view = mListView.getChildAt(0);
+            mListView.getLocalVisibleRect(corners);
+            Log.d("Hoa debug", "Top left " + corners.top + ", " + corners.left + ", " + corners.right
+                    + ", " + corners.bottom);
+        }
+        //update data in view
+        mMessages.addAll(0, messages);
+        notifyDataSetChanged();
+
+        if (isGotoBottom == false) {
+            mListView.setSelected(true);
+            mListView.setSelectionFromTop(messages.size(), corners.top);
+        } else {
+            mListView.setSelected(true);
+            mListView.setSelection(mMessages.size());
+        }
+    }
+
+    public void addMessage(ChatMessage message, boolean isGotoBottom) {
+        Rect corners = new Rect();
+        int topItem = 0;
+        if (isGotoBottom == false) {
+            topItem = mListView.getFirstVisiblePosition();
+            View view = mListView.getChildAt(topItem);
+            Log.d("Hoa debug", "mListView.getTop() = " + topItem);
+            mListView.getLocalVisibleRect(corners);
+            Log.d("Hoa debug", "Top left " + corners.top + ", " + corners.left + ", " + corners.right
+                    + ", " + corners.bottom);
+        }
+        //update data in view
+        if (message.isModified()) {
+            boolean isFinded = false;
+            for (ChatMessage chatMessage : mMessages) {
+                if (chatMessage.getId() == message.getId()) {
+                    chatMessage.setBody(message.getBody());
+                    isFinded = true;
+                    break;
+                }
+            }
+            if (!isFinded) {
+                mMessages.add(message);
+            }
+        } else {
+            mMessages.add(message);
+        }
+        Collections.sort(mMessages, new ChatMessage.MessageComparator());
+        notifyDataSetChanged();
+
+        if (isGotoBottom == false) {
+            mListView.setSelected(true);
+            mListView.setSelectionFromTop(topItem, corners.top);
+        } else {
+            mListView.setSelected(true);
+            mListView.setSelection(mMessages.size());
+        }
+    }
+
 
 }
