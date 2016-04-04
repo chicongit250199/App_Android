@@ -11,9 +11,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
@@ -26,13 +28,13 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
     private final int GROUPS_POSITION = 0;
     private final int MEMBERS_POSITION = 1;
     private Context context;
-    private ArrayList<String> parents;
-    private ArrayList<ArrayList<UserMe.OpeningChatroom>> childers;
+    private List<String> parents;
+    private List<List<OpeningChatRoom>> childers;
     private LayoutInflater inflater;
 
     public ListRecentsAdapter(Context context,
                               ArrayList<String> parents,
-                              ArrayList<ArrayList<UserMe.OpeningChatroom>> childers) {
+                              List<List<OpeningChatRoom>> childers) {
         this.context = context;
         this.parents = parents;
         this.childers = childers;
@@ -50,7 +52,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        ArrayList<UserMe.OpeningChatroom> parent = childers.get(groupPosition);
+        List<OpeningChatRoom> parent = childers.get(groupPosition);
         if (parent != null) {
             return parent.size();
         } else {
@@ -108,7 +110,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
             holder = (Holder) rowView.getTag();
         }
 
-        final UserMe.OpeningChatroom openingChatroom = (UserMe.OpeningChatroom) getChild(groupPosition, childPosition);
+        final OpeningChatRoom openingChatroom = (OpeningChatRoom) getChild(groupPosition, childPosition);
         if (groupPosition == 0) {
             for (Room room : ObjectManager.getInstance().getListRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {

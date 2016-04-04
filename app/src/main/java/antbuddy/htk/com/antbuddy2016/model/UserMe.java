@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import github.ankushsachdeva.emojicon.EmojiconHandler;
@@ -67,7 +68,7 @@ public class UserMe {
         this.chatUrl = chatUrl;
     }
 
-    public ArrayList<OpeningChatroom> getOpeningChatrooms() {
+    public List<OpeningChatRoom> getOpeningChatrooms() {
         String key = currentOrg.getKey();
         for (Org org : orgs) {
             if (org.getOrgKey().equals(key)) {
@@ -318,58 +319,6 @@ public class UserMe {
 
     }
 
-    public static class OpeningChatroom {
-        private final static String key_chatRoomKey = "chatRoomKey";
-        private final static String key__id = "_id";
-        private final static String key_lastTimeReadMessage = "lastTimeReadMessage";
-        private final static String key_headNavigatorStatus = "headNavigatorStatus";
-        private final static String key_lastReadMessage = "lastReadMessage";
-        private final static String key_isUnread = "isUnread";
-        private final static String key_isFavorite = "isFavorite";
-        private final static String key_isMuc = "isMuc";
-        private String chatRoomKey;
-        private String _id;
-        private double lastTimeReadMessage;
-        private String headNavigatorStatus;
-        private String lastReadMessage;
-        private Boolean isUnread;
-        private Boolean isFavorite;
-        private Boolean isMuc;
-    
-        public OpeningChatroom(JSONObject json) {
-            chatRoomKey = AndroidHelper.getString(json, key_chatRoomKey, null);
-            _id = AndroidHelper.getString(json, key__id, null);
-            lastTimeReadMessage = AndroidHelper.getInt(json, key_lastTimeReadMessage, 0);
-            headNavigatorStatus = AndroidHelper.getString(json, key_headNavigatorStatus, null);
-            lastReadMessage = AndroidHelper.getString(json, key_lastReadMessage, null);
-            isUnread = AndroidHelper.getBoolean(json, key_isUnread, false);
-            isFavorite = AndroidHelper.getBoolean(json, key_isFavorite, false);
-            isMuc = AndroidHelper.getBoolean(json, key_isMuc, false);
-        }
-
-        public static ArrayList<OpeningChatroom> parse(JSONArray jsonArray) {
-            ArrayList<OpeningChatroom> openingChatrooms = new ArrayList<>();
-            for(int i=0; i<jsonArray.length(); i++){
-                try {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    OpeningChatroom openingChatroom = new OpeningChatroom(json);
-                    openingChatrooms.add(openingChatroom);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return openingChatrooms;
-        }
-
-        public Boolean getIsMuc() {
-            return isMuc;
-        }
-
-        public String getChatRoomKey() {
-            return chatRoomKey;
-        }
-    }
-
     public static class Org {
 
         private final static String key_orgKey = "orgKey";
@@ -379,7 +328,7 @@ public class UserMe {
         private String orgKey;
         private String role;
         private String _id;
-        private ArrayList<OpeningChatroom> openingChatrooms = null;
+        private ArrayList<OpeningChatRoom> openingChatrooms = null;
 
         public Org(JSONObject json) {
             orgKey = AndroidHelper.getString(json, key_orgKey, null);
@@ -387,7 +336,7 @@ public class UserMe {
             _id = AndroidHelper.getString(json, key__id, null);
             if (json.has(key_openingChatrooms)) {
                 try {
-                    openingChatrooms = OpeningChatroom.parse(json.getJSONArray(key_openingChatrooms));
+                    openingChatrooms = OpeningChatRoom.parse(json.getJSONArray(key_openingChatrooms));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -410,8 +359,7 @@ public class UserMe {
         public String getOrgKey() {
             return orgKey;
         }
-
-        public ArrayList<OpeningChatroom> getOpeningChatrooms() {
+        public ArrayList<OpeningChatRoom> getOpeningChatrooms() {
             return openingChatrooms;
         }
     }
@@ -458,5 +406,23 @@ public class UserMe {
         public String getKey() {
             return key;
         }
+    }
+
+    public static List<OpeningChatRoom> getChatsOpening(UserMe me, boolean isGroup) {
+        List<OpeningChatRoom> listChatsOpening = new ArrayList<>();
+        if (me != null && me.getOpeningChatrooms() != null) {
+            for (OpeningChatRoom openingChatroom : me.getOpeningChatrooms()) {
+                if (isGroup) { // Room
+                    if (openingChatroom.getIsMuc()) {
+                        listChatsOpening.add(openingChatroom);
+                    }
+                } else {
+                    if (!openingChatroom.getIsMuc()) {
+                        listChatsOpening.add(openingChatroom);
+                    }
+                }
+            }
+        }
+        return listChatsOpening;
     }
 }

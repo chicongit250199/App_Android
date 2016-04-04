@@ -228,6 +228,10 @@ public class CenterActivity extends AppCompatActivity {
             public void onSuccess(List<Room> listRooms) {
                 LogHtk.i(LogHtk.API_TAG, "List Groups: " + listRooms.toString());
                 ObjectManager.getInstance().setListRooms(listRooms);
+
+                // Update Recent
+                RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
+                recentFragment.updateUI();
             }
 
             @Override

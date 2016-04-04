@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ListRecentsAdapter;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -22,10 +24,23 @@ import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
  * Created by thanhnguyen on 30/03/2016.
  */
 public class RecentFragment extends Fragment {
-    
+
+    List<List<OpeningChatRoom>> recentsData;
     private ExpandableListView list_recent;
     private ListRecentsAdapter listRecentsAdapter;
-    int steep = 0;
+
+    public enum ChatType {
+        Group(0), OneToOne(1);
+
+        private final int value;
+        private ChatType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
     
     @Nullable
     @Override
@@ -36,9 +51,9 @@ public class RecentFragment extends Fragment {
         groupNames.add("GROUPS");
         groupNames.add("MEMBERS");
 
-        final ArrayList<ArrayList<UserMe.OpeningChatroom>> recentsData = new ArrayList<>();
-        recentsData.add(new ArrayList<UserMe.OpeningChatroom>());
-        recentsData.add(new ArrayList<UserMe.OpeningChatroom>());
+        recentsData = new ArrayList<>();
+        recentsData.add(new ArrayList<OpeningChatRoom>());
+        recentsData.add(new ArrayList<OpeningChatRoom>());
 
         listRecentsAdapter = new ListRecentsAdapter(getContext(),groupNames, recentsData);
         list_recent.setAdapter(listRecentsAdapter);
@@ -78,5 +93,17 @@ public class RecentFragment extends Fragment {
         return rootView;
     }
 
+    protected void updateUI() {
 
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnListenerUserMe() {
+            @Override
+            public void onResponse(UserMe userMe) {
+                if (userMe.getOpeningChatrooms() != null) {
+                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(userMe, true));
+                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(userMe, false));
+                    listRecentsAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
 }
