@@ -9,7 +9,9 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionCreationListener;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SASLAuthentication;
@@ -199,6 +201,7 @@ public class AntbuddyXmppConnection {
 			// After connect successful
 			// set connectionXmpp
 			xmppConnection = connection;
+			xmppConnection.setConnected(true);
 
 			// Register: MessageListener, ConnectionListener, PresenceListener
 			addMessageListener();
@@ -431,7 +434,7 @@ public class AntbuddyXmppConnection {
 //        // GROUP
 //		if (messageChatting.getType().equals(ChatMessage.TYPE.groupchat.toString())) {
 //			msg = new Message(messageChatting.getReceiverJid(), Message.Type.groupchat);
-//		}
+//		}addConnectionCreationListener
 //
 //        // 1-1
 //        if (messageChatting.getType().equals(ChatMessage.TYPE.chat.toString())) {
@@ -688,7 +691,10 @@ public class AntbuddyXmppConnection {
      * Handle disconnect
      */
 	public void disconnect() {
+
 		if (xmppConnection != null) {
+			xmppConnection.setConnected(false);
+
 			if (mConnectionListener != null) {
 				xmppConnection.removeConnectionListener(mConnectionListener);
 			}
@@ -708,6 +714,8 @@ public class AntbuddyXmppConnection {
 			if (presenceListener != null) {
 				xmppConnection.removePacketListener(presenceListener);
 			}
+
+			xmppConnection.disconnect();
 
 			xmppConnection = null;
 		}

@@ -58,11 +58,7 @@
             android:gravity="center"
             android:textSize="25dp"
             android:paddingBottom="10dp" />
-
-
     </RelativeLayout>
-
-
 
     <Button
         android:layout_width="fill_parent"

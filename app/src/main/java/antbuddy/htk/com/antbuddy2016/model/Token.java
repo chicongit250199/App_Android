@@ -6,6 +6,13 @@ package antbuddy.htk.com.antbuddy2016.model;
 public class Token {
     String token;
     String expires;
+    String message;
+
+    public Token() {
+        token = "";
+        expires = "";
+        message = "";
+    }
 
     public String getToken() {
         return token;
@@ -21,5 +28,13 @@ public class Token {
 
     public void setExpires(String expires) {
         this.expires = expires;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

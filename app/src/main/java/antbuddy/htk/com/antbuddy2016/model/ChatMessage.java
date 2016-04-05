@@ -325,6 +325,10 @@ public class ChatMessage implements Parcelable {
 
     private static Pattern maskGitlab  = Pattern.compile("\\[([^\\|]+)\\|+([^\\|]+)\\](.*)");
 
+    public FileAntBuddy getFileAntBuddy() {
+        return fileAntBuddy;
+    }
+
     public void setExpandBody(String expandBody)
     {
         if(expandBody == null) return;

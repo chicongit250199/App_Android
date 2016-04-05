@@ -26,7 +26,7 @@ public interface API {
 
     @FormUrlEncoded
     @POST("/users/session/")
-    Call<Token> getToken(@Field(RequestKey.email)String  email, @Field(RequestKey.password)String  password);
+    Call<Token> GETLogin(@Field(RequestKey.email)String  email, @Field(RequestKey.password)String  password);
 
     @GET("/api/organizations/")
     Call<List<Organization>> GETOrganizations(@Header("authorization") String token);

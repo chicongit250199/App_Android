@@ -4,16 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/walkthough_background">
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar_Login"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone"
-        android:indeterminate="false"
-        android:layout_centerInParent="true" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -39,18 +29,22 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText7"
+            android:id="@+id/etEmail"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
-            android:hint="EMAIL"/>
+            android:hint="EMAIL"
+            android:singleLine="true"
+            android:lines="1"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/editText8"
-            android:hint="PASSWORD"/>
+            android:id="@+id/etPassword"
+            android:hint="PASSWORD"
+            android:singleLine="true"
+            android:lines="1"/>
 
 
         <Button
@@ -65,6 +59,46 @@
             android:contextClickable="true"
             android:layout_marginTop="20dp" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal">
+
+            <CheckBox
+                android:id="@+id/cbRememberPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remember password"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal">
+
+            <CheckBox
+                android:id="@+id/cbShowPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show password"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -72,12 +106,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forgot password"
-        android:id="@+id/button"
+        android:id="@+id/btnForgotPassword"
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
         android:background="#00000000"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true" />
+
 
     <TextView
         android:layout_width="380dp"
@@ -91,5 +126,15 @@
         android:layout_alignParentStart="true"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar_Login"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:indeterminate="false"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

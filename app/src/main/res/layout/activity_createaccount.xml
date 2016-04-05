@@ -42,19 +42,25 @@
             android:ems="10"
             android:id="@+id/editText"
             android:layout_gravity="center_horizontal"
-            android:hint="USERNAME" />
+            android:hint="USERNAME"
+            android:singleLine="true"
+            android:lines="1"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText2"
-            android:hint="FULL NAME" />
+            android:hint="FULL NAME"
+            android:singleLine="true"
+            android:lines="1" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText3"
-            android:hint="EMAIL" />
+            android:hint="EMAIL"
+            android:singleLine="true"
+            android:lines="1" />
 
         <EditText
             android:layout_width="match_parent"
@@ -62,13 +68,17 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/editText4"
-            android:hint="PASSWORD" />
+            android:hint="PASSWORD"
+            android:singleLine="true"
+            android:lines="1" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText5"
-            android:hint="COMPANY NAME" />
+            android:hint="COMPANY NAME"
+            android:singleLine="true"
+            android:lines="1" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -79,7 +89,9 @@
                 android:layout_width="233dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText6"
-                android:hint="COMPANY DOMAIN" />
+                android:hint="COMPANY DOMAIN"
+                android:singleLine="true"
+                android:lines="1" />
 
             <TextView
                 android:layout_width="match_parent"

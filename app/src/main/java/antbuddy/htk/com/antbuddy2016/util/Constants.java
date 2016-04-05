@@ -8,6 +8,9 @@ public class Constants {
     // 2: Create new account status
     public static final String LOGIN_TYPE = "LOGIN_TYPE";
 
+    public static String email = "";
+    public static String password = "";
+
     // Tam thoi cho token static
     public static String token = "";
     public static String domain = "";

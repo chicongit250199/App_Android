@@ -25,7 +25,6 @@ public class CreateAccountActivity extends Activity {
         setContentView(R.layout.activity_createaccount);
         initViews();
 
-
         AndroidHelper.warningInternetConnection(this);
     }
 
@@ -35,10 +34,8 @@ public class CreateAccountActivity extends Activity {
         accept_CreateAccount_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // Request API
+                AndroidHelper.showToast("This feature will be available soon!", CreateAccountActivity.this);
                 requestAPI();
-
             }
         });
     }
@@ -48,58 +45,5 @@ public class CreateAccountActivity extends Activity {
             AndroidHelper.showToast("No network connection available!", CreateAccountActivity.this);
             return;
         }
-
-        //antbuddytesting1@gmail.com/111qqq111
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-
-//                // Check su ton tai Domain
-//                https://antbuddy.com/api/organizations/checkexist POST
-//                POST /api/organizations/checkexist
-//                Posting Data:
-//                {
-//                    name: "htk inc"
-//                }
-//
-//                /api/users/create
-
-
-
-
-//                try {
-//
-//                    // Request
-//                    AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
-//                    AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
-//
-//                    LoginAPI.POSTLogin("antbuddytesting1@gmail.com", "111qqq111", new HttpRequestReceiver() {
-//
-//                        @Override
-//                        public void onSuccess(String result) {
-//                            Constants.token = "Bearer " + ParseJson.getStringWithKey(result, JSONKey.token);
-//                            Log.d("DaiThanh", "Thanh Cong/ Token: " + Constants.token);
-//
-//                            Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
-//                            startActivity(myIntent);
-//                            finish();
-//
-//                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
-//                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//                            AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
-//                            AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
-//
-//                            AndroidHelper.showToast("Please try again!", LoginActivity.this);
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-            }
-        }).start();
     }
 }

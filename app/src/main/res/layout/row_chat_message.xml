@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_chat"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
-    android:paddingBottom="5dp"
-    android:paddingTop="0dp"
-    android:clickable="true"
-    android:background="@drawable/bg_chat"
-    android:orientation="vertical" >
+    android:paddingTop="0dp">
 
     <LinearLayout
         android:id="@+id/ll_message_left"
@@ -43,18 +43,34 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_message"
             android:orientation="vertical"
             >
+
+            <RelativeLayout
+                android:id="@+id/rl_message_image_left"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp">
+
+                <ImageView
+                    android:id="@+id/imgMessage_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    />
+
+            </RelativeLayout>
+
             <github.ankushsachdeva.emojicon.EmojiconTextView
                 android:id="@+id/textMessage_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ff000000"
-                android:textSize="14sp"
                 android:autoLink="web"
-                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong??? cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"/>
-                android:freezesText="true" />
+                android:background="@drawable/bg_message"
+                android:gravity="center|left"
+                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
+                android:textColor="#ff000000"
+                android:textSize="14sp"/>
+            android:freezesText="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -69,7 +85,7 @@
 
     <LinearLayout
         android:id="@+id/ll_message_right"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top|right"
         android:orientation="horizontal">
@@ -77,31 +93,68 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
             android:layout_weight="1"
+
             android:gravity="right"
             android:orientation="vertical"
             >
+
             <LinearLayout
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    >
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:gravity="right"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_message_image_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp">
+
+                        <ImageView
+                            android:id="@+id/imgMessage_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="10dp"
+                            />
+
+                    </RelativeLayout>
+
+                    <github.ankushsachdeva.emojicon.EmojiconTextView
+                        android:id="@+id/textMessage_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:background="@drawable/bg_message_right"
+                        android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
+                        android:textColor="#ff000000"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout><![CDATA[
 
 
-            <github.ankushsachdeva.emojicon.EmojiconTextView
-                android:id="@+id/textMessage_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ff000000"
-                android:textSize="14sp"
-                android:autoLink="web"
-                android:background="@drawable/bg_message_right"
-                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"/>
+
+
+
+
             android:freezesText="true" />
 
+
+
+        ]]>
         </LinearLayout>
 
         <LinearLayout
@@ -110,8 +163,8 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="1dp"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"/>
 
@@ -127,4 +180,5 @@
                 android:src="@drawable/ic_avatar_defaul"/>
         </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

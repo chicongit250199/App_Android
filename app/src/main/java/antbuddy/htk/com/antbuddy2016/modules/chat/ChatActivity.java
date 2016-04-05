@@ -218,12 +218,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Hoa debug","ChatActivity:onReceive:  = messageReceiver");
             try {
                 ChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
-                Log.i("Hoa debug","ChatActivity:onReceive:  = chatMessage "+chatMessage.getBody());
                 if (key.equals(chatMessage.getFromKey())) {
-                    mChatAdapter.addMessage(chatMessage, isFister);
+                    mChatAdapter.addMessage(chatMessage, true);
                     isFister = false;
                 }
             } catch (Exception e) {

@@ -46,7 +46,8 @@
             android:src="@drawable/bt_attachment" />
 
         <github.ankushsachdeva.emojicon.EmojiconEditText
-            android:padding="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:id="@+id/text_send"
             android:background="@drawable/bg_rounded_corners"
             android:layout_width="0dip"
@@ -66,13 +67,20 @@
         </github.ankushsachdeva.emojicon.EmojiconEditText>
 
 
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send"
-            android:background="@null"
+        <LinearLayout
+            android:layout_width="80dp"
+            android:clickable="true"
             android:onClick="onClick"
-            android:id="@+id/btn_send"/>
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/send"
+                android:textColor="#0000ff"
+                android:textStyle="bold"
+                android:id="@+id/textView5"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

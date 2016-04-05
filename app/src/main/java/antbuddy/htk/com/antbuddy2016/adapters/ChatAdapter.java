@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -56,6 +57,11 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             holder.textMessage_right = (EmojiconTextView) rowView.findViewById(R.id.textMessage_right);
             holder.imgAvatarLeft = (ImageView) rowView.findViewById(R.id.imgAvatarLeft);
             holder.imgAvatarRight = (ImageView) rowView.findViewById(R.id.imgAvatarRight);
+            holder.imgMessage_left = (ImageView) rowView.findViewById(R.id.imgMessage_left);
+            holder.imgMessage_right = (ImageView) rowView.findViewById(R.id.imgMessage_right);
+            holder.rl_message_image_right = (RelativeLayout) rowView.findViewById(R.id.rl_message_image_right);
+            holder.rl_message_image_left = (RelativeLayout) rowView.findViewById(R.id.rl_message_image_left);
+
             rowView.setTag(holder);
         } else {
             rowView = convertView;
@@ -69,15 +75,34 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         Log.i("Hoa debug", "ChatMessage:ChatMessage:  => senderKey " + senderKey);
         Log.i("Hoa debug", "ChatMessage:ChatMessage:  => message.getSubtype() " + message.getSubtype());
         boolean isMe = TextUtils.isEmpty(message.getSubtype()) && senderKey.equals(keyMe);
+        Boolean isFile = message.getFileAntBuddy() != null && message.getFileAntBuddy().getMimeType().startsWith("image");
 
         if (isMe) {
             holder.ll_message_left.setVisibility(View.GONE);
             holder.ll_message_right.setVisibility(View.VISIBLE);
-            holder.textMessage_right.setText(message.getBody());
+
+            holder.textMessage_right.setVisibility(isFile?View.GONE:View.VISIBLE);
+            holder.rl_message_image_right.setVisibility(!isFile?View.GONE:View.VISIBLE);
+            if (!isFile) {
+                holder.textMessage_right.setText(message.getBody());
+            } else {
+                Glide.with(ctx)
+                        .load(message.getFileAntBuddy().getThumbnailUrl())
+                        .into( holder.imgMessage_right);
+            }
         } else {
             holder.ll_message_left.setVisibility(View.VISIBLE);
             holder.ll_message_right.setVisibility(View.GONE);
-            holder.textMessage_left.setText(message.getBody());
+
+            holder.textMessage_left.setVisibility(isFile?View.GONE:View.VISIBLE);
+            holder.rl_message_image_left.setVisibility(!isFile?View.GONE:View.VISIBLE);
+            if (!isFile) {
+                holder.textMessage_left.setText(message.getBody());
+            } else {
+                Glide.with(ctx)
+                        .load(message.getFileAntBuddy().getThumbnailUrl())
+                        .into( holder.imgMessage_left);
+            }
         }
 
         if (!TextUtils.isEmpty(message.getSubtype()) && message.getSubtype().equals("bot-gitlab")) {
@@ -114,6 +139,10 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         public ImageView imgAvatarLeft;
         public LinearLayout ll_message_right;
         public LinearLayout ll_message_left;
+        public ImageView imgMessage_left;
+        public ImageView imgMessage_right;
+        public RelativeLayout rl_message_image_right;
+        public RelativeLayout rl_message_image_left;
     }
 
     @Override
