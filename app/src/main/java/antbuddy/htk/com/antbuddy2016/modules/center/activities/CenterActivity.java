@@ -15,11 +15,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -27,7 +22,6 @@ import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
-import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.customview.TabBarView;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
@@ -41,12 +35,7 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import antbuddy.htk.com.antbuddy2016.modules.center.activities.RecentFragment;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -232,6 +221,9 @@ public class CenterActivity extends AppCompatActivity {
                 // Update Recent
                 RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
                 recentFragment.updateUI();
+
+//                RecentFragment memberFragment = (RecentFragment) mTabFragments.get(1);
+//                memberFragment.updateUI();
             }
 
             @Override

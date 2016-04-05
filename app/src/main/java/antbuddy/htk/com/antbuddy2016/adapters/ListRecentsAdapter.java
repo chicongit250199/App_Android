@@ -8,6 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,7 +20,10 @@ import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 3/31/2016.
@@ -82,7 +86,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
     
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        View v = null;
+        View v;
         if (convertView != null)
             v = convertView;
         else
@@ -96,7 +100,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        View rowView = null;
+        View rowView;
         final Holder holder;
 
         if (convertView == null ){
@@ -104,6 +108,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
             rowView = inflater.inflate(R.layout.row_member, parent, false);
             holder.imgAvatar = (ImageView) rowView.findViewById(R.id.imgAvatar);
             holder.tv_user_name = (TextView) rowView.findViewById(R.id.tv_user_name);
+            holder.ic_status = (ImageView) rowView.findViewById(R.id.ic_status);
             rowView.setTag(holder);
         } else {
             rowView = convertView;
@@ -112,23 +117,34 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
 
         final OpeningChatRoom openingChatroom = (OpeningChatRoom) getChild(groupPosition, childPosition);
         if (groupPosition == 0) {
+            holder.ic_status.setVisibility(View.GONE);
             for (Room room : ObjectManager.getInstance().getListRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
-                        Picasso.with(context).load(R.drawable.ic_global);
+                        Glide.with(context).load(R.drawable.ic_global).override(30, 30).into(holder.imgAvatar);
                     } else {
-                        Picasso.with(context).load(R.drawable.ic_lock);
+                        Glide.with(context).load(R.drawable.ic_lock).override(30, 30).into(holder.imgAvatar);
                     }
                     holder.tv_user_name.setText(room.getName());
                     break;
                 }
             }
         } else {
+            holder.ic_status.setVisibility(View.VISIBLE);
             for (User user : ObjectManager.getInstance().getListUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
-                    Picasso.with(context).load(user.getAvatar()).
-                            resize(60, 60).error(R.drawable.ic_avatar_defaul).transform(new RoundedTransformation(5, 5)).
-                            into(holder.imgAvatar);
+                    LogHtk.d(LogHtk.Test1, "user = " + user.getUsername());
+//                    Picasso.with(context).load(user.getAvatar()).
+//                            resize(60, 60).error(R.drawable.ic_avatar_defaul).transform(new RoundedTransformation(5, 5)).
+//                            into(holder.imgAvatar);
+
+                    Glide.with(context)
+                            .load(user.getAvatar())
+                            .override(60, 60)
+                            .placeholder(R.drawable.ic_avatar_defaul)
+                            .bitmapTransform(new CropCircleTransformation(context))
+                            .into(holder.imgAvatar);
+
                     holder.tv_user_name.setText(user.getName());
                     break;
                 }
@@ -140,6 +156,7 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
     public class Holder {
         public ImageView imgAvatar;
         public TextView tv_user_name;
+        public ImageView ic_status;
     }
 
     public boolean hasStableIds() {

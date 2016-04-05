@@ -8,8 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -18,11 +20,10 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.R;
 
@@ -185,5 +186,48 @@ public class AndroidHelper {
         } catch (JSONException e) {
             return iDefault;
         }
+    }
+    public static String renID() {
+        String md5OfTime = md5("" + NationalTime.getlongTime());
+        Matcher m = Pattern.compile("(.{5})(.{4})(.{4})(.{4})(.{12})").matcher(md5OfTime);
+        while (m.find()) {
+            return String.format("%s-%s-%s-%s-%s", m.group(1), m.group(2), m.group(3), m.group(4), m.group(5));
+        }
+        return md5OfTime;
+    }
+
+    public static final String md5(final String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++) {
+                String h = Integer.toHexString(0xFF & messageDigest[i]);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static void showLogSizeDevice(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE); // the results will be higher than using the activity context object or the getWindowManager() shortcut
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+
+        LogHtk.i(LogHtk.AntbuddyApplication, "screenWidth" + screenWidth);
+        LogHtk.i(LogHtk.AntbuddyApplication, "screenHeight" + screenHeight);
     }
 }

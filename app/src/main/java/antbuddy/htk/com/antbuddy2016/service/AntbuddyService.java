@@ -7,6 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
+import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 public class AntbuddyService extends Service {
@@ -133,6 +134,11 @@ public class AntbuddyService extends Service {
 //			return "Error";
 //		}
 
+	}
+
+	public void sendMessageOut(ChatMessage chatMessage) {
+		mXmppConnection = AntbuddyXmppConnection.getInstance();
+		mXmppConnection.sendMessageOut(chatMessage);
 	}
 
 	public void resetXMPP() {

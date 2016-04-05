@@ -18,6 +18,7 @@ import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -51,13 +52,8 @@ public class MembersFragment extends Fragment {
                 AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);
             }
         });
-        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
-            @Override
-            public void onResponse(List<User> listUsers) {
-//                mUserAdapter.notifyDataSetChanged();
-                mUserAdapter.filter(searchView.getQuery().toString());
-            }
-        });
+
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -67,11 +63,24 @@ public class MembersFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mUserAdapter.filter(newText);
+                mUserAdapter.filter(newText, ObjectManager.getInstance().getListUsers());
                 return true;
             }
         });
 
+        updateUI();
+
         return rootView;
     }
+
+    protected void updateUI() {
+        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
+            @Override
+            public void onResponse(List<User> listUsers) {
+                LogHtk.i(LogHtk.Test1, "listUsers = " + listUsers.size());
+                mUserAdapter.filter(searchView.getQuery().toString(), listUsers);
+            }
+        });
+    }
+
 }

@@ -51,8 +51,17 @@ public class ObjectManager {
     }
 
     public void clear() {
-        listRooms.clear();
-        listUsers.clear();
+        if (userMe != null) {
+            userMe.getOpeningChatrooms().clear();
+        }
+
+        if (listRooms != null) {
+            listRooms.clear();
+        }
+
+        if (listUsers != null) {
+            listUsers.clear();
+        }
     }
 
     public UserMe getUserMe() {
@@ -77,39 +86,26 @@ public class ObjectManager {
     }
 
     public void setOnListenerUser(Class<?> cls, OnListenerUser listener) {
-        new Exception().printStackTrace();
-        LogHtk.d(LogHtk.API_TAG, "Co goi ko?");
         mListenerUser.put(cls.getName(), listener);
-        LogHtk.d(LogHtk.API_TAG, "Co goi ko? listUsers.size() : " + listUsers.size());
         if (listUsers.size() == 0) {
-            String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/users/";
-            JsonArrayRequest req = new JsonArrayRequest(API_USERS_URL,
-                    new Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            LogHtk.d(LogHtk.API_TAG, "1111 " + response.length());
-                            listUsers.addAll(User.parseArray(response));
-                            for (String key: mListenerUser.keySet()) {
-                                if(mListenerUser.get(key) != null) {
-                                    mListenerUser.get(key).onResponse(listUsers);
-                                }
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            LogHtk.d(LogHtk.API_TAG, "222 " + error.toString());
-                        }
-                    }) {
+
+            LoginAPI.GETUsers(new HttpRequestReceiver<List<User>>() {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("authorization", Constants.token);
-                    return params;
+                public void onSuccess(List<User> _listUsers) {
+                    listUsers.addAll(_listUsers);
+                    for (String key: mListenerUser.keySet()) {
+                        if(mListenerUser.get(key) != null) {
+                            mListenerUser.get(key).onResponse(listUsers);
+                        }
+                    }
                 }
-            };
-            AntbuddyApplication.getInstance().addToRequestQueue(req);
+
+                @Override
+                public void onError(String error) {
+                    LogHtk.d(LogHtk.API_TAG, "222 " + error.toString());
+                }
+            });
+
         }else {
             LogHtk.d(LogHtk.API_TAG, "333 ");
             listener.onResponse(listUsers);

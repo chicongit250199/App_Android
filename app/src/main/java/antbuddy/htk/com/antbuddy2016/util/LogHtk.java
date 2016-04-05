@@ -14,14 +14,23 @@ public class LogHtk {
     public static String XMPP_TAG = "XMPP";
     public static String API_TAG = "API";
 
+    public static String Test1 = "Test1";
+    public static String Test2 = "Test2";
+    public static String Test3 = "Test3";
+    public static String AntbuddyApplication = "AntbuddyApplication";
+
+
     private static String[] tags = {
             DomainActivity.TAG_THISCLASS,
             CenterActivity.TAG_THISCLASS,
-            AntbuddyApplication.TAG,
             "asdf",
             SERVICE_TAG,
             XMPP_TAG,
             API_TAG,
+            Test1,
+            Test2,
+            Test3,
+            AntbuddyApplication,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

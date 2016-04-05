@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/walkthough_background"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageView14"
+        android:layout_gravity="center"
+        android:background="@drawable/logo"
+        android:layout_marginTop="10dp" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText9"
         android:layout_gravity="center_horizontal"
-        android:text="logo" />
+        android:text="AntBuddy"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="text"
-        android:id="@+id/textView4"
-        android:layout_gravity="center_horizontal" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="237dp"
+        android:layout_weight="0.63">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text"
+            android:id="@+id/textView4"
+            android:layout_gravity="center_horizontal" />
+
+
+    </RelativeLayout>
+
+
 
     <Button
         android:layout_width="wrap_content"

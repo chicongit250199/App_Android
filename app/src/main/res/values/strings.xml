@@ -2,4 +2,9 @@
     <string name="app_name">Antbuddy2016</string>
     <string name="type_message">Type a message...</string>
     <string name="send">Send</string>
+
+    <string name="map_homepage">map homepage</string>
+
+    <string name="sign_up_free">Sign up free</string>
+    <string name="login">Login</string>
 </resources>

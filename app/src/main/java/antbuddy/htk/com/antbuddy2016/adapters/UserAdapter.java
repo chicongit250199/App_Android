@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -25,15 +27,13 @@ import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
 public class UserAdapter extends ArrayAdapter<User> {
     private final Context ctx;
     private final ListView mGridView;
-    private List<User> listUsers;
     private ArrayList<User> listFilterUsers = new ArrayList<>();
 
     public UserAdapter(Context context, ListView listView, List<User> listUsers) {
         super(context, R.layout.row_member);
         this.ctx = context;
         mGridView = listView;
-        this.listUsers = listUsers;
-        filter("");
+        filter("", new ArrayList<User>());
     }
 
     @Override
@@ -55,11 +55,9 @@ public class UserAdapter extends ArrayAdapter<User> {
         }
 
         User user = listFilterUsers.get(position);
-//        Picasso.with(ctx).load(user.getAvatar()).
-//                resize(60, 60).
-//                error(R.drawable.ic_avatar_defaul).
-//                transform(new RoundedTransformation(5, 5)).
-//                into(holder.imgAvatar);
+        Glide.with(ctx).load(user.getAvatar()).override(60, 60).
+                bitmapTransform(new CropCircleTransformation(ctx))
+                .into(holder.imgAvatar);
         holder.tv_user_name.setText(user.getName());
         return rowView;
     }
@@ -75,7 +73,7 @@ public class UserAdapter extends ArrayAdapter<User> {
     }
 
     // Filter Class
-    public void filter(String charText) {
+    public void filter(String charText, List<User> listUsers) {
         charText = charText.toLowerCase(Locale.getDefault());
         listFilterUsers.clear();
         if (charText.length() == 0) {

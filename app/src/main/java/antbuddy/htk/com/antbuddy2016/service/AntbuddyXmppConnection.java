@@ -30,10 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
@@ -379,9 +381,43 @@ public class AntbuddyXmppConnection {
 	public void sendMessageOut(ChatMessage chatMessage) {
 		if(!xmppConnection.isConnected()) return;
 		Message msg = null;
-//		if (chatMessage.getType().equals(ChatMessage.TYPE.groupchat.toString())) {
-//			msg = new Message(chatMessage.getReceiverJid(), Message.Type.groupchat);
-//		}
+		UserMe userMe = ObjectManager.getInstance().getUserMe();
+		if (userMe == null) {
+			return;
+		}
+
+		UserMe.Org currentOrg = userMe.getCurrentOrg();
+		if (currentOrg == null) {
+			return;
+		}
+		String orgKey = currentOrg.getOrgKey();
+
+		final String userMeKey = userMe.getKey();
+		final String chatMucDomain = userMe.getChatMucDomain();
+		String receiverJid;
+		Message.Type type;
+		if(chatMessage.getType().equals("groupchat")) {
+			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, chatMucDomain);
+			LogHtk.i(LogHtk.Test1, "receiverJid =" + receiverJid);
+			type = Message.Type.groupchat;
+		} else {
+			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, Constants.DOMAIN_XMPP);
+			type = Message.Type.chat;
+		}
+
+		msg = new Message(receiverJid, type);
+		msg.setBody(chatMessage.getBody());
+		msg.setWith(chatMessage.getReceiverKey());
+		xmppConnection.sendPacket(msg);
+
+		LoginAPI.newMessageToHistory(chatMessage);
+		//fix not update in other device
+		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
+			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, Constants.DOMAIN_XMPP);
+			msg.setTo(mReceiverJid);
+			xmppConnection.sendPacket(msg);
+		}
+
 	}
 
 	/**

@@ -19,6 +19,7 @@ import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -45,6 +46,8 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        LogHtk.d(LogHtk.Test1, "onCreateView");
+
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
         ArrayList<String> groupNames = new ArrayList<>();
@@ -90,7 +93,16 @@ public class RecentFragment extends Fragment {
                 return true;
             }
         });
+
+        updateUI();
+
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        LogHtk.d(LogHtk.Test1, "onResume");
+        super.onResume();
     }
 
     protected void updateUI() {

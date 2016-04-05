@@ -60,6 +60,7 @@ public class ChatMessage implements Parcelable {
     private final static String key_subtype = "subtype";
     private final static String key_type = "type";
     private final static String key_time = "time";
+    private final static String key_file = "file";
 
 
     public final static String info_lastTime = "info_lastTime";
@@ -70,6 +71,7 @@ public class ChatMessage implements Parcelable {
     private String senderKey;
     private String fromKey;
     private String receiverKey;
+    private FileAntBuddy fileAntBuddy;
 
     /***************************/
     public enum TYPE {
@@ -105,6 +107,10 @@ public class ChatMessage implements Parcelable {
 
     public String getSenderKey() {
         return senderKey;
+    }
+
+    public String getFromKey() {
+        return fromKey;
     }
 
     public String getSubtype() {
@@ -191,6 +197,7 @@ public class ChatMessage implements Parcelable {
         outParcel.writeString(subtype);
         outParcel.writeString(type);
         outParcel.writeString(s_datetime);
+        outParcel.writeParcelable(fileAntBuddy, paramInt);
     }
 
     public static final Creator<ChatMessage> CREATOR = new Creator<ChatMessage>() {
@@ -252,25 +259,6 @@ public class ChatMessage implements Parcelable {
         this.body = body;
     }
 
-    public FileAntBuddy getFileAntBuddy() {
-        FileAntBuddy fileAntBuddy = null;
-
-        if(!TextUtils.isEmpty(file_name))
-            fileAntBuddy = new FileAntBuddy(file_name,file_size,file_Url,file_mimeType,file_thumbnailUrl);
-
-        return fileAntBuddy;
-    }
-
-    public void setFileAntBuddy(FileAntBuddy fileAntBuddy) {
-        if(fileAntBuddy == null)
-            return;
-        this.file_name = fileAntBuddy.getName();
-        this.file_size = fileAntBuddy.getSize();
-        this.file_Url = fileAntBuddy.getFileUrl();
-        this.file_mimeType = fileAntBuddy.getMimeType();
-        this.file_thumbnailUrl = fileAntBuddy.getThumbnailUrl();
-    }
-
     public String getFromId() {
         return fromId;
     }
@@ -278,12 +266,6 @@ public class ChatMessage implements Parcelable {
     public void setFromId(String fromId) {
         this.fromId = fromId;
     }
-
-//    public String getReceiverJid() {
-//        UserMe userMe = ObjectManager.getInstance().getUserMe().getCu
-//
-//        return String.format("%s_%s@%s",receiverKey,);
-//    }
 
     public void setReceiverJid(String receiverJid) {
         this.receiverJid = receiverJid;
@@ -372,7 +354,7 @@ public class ChatMessage implements Parcelable {
                 JSONObject json = jsonArray.getJSONObject(i);
                 String idMessage = AndroidHelper.getString(json, key_id, null);
                 String s_datetime =  AndroidHelper.getString(json, key_time, null);
-                if(!idMessage.isEmpty()) {
+                if(!TextUtils.isEmpty(idMessage)) {
                     ChatMessage chatMessage = new ChatMessage(json);
                     messages.add(chatMessage);
                     //get last time in list
@@ -398,6 +380,13 @@ public class ChatMessage implements Parcelable {
         subtype = AndroidHelper.getString(json, key_subtype, null);
         type = AndroidHelper.getString(json, key_type, null);
         s_datetime =  AndroidHelper.getString(json, key_time, null);
+        if (json.has(key_file)) {
+            try {
+                fileAntBuddy = new FileAntBuddy(json.getJSONObject(key_file));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public ChatMessage(Parcel in) {
@@ -411,6 +400,7 @@ public class ChatMessage implements Parcelable {
         subtype = in.readString();
         type = in.readString();
         s_datetime = in.readString();
+        fileAntBuddy = (FileAntBuddy)in.readParcelable(FileAntBuddy.class.getClassLoader());
     }
     public ChatMessage(Message message) {
         idMessage = message.getPacketID();
@@ -419,16 +409,22 @@ public class ChatMessage implements Parcelable {
             org = m.group(2);
             receiverKey = m.group(1);
         }
-        Log.i("Hoa debug", "ChatMessage:ChatMessage:  = message.getFrom() " + message.getFrom());
-        Log.i("Hoa debug", "ChatMessage:ChatMessage:  = message.getTo() " + message.getTo());
-        Matcher m2 = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getFrom());
-        while (m2.find()) {
-            senderKey = m2.group(1);
+
+        String params[] = message.getFrom().split("/");
+        UserMe userMe = ObjectManager.getInstance().getUserMe();
+        if (params[0].endsWith(userMe.getChatMucDomain())){
+            fromKey =  params[0].split("_")[0];
+            senderKey = params[1].split("_")[0];
+        } else {
+            senderKey = fromKey =  params[0].split("_")[0];
         }
-        Log.i("Hoa debug", "ChatMessage:ChatMessage:  = senderKey " + senderKey);
+
+        if (senderKey.endsWith(receiverKey) && !TextUtils.isEmpty(message.getWith())) {
+            fromKey = message.getWith();
+        }
 
         if(message.getFile() != null) {
-            setFileAntBuddy(new FileAntBuddy(message.getFile().getName(), message.getFile().getSize(), message.getFile().getFileUrl(), message.getFile().getMimeType(), message.getFile().getThumbnailUrl()));
+            fileAntBuddy = new FileAntBuddy(message.getFile());
             body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
         } else {
             body = message.getBody();
@@ -444,7 +440,23 @@ public class ChatMessage implements Parcelable {
         isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
     }
 
+    public ChatMessage(String receiverKey, String body, Boolean isMuc) {
+        UserMe userMe = ObjectManager.getInstance().getUserMe();
+        if (userMe == null) {
+            return;
+        }
 
+        UserMe.Org currentOrg = userMe.getCurrentOrg();
+        if (currentOrg == null) {
+            return;
+        }
+        type = (isMuc? "groupchat": "chat");
+        org = currentOrg.getOrgKey();
+        senderKey = userMe.getKey();
+        this.receiverKey = receiverKey;
+        fromKey = senderKey;
+        this.body = body;
+    }
 
     public static class MessageComparator implements Comparator<ChatMessage>
     {

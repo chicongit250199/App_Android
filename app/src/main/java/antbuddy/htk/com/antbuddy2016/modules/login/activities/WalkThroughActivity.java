@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.WalkThroughAdapder;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
@@ -26,6 +28,12 @@ public class WalkThroughActivity extends AppCompatActivity {
     private ViewPager paper;
     private List<Fragment> listData;
 
+    private RadioButton radioButton;
+    private RadioButton radioButton2;
+    private RadioButton radioButton3;
+    private RadioButton radioButton4;
+    private RadioGroup radioGroup;
+
     // Buttons
     private Button signUpFree_Button;
     private Button login_Button;
@@ -34,23 +42,52 @@ public class WalkThroughActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.welcome_activity);
+        setContentView(R.layout.activity_walkthrough);
 
         initViews();
 
         listData = new ArrayList<>();
         listData = new ArrayList<>();
 
-        listData.add(new ItemFragment().newInstance(1));
-        listData.add(new ItemFragment().newInstance(2));
-        listData.add(new ItemFragment().newInstance(3));
-        listData.add(new ItemFragment().newInstance(4));
+        listData.add(new WalkThroughFragment1());
+        listData.add(new WalkThroughFragment2());
+        listData.add(new WalkThroughFragment3());
+        listData.add(new WalkThroughFragment4());
 
         WalkThroughAdapder adapder = new WalkThroughAdapder(getSupportFragmentManager(), listData);
         paper = (ViewPager) findViewById(R.id.viewpager);
 
-        final RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radiogroup);
-        paper.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        radioGroup = (RadioGroup)findViewById(R.id.radiogroup);
+        radioButton = (RadioButton) findViewById(R.id.radioButton);
+        radioButton2 = (RadioButton) findViewById(R.id.radioButton2);
+        radioButton3 = (RadioButton) findViewById(R.id.radioButton3);
+        radioButton4 = (RadioButton) findViewById(R.id.radioButton4);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                if (checkedId == radioButton.getId()) {
+                    LogHtk.d(LogHtk.Test2, "-->Xuc 1");
+                }
+
+                if (checkedId == radioButton2.getId()) {
+                    LogHtk.d(LogHtk.Test2, "-->Xuc 2");
+                }
+
+                if (checkedId == radioButton3.getId()) {
+                    LogHtk.d(LogHtk.Test2, "-->Xuc 3");
+                }
+
+                if (checkedId == radioButton4.getId()) {
+                    LogHtk.d(LogHtk.Test2, "-->Xuc 4");
+                }
+            }
+        });
+
+
+        paper.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -58,25 +95,26 @@ public class WalkThroughActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                LogHtk.i(LogHtk.Test2, "----?onPageSelected + " + position);
                 switch (position) {
                     case 0:
-                        radioGroup.check(R.id.radioButton);
+                        radioButton.setChecked(true);
                         break;
                     case 1:
-                        radioGroup.check(R.id.radioButton2);
+                        radioButton2.setChecked(true);
                         break;
                     case 2:
-                        radioGroup.check(R.id.radioButton3);
+                        radioButton3.setChecked(true);
                         break;
                     case 3:
-                        radioGroup.check(R.id.radioButton4);
+                        radioButton4.setChecked(true);
                         break;
                 }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                LogHtk.i(LogHtk.Test2, "onPageScrollStateChanged");
             }
         });
         paper.setAdapter(adapder);

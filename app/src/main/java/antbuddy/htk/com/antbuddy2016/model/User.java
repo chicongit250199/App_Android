@@ -46,6 +46,9 @@ public class User {
 	}
 
 	public String getAvatar() {
+		if (!avatar.startsWith("http")) {
+			avatar = "https://" + Constants.domain + ".antbuddy.com/"+avatar;
+		}
 		return avatar;
 	}
 
@@ -150,6 +153,7 @@ public class User {
 		}
 		return users;
 	}
+
 
 	public User(JSONObject json) {
 		avatar = AndroidHelper.getString(json, key_avatar, null);

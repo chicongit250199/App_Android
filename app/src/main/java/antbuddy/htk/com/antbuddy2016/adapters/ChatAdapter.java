@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,8 +21,8 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -81,24 +81,26 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         }
 
         if (!TextUtils.isEmpty(message.getSubtype()) && message.getSubtype().equals("bot-gitlab")) {
-            Picasso.with(ctx).load(R.drawable.gitlab_icon).
-                    resize(60, 60).
-                    transform(new RoundedTransformation(5, 5)).
-                    into(holder.imgAvatarLeft);
+            Glide.with(ctx)
+                    .load(R.drawable.gitlab_icon)
+                    .override(60, 60)
+                    .bitmapTransform(new CropCircleTransformation(ctx))
+                    .into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
         } else {
             String url_avatar = "";
+            User user;
             if (!senderKey.isEmpty()) {
-                User user = ObjectManager.getInstance().findUsers(senderKey);
+                user = ObjectManager.getInstance().findUsers(senderKey);
                 if (user != null) {
                     url_avatar = user.getAvatar();
                 }
             }
 
-            Picasso.with(ctx).load(url_avatar).
-                    resize(60, 60).
-                    error(R.drawable.ic_avatar_defaul).
-                    transform(new RoundedTransformation(5, 5)).
-                    into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
+            Glide.with(ctx)
+                    .load(url_avatar)
+                    .override(60, 60)
+                    .bitmapTransform(new CropCircleTransformation(ctx))
+                    .into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
         }
 
 
@@ -129,8 +131,6 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         if (isGotoBottom == false) {
             View view = mListView.getChildAt(0);
             mListView.getLocalVisibleRect(corners);
-            Log.d("Hoa debug", "Top left " + corners.top + ", " + corners.left + ", " + corners.right
-                    + ", " + corners.bottom);
         }
         //update data in view
         mMessages.addAll(0, messages);
@@ -151,17 +151,15 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         if (isGotoBottom == false) {
             topItem = mListView.getFirstVisiblePosition();
             View view = mListView.getChildAt(topItem);
-            Log.d("Hoa debug", "mListView.getTop() = " + topItem);
             mListView.getLocalVisibleRect(corners);
-            Log.d("Hoa debug", "Top left " + corners.top + ", " + corners.left + ", " + corners.right
-                    + ", " + corners.bottom);
         }
         //update data in view
         if (message.isModified()) {
             boolean isFinded = false;
             for (ChatMessage chatMessage : mMessages) {
-                if (chatMessage.getId() == message.getId()) {
+                if (chatMessage.getId().equals(message.getId())) {
                     chatMessage.setBody(message.getBody());
+                    chatMessage.setModified(true);
                     isFinded = true;
                     break;
                 }
@@ -183,6 +181,4 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             mListView.setSelection(mMessages.size());
         }
     }
-
-
 }

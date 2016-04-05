@@ -1,16 +1,18 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
-import android.content.Context;
+import android.util.Log;
 
+import java.util.HashMap;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -87,6 +89,31 @@ public class LoginAPI {
             @Override
             public void onFailure(Throwable t) {
                 receiver.onError(t.toString());
+            }
+        });
+    }
+
+    public static void newMessageToHistory(ChatMessage chatMessage) {
+        String id = chatMessage.getFromKey()+ AndroidHelper.renID();
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("body", chatMessage.getBody());
+        body.put("fromKey", chatMessage.getFromKey());
+        body.put("receiverKey", chatMessage.getReceiverKey());
+        body.put("senderKey", chatMessage.getSenderKey());
+        body.put("subtype", chatMessage.getSubType());
+        body.put("type", chatMessage.getType());
+        body.put("id", id);
+
+        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(Constants.token, body);
+        call.enqueue(new Callback<ChatMessage>() {
+            @Override
+            public void onResponse(Response<ChatMessage> response) {
+                Log.i("Hoa debug", "LoginAPI:onResponse:  = ");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.i("Hoa debug", "LoginAPI:onResponse:  1= ");
             }
         });
     }

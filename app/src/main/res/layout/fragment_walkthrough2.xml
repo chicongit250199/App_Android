@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/walkthough_background">
+
+    <ImageView
+        android:layout_width="370dp"
+        android:layout_height="220dp"
+        android:id="@+id/imageView4"
+        android:contentDescription="@string/map_homepage"
+        android:background="@drawable/map_homepage"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:id="@+id/imageView7"
+        android:layout_alignTop="@+id/imageView4"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/oval_thickness2"/>
+
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/imageView9"
+        android:background="@drawable/small_circle_wt22"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/imageView7"
+        android:layout_alignStart="@+id/imageView7"
+        android:layout_marginTop="34dp" />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/imageView91"
+        android:background="@drawable/teamhcm_wt32"
+        android:layout_alignBottom="@+id/imageView4"
+        android:layout_alignRight="@+id/imageView7"
+        android:layout_alignEnd="@+id/imageView7" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Free video call on all devices"
+        android:id="@+id/textView101"
+        android:gravity="center"
+        android:textColor="@color/white_ab"
+        android:textSize="15dp"
+        android:layout_marginTop="71dp"
+        android:layout_below="@+id/imageView91"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

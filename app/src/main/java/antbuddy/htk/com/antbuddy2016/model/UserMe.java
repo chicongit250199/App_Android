@@ -82,9 +82,16 @@ public class UserMe {
         return key;
     }
 
-//    public String getOrg() {
-//        return currentOrg;
-//    }
+    public Org getCurrentOrg() {
+        String key_org = currentOrg.getKey();
+        for (Org org : orgs) {
+            if (org.getOrgKey().equals(key_org)) {
+                return org;
+            }
+        }
+
+        return null;
+    }
 
     public void setKey(String key) {
         this.key = key;

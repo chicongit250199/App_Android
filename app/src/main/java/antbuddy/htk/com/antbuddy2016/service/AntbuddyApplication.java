@@ -9,6 +9,7 @@ import com.android.volley.toolbox.Volley;
 
 import antbuddy.htk.com.antbuddy2016.api.ABRequest;
 import antbuddy.htk.com.antbuddy2016.api.API;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import retrofit.GsonConverterFactory;
@@ -34,6 +35,8 @@ public class AntbuddyApplication extends Application {
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);
+
+		AndroidHelper.showLogSizeDevice(getApplicationContext());
 	}
 
 	@Override

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/walkthough_background">
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar_CreateAccount"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,28 +23,38 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Create new account"
             android:id="@+id/textView2"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white_ab"
+            android:textSize="20dp" />
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/imageView13"
+            android:background="@drawable/logo"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="User name"
             android:ems="10"
             android:id="@+id/editText"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:hint="USERNAME" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText2"
-            android:text="Full name" />
+            android:hint="FULL NAME" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText3"
-            android:text="Email" />
+            android:hint="EMAIL" />
 
         <EditText
             android:layout_width="match_parent"
@@ -49,13 +62,13 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/editText4"
-            android:text="Password" />
+            android:hint="PASSWORD" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText5"
-            android:text="Company name" />
+            android:hint="COMPANY NAME" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -63,28 +76,34 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:layout_width="266dp"
+                android:layout_width="233dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText6"
-                android:text="Company domain" />
+                android:hint="COMPANY DOMAIN" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="antbuddy.com"
+                android:text=".antbuddy.com"
                 android:id="@+id/textView3"
-                android:layout_gravity="right" />
+                android:textSize="15dp"
+                android:layout_gravity="center"
+                android:gravity="center|fill" />
 
         </LinearLayout>
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="--->"
             android:id="@+id/accept_CreateAccount_Button"
-            android:layout_gravity="center_horizontal" />
+            android:background="@drawable/backgroundbutton4_forward"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:elegantTextHeight="true"
+            android:contextClickable="true"
+            android:layout_marginTop="20dp" />
 
     </LinearLayout>
 </RelativeLayout>

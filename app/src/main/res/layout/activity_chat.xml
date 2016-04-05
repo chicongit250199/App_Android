@@ -72,6 +72,7 @@
             android:layout_height="wrap_content"
             android:text="@string/send"
             android:background="@null"
+            android:onClick="onClick"
             android:id="@+id/btn_send"/>
     </LinearLayout>
 </LinearLayout>

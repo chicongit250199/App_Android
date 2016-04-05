@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape>
+            <solid android:color="@color/signUpFree_Button"/>
+            <!--<stroke android:width="3dip" android:color="#B1BCBE" />-->
+            <corners android:radius="10dip"/>
+            <padding android:left="20dip" android:top="10dip" android:right="20dip" android:bottom="10dip" />
+        </shape>
+    </item>
+    <item>
+        <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+            android:src="@drawable/forward2" android:gravity="center" />
+    </item>
+</layer-list>

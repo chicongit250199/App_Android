@@ -1,11 +1,16 @@
 package antbuddy.htk.com.antbuddy2016.modules.chat;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -14,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -30,15 +34,18 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ChatAdapter;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
+import github.ankushsachdeva.emojicon.EmojiconEditText;
 
 /**
  * Created by Micky on 4/1/2016.
  */
-public class ChatActivity extends Activity {
+public class ChatActivity extends Activity implements View.OnClickListener {
     public final static String key_key = "key";
     public final static String key_type = "type";
     public final static String key_title = "title";
@@ -55,6 +62,24 @@ public class ChatActivity extends Activity {
     private SwipyRefreshLayout mSwipyRefreshLayout;
     private TextView tv_title;
 
+    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
+    private boolean mBound;
+    private final ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
+            mIRemoteService = binder.getService();
+            mBound = true;
+            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mIRemoteService = null;
+            mBound = false;
+            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
+        }
+    };
+    private EmojiconEditText text_send;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,14 +91,30 @@ public class ChatActivity extends Activity {
         }
         setContentView(R.layout.activity_chat);
         tv_title = (TextView) findViewById(R.id.tv_title);
+        text_send = (EmojiconEditText) findViewById(R.id.text_send);
         initView();
         registerReceiver(messageReceiver, new IntentFilter(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT));
+
+        boolean isConnectService = connectServiceInAndroid();
+        if (!isConnectService) {
+            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
+        }
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(messageReceiver);
         super.onDestroy();
+    }
+
+    private boolean connectServiceInAndroid() {
+        if(AntbuddyService.mAntbuddyService == null) {
+            Intent intent = new Intent(this, AntbuddyService.class);
+            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+        } else {
+            mIRemoteService = AntbuddyService.mAntbuddyService;
+        }
+        return mIRemoteService != null;
     }
 
     @Override
@@ -181,7 +222,7 @@ public class ChatActivity extends Activity {
             try {
                 ChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
                 Log.i("Hoa debug","ChatActivity:onReceive:  = chatMessage "+chatMessage.getBody());
-                if (key.equals(chatMessage.getSenderKey()) || key.equals(chatMessage.getReceiverKey())) {
+                if (key.equals(chatMessage.getFromKey())) {
                     mChatAdapter.addMessage(chatMessage, isFister);
                     isFister = false;
                 }
@@ -190,4 +231,14 @@ public class ChatActivity extends Activity {
             }
         }
     };
+
+    @Override
+    public void onClick(View v) {
+        String text_body = text_send.getText().toString();
+        if (!TextUtils.isEmpty(text_body)) {
+            ChatMessage chatMessage = new ChatMessage(key, text_body, type);
+            mIRemoteService.sendMessageOut(chatMessage);
+            text_send.setText("");
+        }
+    }
 }

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import antbuddy.htk.com.antbuddy2016.R;
 
 /**
@@ -32,16 +34,24 @@ public class ItemFragment extends Fragment {
         ImageView img = (ImageView)v.findViewById(R.id.img);
         switch (value) {
             case 1:
-                img.setImageDrawable(getResources().getDrawable(R.drawable.walkthrough_1));
+                Glide.with(getContext())
+                        .load(R.drawable.walkthrough_1).override(60, 60)
+                        .into(img);
                 break;
             case 2:
-                img.setImageDrawable(getResources().getDrawable(R.drawable.walkthrough_2));
+                Glide.with(getContext())
+                        .load(R.drawable.walkthrough_2).override(60, 60)
+                        .into(img);
                 break;
             case 3:
-                img.setImageDrawable(getResources().getDrawable(R.drawable.walkthrough_3));
+                Glide.with(getContext())
+                        .load(R.drawable.walkthrough_3).override(60, 60)
+                        .into(img);
                 break;
             case 4:
-                img.setImageDrawable(getResources().getDrawable(R.drawable.walkthrough_4));
+                Glide.with(getContext())
+                        .load(R.drawable.walkthrough_4).override(60, 60)
+                        .into(img);
                 break;
 
             default:

@@ -1,7 +1,9 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
+import java.util.HashMap;
 import java.util.List;
 
+import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.Token;
@@ -9,6 +11,7 @@ import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.RequestKey;
 import retrofit.Call;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -38,5 +41,8 @@ public interface API {
 
     @GET("/api/rooms/")
     Call<List<Room>> GETRooms(@Header("authorization") String token);
+
+    @POST("/api/messages/")
+    Call<ChatMessage> newMessageToHistory(@Header("authorization") String token, @Body HashMap<String, Object> body);
 
 }

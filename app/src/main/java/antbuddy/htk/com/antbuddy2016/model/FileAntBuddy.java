@@ -3,7 +3,21 @@ package antbuddy.htk.com.antbuddy2016.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.jivesoftware.smack.packet.AntBuddyFile;
+import org.json.JSONObject;
+
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+
 public class FileAntBuddy implements Parcelable {
+	
+	private final static String key_name = "name";
+	private final static String key_size = "size";
+	private final static String key_fileUrl = "fileUrl";
+	private final static String key_mimeType = "mimeType";
+	private final static String key_thumbnailUrl = "thumbnailUrl";
+	private final static String key_thumbnailWidth = "thumbnailWidth";
+	private final static String key_thumbnailHeight = "thumbnailHeight";
+	
 
 	public static final String TAG_THISCLASS = "FileAntBuddy";
 	private String name;           //google_play_services.zip
@@ -11,7 +25,9 @@ public class FileAntBuddy implements Parcelable {
 	private String fileUrl;        //http://s3-ap-southeast-1.amazonaws.com/hipchat/google_play_services1415098114018_google_play_services.zip
 	private String mimeType;       //application/octet-stream
 	private String thumbnailUrl;
-	
+	private int thumbnailWidth;
+	private int thumbnailHeight;
+
 	public FileAntBuddy() {
 	}
 	
@@ -22,6 +38,34 @@ public class FileAntBuddy implements Parcelable {
 		this.mimeType = mimeType;
 		this.thumbnailUrl = thumbnailUrl;
 	}
+	
+	public FileAntBuddy(JSONObject json) {
+		name = AndroidHelper.getString(json, key_name, null);
+		size = AndroidHelper.getInt(json, key_size, 0);
+		fileUrl = AndroidHelper.getString(json, key_fileUrl, null);
+		mimeType = AndroidHelper.getString(json, key_mimeType, null);
+		thumbnailUrl = AndroidHelper.getString(json, key_thumbnailUrl, null);
+		thumbnailWidth = AndroidHelper.getInt(json, key_thumbnailWidth, 0);
+		thumbnailHeight = AndroidHelper.getInt(json, key_thumbnailHeight, 0);
+	}
+	public FileAntBuddy(AntBuddyFile antBuddyFile) {
+		name = antBuddyFile.getName();
+		size = antBuddyFile.getSize();
+		fileUrl = antBuddyFile.getFileUrl();
+		mimeType = antBuddyFile.getMimeType();
+		thumbnailUrl = antBuddyFile.getThumbnailUrl();
+	}
+
+	public FileAntBuddy(Parcel in) {
+		name = in.readString();
+		size = in.readInt();
+		fileUrl = in.readString();
+		mimeType = in.readString();
+		thumbnailUrl = in.readString();
+		thumbnailWidth = in.readInt();
+		thumbnailHeight = in.readInt();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -65,20 +109,15 @@ public class FileAntBuddy implements Parcelable {
         outParcel.writeString(fileUrl);
         outParcel.writeString(mimeType);
         outParcel.writeString(thumbnailUrl);
+        outParcel.writeInt(thumbnailWidth);
+        outParcel.writeInt(thumbnailHeight);
     }
 
     public static final Creator<FileAntBuddy> CREATOR = new Creator<FileAntBuddy>() {
 
         @Override
         public FileAntBuddy createFromParcel(Parcel in) {
-            String name = in.readString();
-            int size = in.readInt();
-            String fileUrl = in.readString();
-            String mimeType = in.readString();
-            String thumbnailUrl = in.readString();
-
-            return new FileAntBuddy(name, size, fileUrl, mimeType, thumbnailUrl);
-            //return new FileAntBuddy(name, "", "", "", "");
+            return new FileAntBuddy(in);
         }
 
         @Override
