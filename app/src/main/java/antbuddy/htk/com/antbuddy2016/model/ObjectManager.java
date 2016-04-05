@@ -85,6 +85,16 @@ public class ObjectManager {
         return null;
     }
 
+    public Room findRoom(String senderKey) {
+        for (Room room : listRooms) {
+            if (room.getKey().equals(senderKey)) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+
     public void setOnListenerUser(Class<?> cls, OnListenerUser listener) {
         mListenerUser.put(cls.getName(), listener);
         if (listUsers.size() == 0) {
@@ -162,7 +172,6 @@ public class ObjectManager {
                 @Override
                 public void onSuccess(UserMe me) {
                     LogHtk.d(LogHtk.API_TAG, "Error 11");
-                    Log.i("Hoa debug", "ObjectManager:JsonObjectRequest:  OK = ");
                     if (onListenerUserMe != null) {
                         onListenerUserMe.onResponse(me);
                     }

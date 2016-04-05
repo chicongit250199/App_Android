@@ -137,6 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:autoLink="web"
+                        android:gravity="center|left"
                         android:background="@drawable/bg_message_right"
                         android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
                         android:textColor="#ff000000"

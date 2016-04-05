@@ -157,7 +157,6 @@ public class Room {
 			for(int i=0; i<jsonArray.length(); i++){
 				try {
 					JSONObject json = jsonArray.getJSONObject(i);
-					Log.i("Hoa debug","UserInRoom:parseArray: json = "+json.toString());
 					String key = AndroidHelper.getString(json, key_user, null);
 					if(!key.isEmpty()) {
 						UserInRoom userInRoom = new UserInRoom(json);

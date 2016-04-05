@@ -92,4 +92,8 @@ public class UserAdapter extends ArrayAdapter<User> {
         notifyDataSetChanged();
     }
 
+    @Override
+    public User getItem(int position) {
+        return listFilterUsers.get(position);
+    }
 }

@@ -136,12 +136,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         lv_messages.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                Log.i("Hoa debug","ChatActivity:onScrollStateChanged: 1 = "+1);
                 if (lv_messages.getFirstVisiblePosition() == 0 && scrollState == SCROLL_STATE_IDLE) {
-                    Log.i("Hoa debug", "ChatActivity:onScrollStateChanged: 2 = " + 2);
 //                    loadMoreMessages();
                     if (lv_messages.getChildAt(0) != null && lv_messages.getChildAt(0).getTop() == 0) {
-                        Log.i("Hoa debug","ChatActivity:onScrollStateChanged: 3 = "+3);
                         loadMoreMessages();
                         //loadMoreMessages();
 //                        mSwipyRefreshLayout.setRefreshing(true);
@@ -149,7 +146,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     }
                 } else {
                     mSwipyRefreshLayout.setRefreshing(false);
-                    Log.i("Hoa debug","ChatActivity:onScrollStateChanged: 4 = "+4);
                 }
             }
 
@@ -179,13 +175,11 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     public void loadMoreMessages(){
         String sFormatUrl ="https://%s.antbuddy.com/api/messages?before=%s&chatRoom=%s&limit=50&type=%s";
         final String API_MESSAGES_URL = String.format(sFormatUrl, Constants.domain, before, key, (type ? "groupchat" : "chat"));
-        Log.i("Hoa debug","ChatActivity:loadMoreMessages: API_MESSAGES_URL = "+API_MESSAGES_URL);
         mSwipyRefreshLayout.setRefreshing(true);
         JsonArrayRequest req = new JsonArrayRequest(API_MESSAGES_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.i("Hoa debug", "ChatActivity:onResponse: thanh cong = "+API_MESSAGES_URL);
                         mSwipyRefreshLayout.setRefreshing(false);
                         HashMap<String,String> infoLoad = new HashMap<>();
                         ArrayList<ChatMessage> messages = ChatMessage.parseArray(response, infoLoad);
@@ -197,7 +191,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("Hoa debug", "ChatActivity:onResponse: error = "+API_MESSAGES_URL);
                         mSwipyRefreshLayout.setRefreshing(false);
                     }
                 }) {

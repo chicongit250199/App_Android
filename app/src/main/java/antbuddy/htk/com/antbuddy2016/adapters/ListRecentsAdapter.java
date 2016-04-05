@@ -116,20 +116,27 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
         }
 
         final OpeningChatRoom openingChatroom = (OpeningChatRoom) getChild(groupPosition, childPosition);
+        ViewGroup.LayoutParams layoutParams = holder.imgAvatar.getLayoutParams();
         if (groupPosition == 0) {
             holder.ic_status.setVisibility(View.GONE);
+            layoutParams.width = 60;
+            layoutParams.height = 60;
+            holder.imgAvatar.setLayoutParams(layoutParams);
             for (Room room : ObjectManager.getInstance().getListRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
-                        Glide.with(context).load(R.drawable.ic_global).override(30, 30).into(holder.imgAvatar);
+                        Glide.with(context).load(R.drawable.ic_global).into(holder.imgAvatar);
                     } else {
-                        Glide.with(context).load(R.drawable.ic_lock).override(30, 30).into(holder.imgAvatar);
+                        Glide.with(context).load(R.drawable.ic_lock).into(holder.imgAvatar);
                     }
                     holder.tv_user_name.setText(room.getName());
                     break;
                 }
             }
         } else {
+            layoutParams.width = 160;
+            layoutParams.height = 160;
+            holder.imgAvatar.setLayoutParams(layoutParams);
             holder.ic_status.setVisibility(View.VISIBLE);
             for (User user : ObjectManager.getInstance().getListUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {

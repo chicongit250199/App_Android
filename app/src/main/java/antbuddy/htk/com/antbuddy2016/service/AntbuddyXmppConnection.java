@@ -491,7 +491,6 @@ public class AntbuddyXmppConnection {
 					presence.setTo(room.getKey() + "_475a400a-292b-440c-981a-57af0b3f9a2c" + "@conference.antbuddy.com/756651f0-9196-11e5-a569-fdc7cdc19515_475a400a-292b-440c-981a-57af0b3f9a2c");
 					if (xmppConnection != null) {
 						xmppConnection.sendPacket(presence);
-						Log.i("Hoa debug", "AntbuddyXmppConnection:sendPresenceOutFromOpeningRooms: presence.toXML() = " + presence.toXML());
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {

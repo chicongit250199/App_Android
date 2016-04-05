@@ -16,6 +16,8 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ListRecentsAdapter;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -89,7 +91,21 @@ public class RecentFragment extends Fragment {
         list_recent.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                AndroidHelper.gotoActivity(getActivity(), ChatActivity.class);
+                Bundle args = new Bundle();
+                if (groupPosition == 0) {
+                    OpeningChatRoom openingChatRoom = (OpeningChatRoom) listRecentsAdapter.getChild(groupPosition, childPosition);
+                    Room room = ObjectManager.getInstance().findRoom(openingChatRoom.getChatRoomKey());
+                    args.putString(ChatActivity.key_key, room.getKey());
+                    args.putBoolean(ChatActivity.key_type, true);
+                    args.putString(ChatActivity.key_title, room.getName());
+                } else {
+                    OpeningChatRoom openingChatRoom = (OpeningChatRoom) listRecentsAdapter.getChild(groupPosition, childPosition);
+                    User user = ObjectManager.getInstance().findUsers(openingChatRoom.getChatRoomKey());
+                    args.putString(ChatActivity.key_key, user.getKey());
+                    args.putBoolean(ChatActivity.key_type, false);
+                    args.putString(ChatActivity.key_title, user.getName());
+                }
+                AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);
                 return true;
             }
         });

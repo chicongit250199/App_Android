@@ -61,4 +61,6 @@ public class OpeningChatRoom {
     public String getChatRoomKey() {
         return chatRoomKey;
     }
+
+
 }

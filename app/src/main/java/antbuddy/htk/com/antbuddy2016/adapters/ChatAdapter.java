@@ -72,9 +72,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         //set data to GUI
 
         String senderKey = message.getSenderKey();
-        Log.i("Hoa debug", "ChatMessage:ChatMessage:  => senderKey " + senderKey);
-        Log.i("Hoa debug", "ChatMessage:ChatMessage:  => message.getSubtype() " + message.getSubtype());
-        boolean isMe = TextUtils.isEmpty(message.getSubtype()) && senderKey.equals(keyMe);
+        boolean isMe = (TextUtils.isEmpty(message.getSubtype()) || message.getSubtype().equals("null")) && senderKey.equals(keyMe);
         Boolean isFile = message.getFileAntBuddy() != null && message.getFileAntBuddy().getMimeType().startsWith("image");
 
         if (isMe) {

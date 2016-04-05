@@ -44,7 +44,7 @@ public class MembersFragment extends Fragment {
         lv_member.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User user = ObjectManager.getInstance().getListUsers().get(position);
+                User user = mUserAdapter.getItem(position);
                 Bundle args = new Bundle();
                 args.putString(ChatActivity.key_key, user.getKey());
                 args.putBoolean(ChatActivity.key_type, false);

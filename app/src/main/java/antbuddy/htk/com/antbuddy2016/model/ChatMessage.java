@@ -458,7 +458,11 @@ public class ChatMessage implements Parcelable {
         org = currentOrg.getOrgKey();
         senderKey = userMe.getKey();
         this.receiverKey = receiverKey;
-        fromKey = senderKey;
+        if (isMuc) {
+            fromKey = receiverKey;
+        } else {
+            fromKey = senderKey;
+        }
         this.body = body;
     }
 

@@ -108,12 +108,10 @@ public class LoginAPI {
         call.enqueue(new Callback<ChatMessage>() {
             @Override
             public void onResponse(Response<ChatMessage> response) {
-                Log.i("Hoa debug", "LoginAPI:onResponse:  = ");
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.i("Hoa debug", "LoginAPI:onResponse:  1= ");
             }
         });
     }

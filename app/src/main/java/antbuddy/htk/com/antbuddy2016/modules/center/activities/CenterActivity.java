@@ -247,7 +247,6 @@ public class CenterActivity extends AppCompatActivity {
         ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
             @Override
             public void onResponse(List<Room> listRooms) {
-                Log.i("Hoa debug", "CenterActivity:onResponse: Load ok listRooms = " + listRooms.size());
             }
         });
     }
@@ -256,7 +255,6 @@ public class CenterActivity extends AppCompatActivity {
         ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
             @Override
             public void onResponse(List<User> listUsers) {
-                Log.i("Hoa debug", "CenterActivity:onResponse: Load ok listUsers = " + listUsers.size());
             }
         });
     }
