@@ -363,6 +363,7 @@ public class ChatMessage implements Parcelable {
                     messages.add(chatMessage);
                     //get last time in list
                     lastTime = s_datetime;
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

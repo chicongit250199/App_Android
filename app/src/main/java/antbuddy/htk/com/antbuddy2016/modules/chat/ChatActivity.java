@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import org.json.JSONArray;
 
@@ -133,38 +134,53 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         lv_messages.setAdapter(mChatAdapter);
         lv_messages.setDividerHeight(0);
+
+        mSwipyRefreshLayout.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(SwipyRefreshLayoutDirection direction) {
+                LogHtk.i(LogHtk.Test2, "onRefresh 1 =" + direction.toString());
+//                if (lv_messages.getFirstVisiblePosition() == 0) {
+                LogHtk.i(LogHtk.Test1, "Load/ = " + lv_messages.getFirstVisiblePosition());
+//                    if (lv_messages.getChildAt(0) != null && lv_messages.getChildAt(0).getTop() == 0) {
+                loadMoreMessages();
+//                    }
+//                } else {
+//                    mSwipyRefreshLayout.setRefreshing(false);
+//                }
+            }
+        });
+
         lv_messages.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (lv_messages.getFirstVisiblePosition() == 0 && scrollState == SCROLL_STATE_IDLE) {
-//                    loadMoreMessages();
-                    if (lv_messages.getChildAt(0) != null && lv_messages.getChildAt(0).getTop() == 0) {
-                        loadMoreMessages();
-                        //loadMoreMessages();
-//                        mSwipyRefreshLayout.setRefreshing(true);
-//                        loadMoreMessages();
-                    }
-                } else {
-                    mSwipyRefreshLayout.setRefreshing(false);
-                }
+
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                LogHtk.i(LogHtk.Test1, "--->firstVisibleItem = " + firstVisibleItem);
+                LogHtk.i(LogHtk.Test1, "visibleItemCount = " + visibleItemCount);
+                LogHtk.i(LogHtk.Test1, "totalItemCount = " + totalItemCount);
+                boolean loadMore =  firstVisibleItem + visibleItemCount >= totalItemCount-1;
 
+                if (firstVisibleItem == 0) {
+//                    mSwipyRefreshLayout.post(new Runnable() {
+//                        @Override public void run() {
+//                            mSwipyRefreshLayout.setRefreshing(true);
+//                            // directly call onRefresh() method
+//                            mSwipyRefreshLayout.onRefresh();
+//                        }
+//                    });
+                }
             }
         });
+
         lv_messages.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
 
         lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//                if (imm.isAcceptingText()) {
-////                    AntbuddyUtil.hideSoftKeyboard(getActivity());
-//                } else {
-//                }
+
             }
         });
         loadMoreMessages();
@@ -173,9 +189,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     
     //goi len webservice lay tin nhan cua room / uses
     public void loadMoreMessages(){
+        LogHtk.i(LogHtk.Test2, "-->loadMoreMessages");
         String sFormatUrl ="https://%s.antbuddy.com/api/messages?before=%s&chatRoom=%s&limit=50&type=%s";
         final String API_MESSAGES_URL = String.format(sFormatUrl, Constants.domain, before, key, (type ? "groupchat" : "chat"));
-        mSwipyRefreshLayout.setRefreshing(true);
+        LogHtk.i(LogHtk.Test2, "-->URL" + API_MESSAGES_URL);
         JsonArrayRequest req = new JsonArrayRequest(API_MESSAGES_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -183,14 +200,18 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                         mSwipyRefreshLayout.setRefreshing(false);
                         HashMap<String,String> infoLoad = new HashMap<>();
                         ArrayList<ChatMessage> messages = ChatMessage.parseArray(response, infoLoad);
-                        mChatAdapter.addMessages(messages,isFister);
+                        LogHtk.i(LogHtk.Test2, "-->ThanhCong = " + messages.size());
+                        mChatAdapter.addMessages(messages, isFister);
                         isFister = false;
-                        before = infoLoad.get(ChatMessage.info_lastTime);
+                        if (response.length()>0) {
+                            before = infoLoad.get(ChatMessage.info_lastTime);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        LogHtk.i(LogHtk.Test2, "-->Error");
                         mSwipyRefreshLayout.setRefreshing(false);
                     }
                 }) {
