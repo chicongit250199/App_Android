@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -99,12 +102,35 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_chat);
         tv_title = (TextView) findViewById(R.id.tv_title);
         text_send = (EmojiconEditText) findViewById(R.id.text_send);
+        text_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        lv_messages.setSelection(lv_messages.getCount() - 1);
+                    }
+                }, 100);
+
+            }
+        });
         initView();
         registerReceiver(messageReceiver, new IntentFilter(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT));
 
         boolean isConnectService = connectServiceInAndroid();
         if (!isConnectService) {
             LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks whether a hardware keyboard is available
+        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,7 +156,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
     
     private void initView() {
-
         setTitle(title);
         lv_messages = (ListView) findViewById(R.id.lv_messages);
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
@@ -145,31 +170,11 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                LogHtk.i(LogHtk.Test1, "Load/ = " + lv_messages.getFirstVisiblePosition());
                 loadMoreMessages();
             }
         });
 
-        lv_messages.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                LogHtk.i(LogHtk.Test1, "--->firstVisibleItem = " + firstVisibleItem);
-                LogHtk.i(LogHtk.Test1, "visibleItemCount = " + visibleItemCount);
-                LogHtk.i(LogHtk.Test1, "totalItemCount = " + totalItemCount);
-                boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount - 1;
-
-                if (firstVisibleItem == 0) {
-                }
-            }
-        });
-
         lv_messages.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
-
         lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -181,7 +186,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     
     //goi len webservice lay tin nhan cua room / uses
     public void loadMoreMessages(){
-        LogHtk.i(LogHtk.Test2, "-->loadMoreMessages");
         APIManager.GETMessages(before, key, (type ? "groupchat" : "chat"), new HttpRequestReceiver<List<ChatMessage>>() {
             @Override
             public void onSuccess(List<ChatMessage> listMessages) {
@@ -190,8 +194,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 mChatAdapter.addMessages(listMessages, isFister);
                 isFister = false;
                 if (listMessages.size() > 0) {
-                    LogHtk.i(LogHtk.Test2, "-->Dau: = " + listMessages.get(0).getDatetime());
-                    LogHtk.i(LogHtk.Test2, "-->Cuoi: = " + listMessages.get(listMessages.size() - 1).getDatetime());
                     before = listMessages.get(0).getDatetime();
                 }
             }
@@ -202,41 +204,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 mSwipyRefreshLayout.setRefreshing(false);
             }
         });
-
-//        String sFormatUrl ="https://%s.antbuddy.com/api/messages?before=%s&chatRoom=%s&limit=50&type=%s";
-//        final String API_MESSAGES_URL = String.format(sFormatUrl, Constants.domain, before, key, (type ? "groupchat" : "chat"));
-//        LogHtk.i(LogHtk.Test2, "-->URL" + API_MESSAGES_URL);
-//        JsonArrayRequest req = new JsonArrayRequest(API_MESSAGES_URL,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        mSwipyRefreshLayout.setRefreshing(false);
-//                        HashMap<String,String> infoLoad = new HashMap<>();
-//                        ArrayList<ChatMessage> messages = ChatMessage.parseArray(response, infoLoad);
-//                        LogHtk.i(LogHtk.Test2, "-->ThanhCong = " + messages.size());
-//                        mChatAdapter.addMessages(messages, isFister);
-//                        isFister = false;
-//                        if (response.length()>0) {
-//                            before = infoLoad.get(ChatMessage.info_lastTime);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        LogHtk.i(LogHtk.Test2, "-->Error");
-//                        mSwipyRefreshLayout.setRefreshing(false);
-//                    }
-//                }) {
-//
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("authorization", Constants.token);
-//                return params;
-//            }
-//        };
-//        AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
     /**
