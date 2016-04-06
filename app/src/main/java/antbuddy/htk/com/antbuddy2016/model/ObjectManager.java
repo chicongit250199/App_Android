@@ -94,17 +94,25 @@ public class ObjectManager {
         return null;
     }
 
+    public void setOnListenerUser(OnListenerUser listener) {
+        setOnListenerUser(null, listener);
+    }
 
-    public void setOnListenerUser(Class<?> cls, OnListenerUser listener) {
-        mListenerUser.put(cls.getName(), listener);
+    public void setOnListenerUser(final Class<?> keyRegister, final OnListenerUser listener) {
+        if (keyRegister != null) {
+            mListenerUser.put(keyRegister.getName(), listener);
+        }
         if (listUsers.size() == 0) {
 
             LoginAPI.GETUsers(new HttpRequestReceiver<List<User>>() {
                 @Override
                 public void onSuccess(List<User> _listUsers) {
                     listUsers.addAll(_listUsers);
-                    for (String key: mListenerUser.keySet()) {
-                        if(mListenerUser.get(key) != null) {
+                    if (keyRegister == null) {
+                        listener.onResponse(listUsers);
+                    }
+                    for (String key : mListenerUser.keySet()) {
+                        if (mListenerUser.get(key) != null) {
                             mListenerUser.get(key).onResponse(listUsers);
                         }
                     }
@@ -116,7 +124,7 @@ public class ObjectManager {
                 }
             });
 
-        }else {
+        } else {
             LogHtk.d(LogHtk.API_TAG, "333 ");
             listener.onResponse(listUsers);
         }
@@ -125,7 +133,6 @@ public class ObjectManager {
     public void removeOnListenerUser(Class<?> cls) {
         mListenerUser.remove(cls.getName());
     }
-
 
     public void setOnListenerRoom(Class<?> cls, OnListenerGroup onListenerGroup) {
         mListenerRoom.put(cls.getName(), onListenerGroup);
@@ -164,7 +171,7 @@ public class ObjectManager {
         mListenerRoom.remove(cls.getName());
     }
 
-    public void getUserMe(final OnListenerUserMe onListenerUserMe) {
+    public void getUserMe(final OnObjectManagerListener listener) {
         if (userMe == null) {
             String API_USER_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/me/";
 
@@ -172,18 +179,18 @@ public class ObjectManager {
                 @Override
                 public void onSuccess(UserMe me) {
                     LogHtk.d(LogHtk.API_TAG, "Error 11");
-                    if (onListenerUserMe != null) {
-                        onListenerUserMe.onResponse(me);
+                    if (listener != null) {
+                        listener.onSuccess(me);
                     }
                 }
 
                 @Override
                 public void onError(String error) {
-                    LogHtk.d(LogHtk.API_TAG, "Error 12");
+                    listener.onError(error);
                 }
             });
         } else {
-            onListenerUserMe.onResponse(userMe);
+            listener.onSuccess(userMe);
         }
     }
 
@@ -191,6 +198,10 @@ public class ObjectManager {
         userMe = new UserMe(response);
     }
 
+    public interface OnObjectManagerListener<T> {
+        public void onSuccess(T object);
+        public void onError(String error);
+    }
 
     public interface OnListenerUser {
         public void onResponse(List<User> listUsers);

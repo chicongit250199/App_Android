@@ -135,7 +135,8 @@ public class LoginActivity extends Activity {
 
         AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
         AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
-        Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin(etEmail.getText().toString().trim(), etPassword.getText().toString().trim());
+//        Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin(etEmail.getText().toString().trim(), etPassword.getText().toString().trim());
+        Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin("thanh.nguyen@htklabs.com", "doipasshoairuatroi");
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Response<Token> response) {

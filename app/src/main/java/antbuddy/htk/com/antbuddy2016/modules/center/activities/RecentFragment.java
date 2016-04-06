@@ -34,12 +34,10 @@ public class RecentFragment extends Fragment {
 
     public enum ChatType {
         Group(0), OneToOne(1);
-
         private final int value;
         private ChatType(int value) {
             this.value = value;
         }
-
         public int getValue() {
             return value;
         }
@@ -48,7 +46,6 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogHtk.d(LogHtk.Test1, "onCreateView");
 
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
@@ -64,21 +61,6 @@ public class RecentFragment extends Fragment {
         list_recent.setAdapter(listRecentsAdapter);
         list_recent.expandGroup(1);
         list_recent.expandGroup(0);
-
-//        ObjectManager.getInstance().getUserMe(new ObjectManager.OnListenerUserMe() {
-//            @Override
-//            public void onResponse(UserMe userMe) {
-//                if (userMe != null && userMe.getOpeningChatrooms() != null) {
-//                    for (UserMe.OpeningChatroom openingChatroom : userMe.getOpeningChatrooms()) {
-//                        if (openingChatroom.getIsMuc()) {
-//                            recentsData.get(0).add(openingChatroom);
-//                        } else {
-//                            recentsData.get(1).add(openingChatroom);
-//                        }
-//                    }
-//                }
-//            }
-//        });
 
         //lock header
         list_recent.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -111,7 +93,6 @@ public class RecentFragment extends Fragment {
         });
 
         updateUI();
-
         return rootView;
     }
 
@@ -122,15 +103,19 @@ public class RecentFragment extends Fragment {
     }
 
     protected void updateUI() {
-
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnListenerUserMe() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
-            public void onResponse(UserMe userMe) {
-                if (userMe.getOpeningChatrooms() != null) {
-                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(userMe, true));
-                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(userMe, false));
+            public void onSuccess(UserMe me) {
+                if (me.getOpeningChatrooms() != null) {
+                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
+                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
                     listRecentsAdapter.notifyDataSetChanged();
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.d(LogHtk.Test1, "error = " + error);
             }
         });
     }

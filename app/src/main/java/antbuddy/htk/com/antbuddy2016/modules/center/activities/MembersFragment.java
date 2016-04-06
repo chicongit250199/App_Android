@@ -73,6 +73,12 @@ public class MembersFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        ObjectManager.getInstance().removeOnListenerUser(this.getClass());
+        super.onDestroy();
+    }
+
     protected void updateUI() {
         ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
             @Override

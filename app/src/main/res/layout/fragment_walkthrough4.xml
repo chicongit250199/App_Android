@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Communicate seamlessly with your team"
@@ -50,11 +50,11 @@
         android:gravity="center"
         android:textColor="@color/white_ab"
         android:textSize="15dp"
-        android:layout_marginTop="111dp"
-        android:layout_below="@+id/imageView4"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_marginBottom="110dp"
+        android:layout_alignParentBottom="true" />
 
 
 </RelativeLayout>
