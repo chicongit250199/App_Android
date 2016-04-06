@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +18,13 @@ import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 3/31/2016.
  */
-public class ListRecentsAdapter extends BaseExpandableListAdapter {
+public class RecentsAdapter extends BaseExpandableListAdapter {
     private final int GROUPS_POSITION = 0;
     private final int MEMBERS_POSITION = 1;
     private Context context;
@@ -36,9 +32,9 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
     private List<List<OpeningChatRoom>> childers;
     private LayoutInflater inflater;
 
-    public ListRecentsAdapter(Context context,
-                              ArrayList<String> parents,
-                              List<List<OpeningChatRoom>> childers) {
+    public RecentsAdapter(Context context,
+                          ArrayList<String> parents,
+                          List<List<OpeningChatRoom>> childers) {
         this.context = context;
         this.parents = parents;
         this.childers = childers;
@@ -125,9 +121,17 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
             for (Room room : ObjectManager.getInstance().getListRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
-                        Glide.with(context).load(R.drawable.ic_global).into(holder.imgAvatar);
+                        Glide.with(context)
+                                .load(R.drawable.ic_global)
+                                .placeholder(R.drawable.ic_avatar_defaul)
+                                .error(R.drawable.ic_avatar_defaul)
+                                .into(holder.imgAvatar);
                     } else {
-                        Glide.with(context).load(R.drawable.ic_lock).into(holder.imgAvatar);
+                        Glide.with(context)
+                                .load(R.drawable.ic_lock)
+                                .placeholder(R.drawable.ic_avatar_defaul)
+                                .error(R.drawable.ic_avatar_defaul)
+                                .into(holder.imgAvatar);
                     }
                     holder.tv_user_name.setText(room.getName());
                     break;
@@ -141,14 +145,12 @@ public class ListRecentsAdapter extends BaseExpandableListAdapter {
             for (User user : ObjectManager.getInstance().getListUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     LogHtk.d(LogHtk.Test1, "user = " + user.getUsername());
-//                    Picasso.with(context).load(user.getAvatar()).
-//                            resize(60, 60).error(R.drawable.ic_avatar_defaul).transform(new RoundedTransformation(5, 5)).
-//                            into(holder.imgAvatar);
 
                     Glide.with(context)
                             .load(user.getAvatar())
                             .override(60, 60)
                             .placeholder(R.drawable.ic_avatar_defaul)
+                            .error(R.drawable.ic_avatar_defaul)
                             .bitmapTransform(new CropCircleTransformation(context))
                             .into(holder.imgAvatar);
 
