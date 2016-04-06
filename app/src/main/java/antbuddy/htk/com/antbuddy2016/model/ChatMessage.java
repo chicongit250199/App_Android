@@ -3,13 +3,13 @@ package antbuddy.htk.com.antbuddy2016.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -432,8 +432,14 @@ public class ChatMessage implements Parcelable {
             fileAntBuddy = new FileAntBuddy(message.getFile());
             body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
         } else {
-            body = message.getBody();
+            try {
+                body = new String( message.getBody().getBytes(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                body = message.getBody();
+                e.printStackTrace();
+            }
         }
+
         type = message.getType().toString();
 
         if(message.getSubtype() != null) {
