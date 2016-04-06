@@ -17,6 +17,8 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
+import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Created by thanhnguyen on 01/04/2016.
@@ -44,5 +46,8 @@ public interface API {
 
     @POST("/api/messages/")
     Call<ChatMessage> newMessageToHistory(@Header("authorization") String token, @Body HashMap<String, Object> body);
+
+    @GET("/api/messages?limit=50")
+    Call<List<ChatMessage>> GETMessages(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
 
 }

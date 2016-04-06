@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
@@ -153,7 +154,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         addMessages(messages, true);
     }
 
-    public void addMessages(ArrayList<ChatMessage> messages, boolean isGotoBottom) {
+    public void addMessages(List<ChatMessage> messages, boolean isGotoBottom) {
         Rect corners = new Rect();
         if (isGotoBottom == false) {
             View view = mListView.getChildAt(0);

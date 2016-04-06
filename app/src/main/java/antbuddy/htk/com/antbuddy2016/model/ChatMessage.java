@@ -37,7 +37,7 @@ public class ChatMessage implements Parcelable {
     private boolean isModified; // true
     private String type; // chat or groupchat
     private String subtype; // adduser or remove
-    private String s_datetime; // 08:46 AM
+    private String time; // 08:46 AM
     private String expandBody;
 
     /***************************/
@@ -94,7 +94,7 @@ public class ChatMessage implements Parcelable {
         this.body = body;
         this.type = type;
         this.subtype = subtype;
-        this.s_datetime = "" +datetime;
+        this.time = "" +datetime;
     }
 
     public ChatMessage(String senderName, String receiverName, boolean isModified, String body, long datetime) {
@@ -102,7 +102,7 @@ public class ChatMessage implements Parcelable {
         this.receiverName = receiverName;
         this.isModified = isModified;
         this.body = body;
-        this.s_datetime = "" + datetime;
+        this.time = "" + datetime;
     }
 
     public String getSenderKey() {
@@ -196,7 +196,7 @@ public class ChatMessage implements Parcelable {
         outParcel.writeByte((byte) (isModified ? 1 : 0));
         outParcel.writeString(subtype);
         outParcel.writeString(type);
-        outParcel.writeString(s_datetime);
+        outParcel.writeString(time);
         outParcel.writeParcelable(fileAntBuddy, paramInt);
     }
 
@@ -312,7 +312,7 @@ public class ChatMessage implements Parcelable {
     }
 
     public String getDatetime() {
-        return s_datetime;
+        return time;
     }
 
     public String getReceiverKey() {
@@ -357,12 +357,12 @@ public class ChatMessage implements Parcelable {
             try {
                 JSONObject json = jsonArray.getJSONObject(i);
                 String idMessage = AndroidHelper.getString(json, key_id, null);
-                String s_datetime =  AndroidHelper.getString(json, key_time, null);
+                String time =  AndroidHelper.getString(json, key_time, null);
                 if(!TextUtils.isEmpty(idMessage)) {
                     ChatMessage chatMessage = new ChatMessage(json);
                     messages.add(chatMessage);
                     //get last time in list
-                    lastTime = s_datetime;
+                    lastTime = time;
 
                 }
             } catch (JSONException e) {
@@ -384,7 +384,7 @@ public class ChatMessage implements Parcelable {
         isModified = AndroidHelper.getBoolean(json, key_isModified, false);
         subtype = AndroidHelper.getString(json, key_subtype, null);
         type = AndroidHelper.getString(json, key_type, null);
-        s_datetime =  AndroidHelper.getString(json, key_time, null);
+        time =  AndroidHelper.getString(json, key_time, null);
         if (json.has(key_file)) {
             try {
                 fileAntBuddy = new FileAntBuddy(json.getJSONObject(key_file));
@@ -404,7 +404,7 @@ public class ChatMessage implements Parcelable {
         isModified = in.readByte() != 0;
         subtype = in.readString();
         type = in.readString();
-        s_datetime = in.readString();
+        time = in.readString();
         fileAntBuddy = (FileAntBuddy)in.readParcelable(FileAntBuddy.class.getClassLoader());
     }
     public ChatMessage(Message message) {
@@ -447,7 +447,7 @@ public class ChatMessage implements Parcelable {
         } else {
             subtype = null;
         }
-        s_datetime = NationalTime.getLocalTimeToUTCTime();
+        time = NationalTime.getLocalTimeToUTCTime();
         isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
     }
 

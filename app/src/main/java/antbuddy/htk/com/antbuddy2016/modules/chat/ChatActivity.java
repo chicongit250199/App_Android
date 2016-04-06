@@ -28,11 +28,15 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutD
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.ChatAdapter;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
@@ -178,40 +182,61 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     //goi len webservice lay tin nhan cua room / uses
     public void loadMoreMessages(){
         LogHtk.i(LogHtk.Test2, "-->loadMoreMessages");
-        String sFormatUrl ="https://%s.antbuddy.com/api/messages?before=%s&chatRoom=%s&limit=50&type=%s";
-        final String API_MESSAGES_URL = String.format(sFormatUrl, Constants.domain, before, key, (type ? "groupchat" : "chat"));
-        LogHtk.i(LogHtk.Test2, "-->URL" + API_MESSAGES_URL);
-        JsonArrayRequest req = new JsonArrayRequest(API_MESSAGES_URL,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        mSwipyRefreshLayout.setRefreshing(false);
-                        HashMap<String,String> infoLoad = new HashMap<>();
-                        ArrayList<ChatMessage> messages = ChatMessage.parseArray(response, infoLoad);
-                        LogHtk.i(LogHtk.Test2, "-->ThanhCong = " + messages.size());
-                        mChatAdapter.addMessages(messages, isFister);
-                        isFister = false;
-                        if (response.length()>0) {
-                            before = infoLoad.get(ChatMessage.info_lastTime);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        LogHtk.i(LogHtk.Test2, "-->Error");
-                        mSwipyRefreshLayout.setRefreshing(false);
-                    }
-                }) {
+        APIManager.GETMessages(before, key, (type ? "groupchat" : "chat"), new HttpRequestReceiver<List<ChatMessage>>() {
+            @Override
+            public void onSuccess(List<ChatMessage> listMessages) {
+                Collections.reverse(listMessages);
+                mSwipyRefreshLayout.setRefreshing(false);
+                mChatAdapter.addMessages(listMessages, isFister);
+                isFister = false;
+                if (listMessages.size() > 0) {
+                    LogHtk.i(LogHtk.Test2, "-->Dau: = " + listMessages.get(0).getDatetime());
+                    LogHtk.i(LogHtk.Test2, "-->Cuoi: = " + listMessages.get(listMessages.size() - 1).getDatetime());
+                    before = listMessages.get(0).getDatetime();
+                }
+            }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("authorization", Constants.token);
-                return params;
+            public void onError(String error) {
+                LogHtk.i(LogHtk.Test2, "-->Error");
+                mSwipyRefreshLayout.setRefreshing(false);
             }
-        };
-        AntbuddyApplication.getInstance().addToRequestQueue(req);
+        });
+
+//        String sFormatUrl ="https://%s.antbuddy.com/api/messages?before=%s&chatRoom=%s&limit=50&type=%s";
+//        final String API_MESSAGES_URL = String.format(sFormatUrl, Constants.domain, before, key, (type ? "groupchat" : "chat"));
+//        LogHtk.i(LogHtk.Test2, "-->URL" + API_MESSAGES_URL);
+//        JsonArrayRequest req = new JsonArrayRequest(API_MESSAGES_URL,
+//                new Response.Listener<JSONArray>() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        mSwipyRefreshLayout.setRefreshing(false);
+//                        HashMap<String,String> infoLoad = new HashMap<>();
+//                        ArrayList<ChatMessage> messages = ChatMessage.parseArray(response, infoLoad);
+//                        LogHtk.i(LogHtk.Test2, "-->ThanhCong = " + messages.size());
+//                        mChatAdapter.addMessages(messages, isFister);
+//                        isFister = false;
+//                        if (response.length()>0) {
+//                            before = infoLoad.get(ChatMessage.info_lastTime);
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        LogHtk.i(LogHtk.Test2, "-->Error");
+//                        mSwipyRefreshLayout.setRefreshing(false);
+//                    }
+//                }) {
+//
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("authorization", Constants.token);
+//                return params;
+//            }
+//        };
+//        AntbuddyApplication.getInstance().addToRequestQueue(req);
     }
 
     /**
