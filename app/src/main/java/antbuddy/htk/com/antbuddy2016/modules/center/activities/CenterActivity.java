@@ -221,9 +221,6 @@ public class CenterActivity extends AppCompatActivity {
                 // Update Recent
                 RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
                 recentFragment.updateUI();
-
-//                RecentFragment memberFragment = (RecentFragment) mTabFragments.get(1);
-//                memberFragment.updateUI();
             }
 
             @Override

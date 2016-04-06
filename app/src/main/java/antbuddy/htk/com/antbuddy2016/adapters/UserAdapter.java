@@ -10,7 +10,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.Locale;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.util.RoundedTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -55,8 +53,12 @@ public class UserAdapter extends ArrayAdapter<User> {
         }
 
         User user = listFilterUsers.get(position);
-        Glide.with(ctx).load(user.getAvatar()).override(60, 60).
-                bitmapTransform(new CropCircleTransformation(ctx))
+        Glide.with(ctx)
+                .load(user.getAvatar())
+                .override(60, 60)
+                .bitmapTransform(new CropCircleTransformation(ctx))
+                .placeholder(R.drawable.ic_avatar_defaul)
+                .error(R.drawable.ic_avatar_defaul)
                 .into(holder.imgAvatar);
         holder.tv_user_name.setText(user.getName());
         return rowView;

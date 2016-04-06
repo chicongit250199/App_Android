@@ -36,7 +36,7 @@
 
     <ImageView
         android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_height="110dp"
         android:id="@+id/imageView91"
         android:background="@drawable/teamhcm_wt32"
         android:layout_alignBottom="@+id/imageView4"

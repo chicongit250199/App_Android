@@ -40,6 +40,7 @@ public class MembersFragment extends Fragment {
         lv_member.setAdapter(mUserAdapter);
         lv_member.setDividerHeight(0);
         searchView = (SearchView)rootView.findViewById(R.id.searchView);
+        searchView.setQueryHint("Type something...");
 
         lv_member.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

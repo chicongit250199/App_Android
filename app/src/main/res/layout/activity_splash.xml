@@ -4,4 +4,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/splash_screen">
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:text="ANTBUDDY.COM"
+        android:id="@+id/textView18"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="23dp"
+        android:background="@color/walkthough_background"
+        android:textColor="@color/white_ab"/>
 </RelativeLayout>

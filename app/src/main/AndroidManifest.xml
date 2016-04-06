@@ -42,24 +42,28 @@
         <activity
             android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.CreateAccountActivity"
             android:label="@string/app_name"
+            android:theme ="@style/WelcomeTheme"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity"
             android:label="@string/app_name"
+            android:theme ="@style/WelcomeTheme"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.ForgotPasswordActivity"
             android:label="@string/app_name"
+            android:theme ="@style/WelcomeTheme"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name="antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity"
             android:label="@string/app_name"
+            android:theme ="@style/WelcomeTheme"
             android:screenOrientation="portrait">
         </activity>
 
