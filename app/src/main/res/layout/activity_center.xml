@@ -6,6 +6,16 @@
     android:background="#cccccc"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/progressBar_Center"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:visibility="gone"
+        android:layout_centerInParent="true" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -73,12 +83,4 @@
 
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar_Center"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="false"
-        android:visibility="gone"/>
 </RelativeLayout>
