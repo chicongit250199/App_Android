@@ -110,7 +110,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     public void run() {
                         lv_messages.setSelection(lv_messages.getCount() - 1);
                     }
-                }, 100);
+                }, 300);
 
             }
         });
