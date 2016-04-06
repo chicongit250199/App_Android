@@ -15,11 +15,9 @@
         android:layout_gravity="center_horizontal|bottom"
         android:orientation="horizontal"
         android:id="@+id/radiogroup"
-        android:layout_marginBottom="70dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_centerInParent="true"
-        android:layout_alignParentBottom="true">
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_centerHorizontal="true">
 
         <RadioButton
             android:layout_width="10dp"
@@ -64,7 +62,8 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:id="@+id/linearLayout">
 
         <Button
             android:layout_width="wrap_content"
