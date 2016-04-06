@@ -63,6 +63,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private SwipyRefreshLayout mSwipyRefreshLayout;
     private TextView tv_title;
 
+    private EmojiconEditText text_send;
+
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
     private boolean mBound;
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -79,7 +81,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
         }
     };
-    private EmojiconEditText text_send;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +126,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
     
     private void initView() {
+
         setTitle(title);
         lv_messages = (ListView) findViewById(R.id.lv_messages);
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
@@ -138,15 +141,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                LogHtk.i(LogHtk.Test2, "onRefresh 1 =" + direction.toString());
-//                if (lv_messages.getFirstVisiblePosition() == 0) {
                 LogHtk.i(LogHtk.Test1, "Load/ = " + lv_messages.getFirstVisiblePosition());
-//                    if (lv_messages.getChildAt(0) != null && lv_messages.getChildAt(0).getTop() == 0) {
                 loadMoreMessages();
-//                    }
-//                } else {
-//                    mSwipyRefreshLayout.setRefreshing(false);
-//                }
             }
         });
 
@@ -161,16 +157,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 LogHtk.i(LogHtk.Test1, "--->firstVisibleItem = " + firstVisibleItem);
                 LogHtk.i(LogHtk.Test1, "visibleItemCount = " + visibleItemCount);
                 LogHtk.i(LogHtk.Test1, "totalItemCount = " + totalItemCount);
-                boolean loadMore =  firstVisibleItem + visibleItemCount >= totalItemCount-1;
+                boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount - 1;
 
                 if (firstVisibleItem == 0) {
-//                    mSwipyRefreshLayout.post(new Runnable() {
-//                        @Override public void run() {
-//                            mSwipyRefreshLayout.setRefreshing(true);
-//                            // directly call onRefresh() method
-//                            mSwipyRefreshLayout.onRefresh();
-//                        }
-//                    });
                 }
             }
         });
@@ -184,7 +173,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             }
         });
         loadMoreMessages();
-        AndroidHelper.hideSoftKeyboard(this);
     }
     
     //goi len webservice lay tin nhan cua room / uses

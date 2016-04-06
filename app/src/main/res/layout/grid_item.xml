@@ -13,7 +13,6 @@
         android:background="@drawable/bg_round"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:ellipsize="none"
-        android:ellip
         android:maxLines="2"
         android:scrollHorizontally="false"
         android:padding="5dp"
