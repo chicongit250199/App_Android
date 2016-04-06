@@ -23,8 +23,8 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="1dp"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"/>
 
@@ -69,7 +69,7 @@
                 android:gravity="center|left"
                 android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
                 android:textColor="#ff000000"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
             android:freezesText="true" />
         </LinearLayout>
 
