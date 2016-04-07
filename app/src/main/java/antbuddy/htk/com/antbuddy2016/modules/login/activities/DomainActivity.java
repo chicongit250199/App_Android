@@ -23,11 +23,7 @@ import antbuddy.htk.com.antbuddy2016.modules.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -91,10 +87,8 @@ public class DomainActivity extends Activity {
         AndroidHelper.alertDialogShow(this, "Do you want to sign out?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 LoReActivity.resetAccountInSharedPreferences();
                 LoReActivity.resetXMPP();
-
                 Intent myIntent = new Intent(DomainActivity.this, LoginActivity.class);
                 startActivity(myIntent);
                 finish();
@@ -108,7 +102,7 @@ public class DomainActivity extends Activity {
             return;
         }
 
-        if (ABSharedPreference.getAccoungConfig().getToken().length() > 0) {
+        if (ABSharedPreference.getAccountConfig().getToken().length() > 0) {
             AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
 
             APIManager.GETOrganizations(new HttpRequestReceiver<List<Organization>>() {

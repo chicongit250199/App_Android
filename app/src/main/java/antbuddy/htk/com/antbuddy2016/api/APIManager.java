@@ -15,8 +15,6 @@ import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -58,7 +56,7 @@ public class APIManager {
     }
 
     public static void GETOrganizations(final HttpRequestReceiver<List<Organization>> receiver) {
-        Call<List<Organization>> call = AntbuddyApplication.getInstance().getApiService().GETOrganizations(ABSharedPreference.getAccoungConfig().getToken());
+        Call<List<Organization>> call = AntbuddyApplication.getInstance().getApiService().GETOrganizations(ABSharedPreference.getAccountConfig().getToken());
         call.enqueue(new Callback<List<Organization>>() {
             @Override
             public void onResponse(Response<List<Organization>> response) {
@@ -78,7 +76,7 @@ public class APIManager {
 
 
     public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<ChatMessage>> receiver) {
-        String token = ABSharedPreference.getAccoungConfig().getToken();
+        String token = ABSharedPreference.getAccountConfig().getToken();
         Call<List<ChatMessage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages(token, time, chatRoomKey, typeChat);
         call.enqueue(new Callback<List<ChatMessage>>() {
             @Override
@@ -98,7 +96,7 @@ public class APIManager {
     }
 
     public static void GETUserMe(final HttpRequestReceiver<UserMe> receiver) {
-        Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(ABSharedPreference.getAccoungConfig().getToken());
+        Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(ABSharedPreference.getAccountConfig().getToken());
         call.enqueue(new Callback<UserMe>() {
             @Override
             public void onResponse(Response<UserMe> response) {
@@ -117,7 +115,7 @@ public class APIManager {
     }
 
     public static void GETUsers(final HttpRequestReceiver<List<User>> receiver) {
-        Call<List<User>> call = AntbuddyApplication.getInstance().getApiService().GETUsers(ABSharedPreference.getAccoungConfig().getToken());
+        Call<List<User>> call = AntbuddyApplication.getInstance().getApiService().GETUsers(ABSharedPreference.getAccountConfig().getToken());
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Response<List<User>> response) {
@@ -136,7 +134,7 @@ public class APIManager {
     }
 
     public static void GETGroups(final HttpRequestReceiver<List<Room>> receiver) {
-        Call<List<Room>> call = AntbuddyApplication.getInstance().getApiService().GETRooms(ABSharedPreference.getAccoungConfig().getToken());
+        Call<List<Room>> call = AntbuddyApplication.getInstance().getApiService().GETRooms(ABSharedPreference.getAccountConfig().getToken());
         call.enqueue(new Callback<List<Room>>() {
             @Override
             public void onResponse(Response<List<Room>> response) {
@@ -165,7 +163,7 @@ public class APIManager {
         body.put("type", chatMessage.getType());
         body.put("id", id);
 
-        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccoungConfig().getToken(), body);
+        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), body);
         call.enqueue(new Callback<ChatMessage>() {
             @Override
             public void onResponse(Response<ChatMessage> response) {

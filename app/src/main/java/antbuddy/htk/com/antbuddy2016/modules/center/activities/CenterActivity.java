@@ -32,6 +32,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -79,12 +80,13 @@ public class CenterActivity extends AppCompatActivity {
         initView();
         loadData();
     }
+
     private void initView() {
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
+        mViewPager         = (ViewPager) findViewById(R.id.id_viewpager);
+        tabBarView         = (TabBarView) findViewById(R.id.change_color_tab);
+        tv_title           = (TextView) findViewById(R.id.tv_title);
 
-        mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
-        tabBarView = (TabBarView) findViewById(R.id.change_color_tab);
-        tv_title = (TextView) findViewById(R.id.tv_title);
         RecentFragment recentFragment = new RecentFragment();
         mTabFragments.add(recentFragment);
         MembersFragment membersFragment = new MembersFragment();
@@ -168,13 +170,11 @@ public class CenterActivity extends AppCompatActivity {
     }
 
     private void getUserMe() {
-        AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
+        //AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
         APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
             public void onSuccess(UserMe me) {
-                LogHtk.d(LogHtk.API_TAG, "onSuccess 12");
-
                 // Connect XMPP
                 connectXMPP(me);
 
@@ -189,12 +189,13 @@ public class CenterActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 LogHtk.e(LogHtk.API_TAG, "Load UserMe Error!!" + error);
+                APIManager.showToastWithCode(error, CenterActivity.this);
             }
         });
     }
 
     private void getListUsers() {
-        AndroidHelper.showToast("Loading users...", CenterActivity.this);
+        //AndroidHelper.showToast("Loading users...", CenterActivity.this);
         APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
             @Override
             public void onSuccess(List<User> listUsers) {
@@ -205,12 +206,13 @@ public class CenterActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 LogHtk.e(LogHtk.API_TAG, "Can not get list Users!");
+                APIManager.showToastWithCode(error, CenterActivity.this);
             }
         });
     }
 
     private void getListGroups() {
-        AndroidHelper.showToast("Loading groups...", CenterActivity.this);
+        //AndroidHelper.showToast("Loading groups...", CenterActivity.this);
         APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
             @Override
             public void onSuccess(List<Room> listRooms) {
@@ -225,6 +227,7 @@ public class CenterActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 LogHtk.e(LogHtk.API_TAG, "Can not get list Groups!" + error);
+                APIManager.showToastWithCode(error, CenterActivity.this);
             }
         });
     }
@@ -239,45 +242,36 @@ public class CenterActivity extends AppCompatActivity {
         return mIRemoteService != null;
     }
 
-	public void loadRoom() {
-        ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
-            @Override
-            public void onResponse(List<Room> listRooms) {
-            }
-        });
-    }
-
-    public void loadUsers() {
-        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
-            @Override
-            public void onResponse(List<User> listUsers) {
-            }
-        });
-    }
-
-
     private void connectXMPP(UserMe me) {
         LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());
 
-        String chatURLXMPP = me.getChatUrl();
-        Constants.DOMAIN_XMPP = me.getChatDomain();
-        String[] fields = me.getChatToken().split(":");
-        Constants.USERNAME_XMPP = fields[0];
-        Constants.PASSWORD_XMPP = fields[1];
+        String[] accountXMPP = me.getChatToken().split(":");
+        String username = accountXMPP[0];
+        String password = accountXMPP[1];
 
         Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
-        Matcher m = p.matcher(chatURLXMPP);
+        Matcher m = p.matcher(me.getChatUrl());
+        String hostXMPP = "";
         if (m.matches()) {
-            Constants.HOST_XMPP = m.group(1);
+            hostXMPP = m.group(1);
         }
 
-        // LOGIN XMPP
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mIRemoteService.loginXMPP(Constants.USERNAME_XMPP, Constants.PASSWORD_XMPP);
-            }
-        }).start();
-        LogHtk.d(LogHtk.API_TAG, "chatURLXMPP = " + chatURLXMPP);
+        int portXMPP = 5222;    // Default
+        String domainXMPP = me.getChatDomain();
+        if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
+
+            // LOGIN XMPP
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mIRemoteService.loginXMPP(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_USERNAME), ABSharedPreference.get(ABSharedPreference.KEY_XMPP_PASSWORD));
+                }
+            }).start();
+        }
     }
 }

@@ -45,8 +45,8 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        emailStr    = ABSharedPreference.getAccoungConfig().getEmail();
-        passwordStr = ABSharedPreference.getAccoungConfig().getPassword();
+        emailStr    = ABSharedPreference.getAccountConfig().getEmail();
+        passwordStr = ABSharedPreference.getAccountConfig().getPassword();
 
         LogHtk.i(LogHtk.Test1, "emailStr=" + emailStr);
         LogHtk.i(LogHtk.Test1, "passwordStr=" + passwordStr);

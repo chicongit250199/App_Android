@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
 
 public class User {
 	private static final String key_avatar = "avatar";
@@ -48,7 +47,7 @@ public class User {
 
 	public String getAvatar() {
 		if (!avatar.startsWith("http")) {
-			String domain = ABSharedPreference.getAccoungConfig().getDomain();
+			String domain = ABSharedPreference.getAccountConfig().getDomain();
 			avatar = "https://" + domain + ".antbuddy.com/"+avatar;
 		}
 		return avatar;
@@ -161,7 +160,7 @@ public class User {
 		avatar = AndroidHelper.getString(json, key_avatar, null);
 		//fix avatar defaul
 		if (!avatar.startsWith("http")) {
-			String domain = ABSharedPreference.getAccoungConfig().getDomain();
+			String domain = ABSharedPreference.getAccountConfig().getDomain();
 			avatar = "https://" + domain + ".antbuddy.com/"+avatar;
 		}
 		username = AndroidHelper.getString(json, key_username, null);

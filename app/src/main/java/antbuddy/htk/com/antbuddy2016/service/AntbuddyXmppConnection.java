@@ -36,27 +36,28 @@ import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 public class AntbuddyXmppConnection {
-	public static final String TAG = "AntbuddyXmppConnection";
-
-	public static final String HOST_XMPP = "dev.antbuddy.com"; // wss://chat.htk.me/chatserver
-	public static final String HOST_GETCOOKIE = "https://" + HOST_XMPP;
-    public static final String HOST_SERVER_NODEJS = "https://" + HOST_XMPP;
-
-	// Doman when OneToOneRoom
-	public static final String DOMAIN = "htklabs.com";
-
-	// Domain when Group Room
-	public static final String DOMAINGROUP = "conference.htklabs.com";
-	public static final int PORT = 5222; // Default: 5222
+//	public static final String TAG = "AntbuddyXmppConnection";
+//
+//	public static final String HOST_XMPP = "dev.antbuddy.com"; // wss://chat.htk.me/chatserver
+//	public static final String HOST_GETCOOKIE = "https://" + HOST_XMPP;
+//    public static final String HOST_SERVER_NODEJS = "https://" + HOST_XMPP;
+//
+//	// Doman when OneToOneRoom
+//	public static final String DOMAIN = "htklabs.com";
+//
+//	// Domain when Group Room
+//	public static final String DOMAINGROUP = "conference.htklabs.com";
+//	public static final int PORT = 5222; // Default: 5222
 
 	// Used when connect to XMPP Server successful or unsuccessful.
 	public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
-	public static final String SERVICE_START_ERROR = "XMPP_START_ERROR";
+	public static final String SERVICE_START_ERROR   = "XMPP_START_ERROR";
 	public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
 
 	//private static Map<String, List<ChatMessage>> historyMessages;
@@ -116,15 +117,20 @@ public class AntbuddyXmppConnection {
 	}
 
 	public void connectXMPP() throws XMPPException {
-		LogHtk.i("asdf", "Constants.HOST_XMPP = " + Constants.HOST_XMPP);
-		LogHtk.i("asdf", "Constants.PORT_XMPP = " + Constants.PORT_XMPP);
-		LogHtk.i("asdf", "Constants.DOMAIN_XMPP = " + Constants.DOMAIN_XMPP);
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(Constants.HOST_XMPP, Constants.PORT_XMPP, Constants.DOMAIN_XMPP);
+		String hostXMPP   = ABSharedPreference.getXMPPConfig().getHOST_XMPP();
+		int    portXMPP   = ABSharedPreference.getXMPPConfig().getPORT_XMPP();
+		String domainXMPP = ABSharedPreference.getXMPPConfig().getDOMAIN_XMPP();
+
+		LogHtk.i("asdf", "Constants.HOST_XMPP = " + hostXMPP);
+		LogHtk.i("asdf", "Constants.PORT_XMPP = " + portXMPP);
+		LogHtk.i("asdf", "Constants.DOMAIN_XMPP = " + domainXMPP);
+
+		ConnectionConfiguration connConfig = new ConnectionConfiguration(hostXMPP, portXMPP, domainXMPP);
 		xmppConnection = new XMPPConnection(connConfig);
 		try {
 			xmppConnection.connect();
-		} catch (XMPPException ex) {
-			throw ex;
+		} catch (XMPPException e) {
+			throw e;
 		}
 	}
 
@@ -456,7 +462,7 @@ public class AntbuddyXmppConnection {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						LogHtk.i(TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
 					}
 				}
 			}
