@@ -31,7 +31,7 @@ public class AntbuddyApplication extends Application {
 		LogHtk.e(TAG, "Created AntbuddyApplication!");
 
 		retrofit = new Retrofit.Builder()
-				.baseUrl(APIManager.BASE_URL)			//"https://antbuddy.com"
+				.baseUrl(API.BASE_URL)			//"https://antbuddy.com"
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);
@@ -54,10 +54,9 @@ public class AntbuddyApplication extends Application {
 	}
 
 	public API restartAPIServiceWithDomain(String domain) {
-
-		final String URLWithDomain = "https://" + ABSharedPreference.getAccoungConfig().getDomain() + ".antbuddy.com";
+		String URLWithDomain = String.format(API.BASE_URL_WITH_DOMAIN, domain);
 		retrofit = new Retrofit.Builder()
-				.baseUrl(URLWithDomain)			//"https://antbuddy.com"
+				.baseUrl(URLWithDomain)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);

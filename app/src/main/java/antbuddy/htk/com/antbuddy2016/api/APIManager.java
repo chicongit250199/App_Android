@@ -25,7 +25,6 @@ import retrofit.Response;
  * Created by thanhnguyen on 06/04/2016.
  */
 public class APIManager {
-    public static final String BASE_URL = "https://antbuddy.com";
 
     public static void showToastWithCode(String code, Activity activity) {
         int codeInt;

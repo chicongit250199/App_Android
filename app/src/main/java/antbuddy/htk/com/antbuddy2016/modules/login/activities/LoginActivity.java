@@ -161,7 +161,6 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Login error: " + error);
                 AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
                 AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
                 APIManager.showToastWithCode(error, LoginActivity.this);

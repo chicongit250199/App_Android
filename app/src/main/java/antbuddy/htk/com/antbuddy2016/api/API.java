@@ -25,6 +25,9 @@ import retrofit.http.Query;
  */
 public interface API {
 
+    String BASE_URL = "https://antbuddy.com";
+    String BASE_URL_WITH_DOMAIN = "https://%s.antbuddy.com";
+
     @FormUrlEncoded
     @POST("/users/session/")
     Call<Token> GETLogin(@Field(RequestKey.email)String  email, @Field(RequestKey.password)String  password);
