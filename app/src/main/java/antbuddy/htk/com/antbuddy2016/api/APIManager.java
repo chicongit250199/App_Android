@@ -24,7 +24,7 @@ import retrofit.Response;
 public class APIManager {
     public static final String BASE_URL = "https://antbuddy.com";
 
-    public static void GETLogin(String email, String password, final HttpRequestReceiver receiver) {
+    public static void GETLogin(String email, String password, final HttpRequestReceiver<Token> receiver) {
         Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin(email, password);
         call.enqueue(new Callback<Token>() {
             @Override
@@ -39,7 +39,7 @@ public class APIManager {
         });
     }
 
-    public static void GETOrganizations(final HttpRequestReceiver receiver) {
+    public static void GETOrganizations(final HttpRequestReceiver<List<Organization>> receiver) {
         Call<List<Organization>> call = AntbuddyApplication.getInstance().getApiService().GETOrganizations(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<List<Organization>>() {
             @Override
@@ -55,7 +55,7 @@ public class APIManager {
     }
 
 
-    public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver receiver) {
+    public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<ChatMessage>> receiver) {
         String token = ABSharedPreference.getAccoungConfig().getToken();
         Call<List<ChatMessage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages(token, time, chatRoomKey, typeChat);
         call.enqueue(new Callback<List<ChatMessage>>() {
@@ -71,7 +71,7 @@ public class APIManager {
         });
     }
 
-    public static void GETUserMe(final HttpRequestReceiver receiver) {
+    public static void GETUserMe(final HttpRequestReceiver<UserMe> receiver) {
         Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<UserMe>() {
             @Override
@@ -86,7 +86,7 @@ public class APIManager {
         });
     }
 
-    public static void GETUsers(final HttpRequestReceiver receiver) {
+    public static void GETUsers(final HttpRequestReceiver<List<User>> receiver) {
         Call<List<User>> call = AntbuddyApplication.getInstance().getApiService().GETUsers(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<List<User>>() {
             @Override
@@ -101,7 +101,7 @@ public class APIManager {
         });
     }
 
-    public static void GETGroups(final HttpRequestReceiver receiver) {
+    public static void GETGroups(final HttpRequestReceiver<List<Room>> receiver) {
         Call<List<Room>> call = AntbuddyApplication.getInstance().getApiService().GETRooms(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<List<Room>>() {
             @Override

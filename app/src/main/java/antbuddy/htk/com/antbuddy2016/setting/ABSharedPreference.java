@@ -20,6 +20,9 @@ public class ABSharedPreference {
 
     private static final String KEY_XMPP_HOST = "XMPP_HOST";
 
+    private static final String KEY_REMEMBER_PASSWORD = "KEY_REMEMBER_PASSWORD";
+
+
     public static ABAccountConfig getAccoungConfig() {
         ABAccountConfig accountConfig = new ABAccountConfig();
         SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
@@ -60,5 +63,17 @@ public class ABSharedPreference {
         SharedPreferences.Editor edit = sharedSetting.edit();
         edit.putString(KEY_DOMAIN, domain);
         edit.apply();
+    }
+
+    public static void saveRememberPass(boolean isSave) {
+        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedSetting.edit();
+        edit.putBoolean(KEY_REMEMBER_PASSWORD, isSave);
+        edit.apply();
+    }
+
+    public static boolean getRememberPass() {
+        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+        return sharedSetting.getBoolean(KEY_REMEMBER_PASSWORD, false);
     }
 }

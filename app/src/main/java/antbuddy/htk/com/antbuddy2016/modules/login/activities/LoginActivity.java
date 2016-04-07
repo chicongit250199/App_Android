@@ -48,33 +48,46 @@ public class LoginActivity extends Activity {
         emailStr    = ABSharedPreference.getAccoungConfig().getEmail();
         passwordStr = ABSharedPreference.getAccoungConfig().getPassword();
 
+        LogHtk.i(LogHtk.Test1, "emailStr=" + emailStr);
+        LogHtk.i(LogHtk.Test1, "passwordStr=" + passwordStr);
 
+        initViews();
+        registerListeners();
+        setUpUIState();
+
+        LoReActivity.resetAccountInSharedPreferences();
+        LoReActivity.resetXMPP();
+
+        AndroidHelper.warningInternetConnection(this);
+    }
+
+    private void initViews() {
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        cbRememberPassword = (CheckBox) findViewById(R.id.cbRememberPassword);
+        cbShowPassword = (CheckBox) findViewById(R.id.cbShowPassword);
+        btnForgotPassword = (Button) findViewById(R.id.btnForgotPassword);
+        progressBar_Login = (ProgressBar) findViewById(R.id.progressBar_Login);
+        accept_login_Button = (Button) findViewById(R.id.accept_login_Button);
+    }
 
+    private void registerListeners() {
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE){
-                   if (etEmail.length() > 0 && etPassword.length() > 0) {
-                       accept_login_Button.performClick();
-                   }
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (etEmail.length() > 0 && etPassword.length() > 0) {
+                        accept_login_Button.performClick();
+                    }
                 }
                 return false;
             }
         });
 
-        cbRememberPassword = (CheckBox) findViewById(R.id.cbRememberPassword);
-
-        if (passwordStr.length() > 0) {
-            cbRememberPassword.setChecked(true);
-        }
-
-        cbShowPassword = (CheckBox) findViewById(R.id.cbShowPassword);
         cbShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 } else {
                     etPassword.setInputType(129);
@@ -82,18 +95,17 @@ public class LoginActivity extends Activity {
             }
         });
 
-        btnForgotPassword = (Button) findViewById(R.id.btnForgotPassword);
+        cbRememberPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ABSharedPreference.saveRememberPass(true);
+                } else {
+                    ABSharedPreference.saveRememberPass(false);
+                }
+            }
+        });
 
-        if (emailStr.length() > 0) {
-            etEmail.setText(emailStr);
-        }
-
-        if (passwordStr.length() > 0) {
-            etPassword.setText(passwordStr);
-        }
-
-        progressBar_Login = (ProgressBar) findViewById(R.id.progressBar_Login);
-        accept_login_Button = (Button) findViewById(R.id.accept_login_Button);
         accept_login_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,13 +121,16 @@ public class LoginActivity extends Activity {
                 AndroidHelper.showToast("This feature will be available soon!", LoginActivity.this);
             }
         });
+    }
 
-        LoReActivity.resetAccountInSharedPreferences();
-        LoReActivity.resetXMPP();
-
-        AndroidHelper.warningInternetConnection(this);
-
-
+    private void setUpUIState() {
+        if (emailStr.length() > 0) {
+            etEmail.setText(emailStr);
+        }
+        if (ABSharedPreference.getRememberPass()) {
+            cbRememberPassword.setChecked(true);
+            etPassword.setText(passwordStr);
+        }
     }
 
     private void requestAPI() {
@@ -127,20 +142,15 @@ public class LoginActivity extends Activity {
         AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
         AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
 
-//      etEmail.getText().toString().trim()
-//      etPassword.getText().toString().trim());
-        APIManager.GETLogin("thanh.nguyen@htklabs.com", "doipasshoairuatroi", new HttpRequestReceiver<Token>() {
+        emailStr    = etEmail.getText().toString().trim();
+        passwordStr = etPassword.getText().toString().trim();
+        APIManager.GETLogin(emailStr, passwordStr, new HttpRequestReceiver<Token>() {
             @Override
             public void onSuccess(Token token) {
                 if (token != null) {
-                    //Constants.token = "Bearer " + response.body().getToken();
                     tokenStr = "Bearer " + token.getToken();
                     if (tokenStr.length() > 0) {
-                        emailStr = etEmail.getText().toString().trim();
-                        passwordStr = etPassword.getText().toString().trim();
-
                         saveInShared(emailStr, passwordStr, tokenStr);
-
                         Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                         startActivity(myIntent);
                         finish();
@@ -155,7 +165,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Login error: " + error.toString());
+                LogHtk.e(LogHtk.API_TAG, "Login error: " + error);
                 warningTryLogin();
             }
         });

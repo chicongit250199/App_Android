@@ -97,7 +97,6 @@ public class RecentFragment extends Fragment {
 
     @Override
     public void onResume() {
-        LogHtk.d(LogHtk.Test1, "onResume");
         super.onResume();
     }
 
@@ -114,7 +113,7 @@ public class RecentFragment extends Fragment {
 
             @Override
             public void onError(String error) {
-                LogHtk.d(LogHtk.Test1, "error = " + error);
+                LogHtk.d(LogHtk.RecentFragment, "error = " + error);
             }
         });
     }

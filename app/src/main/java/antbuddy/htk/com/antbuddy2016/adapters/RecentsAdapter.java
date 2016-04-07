@@ -144,8 +144,6 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             holder.ic_status.setVisibility(View.VISIBLE);
             for (User user : ObjectManager.getInstance().getListUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
-                    LogHtk.d(LogHtk.Test1, "user = " + user.getUsername());
-
                     Glide.with(context)
                             .load(user.getAvatar())
                             .override(60, 60)

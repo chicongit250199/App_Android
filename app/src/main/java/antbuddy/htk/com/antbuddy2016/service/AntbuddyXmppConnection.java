@@ -363,7 +363,6 @@ public class AntbuddyXmppConnection {
 		Message.Type type;
 		if(chatMessage.getType().equals("groupchat")) {
 			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, chatMucDomain);
-			LogHtk.i(LogHtk.Test1, "receiverJid =" + receiverJid);
 			type = Message.Type.groupchat;
 		} else {
 			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, Constants.DOMAIN_XMPP);

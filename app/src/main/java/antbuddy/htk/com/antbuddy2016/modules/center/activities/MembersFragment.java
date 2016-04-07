@@ -84,7 +84,6 @@ public class MembersFragment extends Fragment {
         ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
             @Override
             public void onResponse(List<User> listUsers) {
-                LogHtk.i(LogHtk.Test1, "listUsers = " + listUsers.size());
                 mUserAdapter.filter(searchView.getQuery().toString(), listUsers);
             }
         });
