@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -34,28 +35,34 @@ import retrofit.Response;
 public class DomainActivity extends Activity {
 
     public static final String TAG_THISCLASS = "DomainActivity";
-
     List<Organization> domainList;
     DomainAdapter domainAdapter;
     ListView domainListView;
-
     ProgressBar progressBar_Domain;
+    Button btnRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_domain);
 
+        initViews();
+        viewsListener();
+
+        // Request Data to show List organizations
+        requestAPIToGetOrganizations();
+    }
+
+    private void initViews() {
         progressBar_Domain = (ProgressBar) findViewById(R.id.progressBar_Domain);
         domainList = new ArrayList<>();
         domainAdapter = new DomainAdapter(this, domainList);
         domainListView = (ListView) findViewById(R.id.domain_ListView);
         domainListView.setAdapter(domainAdapter);
+        btnRefresh = (Button) findViewById(R.id.btnRefresh);
+    }
 
-        // Request Data to show List organizations
-        requestAPIToGetOrganizations();
-
+    private void viewsListener() {
         domainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -68,6 +75,14 @@ public class DomainActivity extends Activity {
                     startActivity(myIntent);
                     finish();
                 }
+            }
+        });
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnRefresh.setVisibility(View.GONE);
+                requestAPIToGetOrganizations();
             }
         });
     }
@@ -101,23 +116,22 @@ public class DomainActivity extends Activity {
                 @Override
                 public void onSuccess(List<Organization> listOrgs) {
                     LogHtk.d(TAG_THISCLASS, "Domain response !: " + listOrgs.size());
-
                     domainList.clear();
                     domainList.addAll(listOrgs);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             domainAdapter.notifyDataSetChanged();
-                        }
-                    });
-
+                            }
+                        });
                     AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                 }
 
                 @Override
                 public void onError(String error) {
-                    LogHtk.e(TAG_THISCLASS, "Domain onFailure!: " + error.toString());
+                    btnRefresh.setVisibility(View.VISIBLE);
                     AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
+                    APIManager.showToastWithCode(error, DomainActivity.this);
                 }
             });
         }

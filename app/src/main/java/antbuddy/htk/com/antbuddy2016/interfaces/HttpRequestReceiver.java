@@ -10,5 +10,4 @@ public interface HttpRequestReceiver<T> {
     //public void onBegin();
     public void onSuccess(T object);
     public void onError(String error);
-    //public void onFinish();
 }

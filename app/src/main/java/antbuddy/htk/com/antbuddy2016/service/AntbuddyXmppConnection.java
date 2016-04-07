@@ -277,7 +277,6 @@ public class AntbuddyXmppConnection {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
-				new Exception().printStackTrace();
 				LogHtk.i(LogHtk.XMPP_TAG, "Successfully reconnected to the XMPP server.");
 				sendPresenceOutFromOpeningRooms();
 			}

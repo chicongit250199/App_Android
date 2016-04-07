@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
+import android.app.Activity;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -24,12 +27,28 @@ import retrofit.Response;
 public class APIManager {
     public static final String BASE_URL = "https://antbuddy.com";
 
+    public static void showToastWithCode(String code, Activity activity) {
+        int codeInt;
+        try {
+            codeInt = Integer.parseInt(code);
+            AndroidHelper.showToast("Request error with code: " + codeInt, activity);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            codeInt = -1;
+            AndroidHelper.showToast("Warning: " + code, activity);
+        }
+    }
+
     public static void GETLogin(String email, String password, final HttpRequestReceiver<Token> receiver) {
         Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin(email, password);
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Response<Token> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
@@ -44,7 +63,11 @@ public class APIManager {
         call.enqueue(new Callback<List<Organization>>() {
             @Override
             public void onResponse(Response<List<Organization>> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
@@ -61,7 +84,11 @@ public class APIManager {
         call.enqueue(new Callback<List<ChatMessage>>() {
             @Override
             public void onResponse(Response<List<ChatMessage>> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
@@ -76,7 +103,11 @@ public class APIManager {
         call.enqueue(new Callback<UserMe>() {
             @Override
             public void onResponse(Response<UserMe> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
@@ -91,7 +122,11 @@ public class APIManager {
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Response<List<User>> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
@@ -106,7 +141,11 @@ public class APIManager {
         call.enqueue(new Callback<List<Room>>() {
             @Override
             public void onResponse(Response<List<Room>> response) {
-                receiver.onSuccess(response.body());
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override

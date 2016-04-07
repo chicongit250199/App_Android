@@ -147,26 +147,24 @@ public class LoginActivity extends Activity {
         APIManager.GETLogin(emailStr, passwordStr, new HttpRequestReceiver<Token>() {
             @Override
             public void onSuccess(Token token) {
-                if (token != null) {
-                    tokenStr = "Bearer " + token.getToken();
-                    if (tokenStr.length() > 0) {
-                        saveInShared(emailStr, passwordStr, tokenStr);
-                        Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
-                        startActivity(myIntent);
-                        finish();
-                    }
-
-                    AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
-                    AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
-                } else {
-                    warningTryLogin();
+                tokenStr = "Bearer " + token.getToken();
+                if (tokenStr.length() > 0) {
+                    ABSharedPreference.saveABAcountConfig(emailStr, passwordStr, tokenStr, null);
+                    Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
+                    startActivity(myIntent);
+                    finish();
                 }
+
+                AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
             }
 
             @Override
             public void onError(String error) {
                 LogHtk.e(LogHtk.API_TAG, "Login error: " + error);
-                warningTryLogin();
+                AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
+                AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
+                APIManager.showToastWithCode(error, LoginActivity.this);
             }
         });
     }
@@ -175,9 +173,5 @@ public class LoginActivity extends Activity {
         AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
         AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
         AndroidHelper.showToast("Please try again!", LoginActivity.this);
-    }
-
-    private void saveInShared(String email, String password, String token) {
-        ABSharedPreference.saveABAcountConfig(email, password, token, null);
     }
 }

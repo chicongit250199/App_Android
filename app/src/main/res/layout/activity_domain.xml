@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/walkthough_background">
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Try again!"
+        android:id="@+id/btnRefresh"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:background="@drawable/backgroundbutton1"/>
+
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
@@ -51,9 +61,8 @@
         android:layout_marginBottom="5dp"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+        android:paddingRight="10dp"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>
