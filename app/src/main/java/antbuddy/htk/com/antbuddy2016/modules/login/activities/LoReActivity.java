@@ -50,6 +50,7 @@ public class LoReActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loreactivity);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LORE_ACTIVITY);
 
         resetAccountInSharedPreferences();
         initViews();
@@ -116,6 +117,7 @@ public class LoReActivity extends Activity {
                 default:
                     break;
             }
+            finish();
         }
     };
 

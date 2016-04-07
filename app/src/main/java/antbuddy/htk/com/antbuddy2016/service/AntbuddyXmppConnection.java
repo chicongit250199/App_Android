@@ -117,17 +117,6 @@ public class AntbuddyXmppConnection {
 		xmppConnection = connection;
 	}
 
-	public void connectXMPP() throws XMPPException {
-		ABXMPPConfig config = getABXMPPConfig();
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
-		xmppConnection = new XMPPConnection(connConfig);
-		try {
-			xmppConnection.connect();
-		} catch (XMPPException e) {
-			throw e;
-		}
-	}
-
 	public void connectXMPP(final Context context, final XMPPReceiver receiver) {
 		if (xmppConnection != null) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
@@ -135,9 +124,21 @@ public class AntbuddyXmppConnection {
 		}
 
 		mContext = context;
+		ABXMPPConfig config = getABXMPPConfig();
+
+		LogHtk.i(LogHtk.Test1, "host =" + config.getHOST_XMPP());
+		LogHtk.i(LogHtk.Test1, "config.getPORT_XMPP() =" + config.getPORT_XMPP());
+		LogHtk.i(LogHtk.Test1, "getDOMAIN_XMPP =" + config.getDOMAIN_XMPP());
+		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
+		xmppConnection = new XMPPConnection(connConfig);
 		try {
-			connectXMPP();
+			xmppConnection.connect();
 		} catch (XMPPException e) {
+			e.printStackTrace();
+			xmppConnection = null;
+			receiver.onError(e.toString());
+			return;
+		} catch (Exception e) {
 			e.printStackTrace();
 			xmppConnection = null;
 			receiver.onError(e.toString());
@@ -150,7 +151,8 @@ public class AntbuddyXmppConnection {
 		try {
 			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-			ABXMPPConfig config = getABXMPPConfig();
+			LogHtk.i(LogHtk.Test1, "getUSERNAME_XMPP =" + config.getUSERNAME_XMPP());
+			LogHtk.i(LogHtk.Test1, "getPASSWORD_XMPP =" + config.getPASSWORD_XMPP());
 			xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
 
 			// After connect successful

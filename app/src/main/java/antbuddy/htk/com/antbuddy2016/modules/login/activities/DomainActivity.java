@@ -41,6 +41,8 @@ public class DomainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_domain);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.DOMAIN_ACTIVITY);
+        ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);
 
         initViews();
         viewsListener();
@@ -65,7 +67,6 @@ public class DomainActivity extends Activity {
                 String domain = domainList.get(position).getDomain();
                 if (domain.length() > 0) {
                     ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, domain);
-                    AntbuddyApplication.getInstance().restartAPIServiceWithDomain(domain);
                     Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
                     startActivity(myIntent);
                     finish();
@@ -99,6 +100,7 @@ public class DomainActivity extends Activity {
     private void requestAPIToGetOrganizations() {
         if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
             Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+            btnRefresh.setVisibility(View.VISIBLE);
             return;
         }
 

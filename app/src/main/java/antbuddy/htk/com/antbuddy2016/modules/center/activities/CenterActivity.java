@@ -71,8 +71,12 @@ public class CenterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_center);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY);
 
-		boolean isConnectService = connectServiceInAndroid();
+        AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
+        ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
+
+        boolean isConnectService = connectServiceInAndroid();
         if (!isConnectService) {
             LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
         }

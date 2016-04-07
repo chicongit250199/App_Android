@@ -44,6 +44,7 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
 
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();
         passwordStr = ABSharedPreference.getAccountConfig().getPassword();
@@ -134,6 +135,13 @@ public class LoginActivity extends Activity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent myIntent = new Intent(LoginActivity.this, LoReActivity.class);
+        startActivity(myIntent);
+        finish();
+    }
+
     private void requestAPI() {
         if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
             AndroidHelper.showToast("No network connection available!", LoginActivity.this);
@@ -151,7 +159,6 @@ public class LoginActivity extends Activity {
                 tokenStr = "Bearer " + token.getToken();
                 if (tokenStr.length() > 0) {
                     ABSharedPreference.saveABAcountConfig(emailStr, passwordStr, tokenStr, null);
-                    ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
 
                     Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                     startActivity(myIntent);

@@ -1,6 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 /**
@@ -21,6 +23,7 @@ public class CreateAccountActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.CREATE_ACCOUNT_ACTIVITY);
 
         setContentView(R.layout.activity_createaccount);
         initViews();
@@ -45,5 +48,12 @@ public class CreateAccountActivity extends Activity {
             AndroidHelper.showToast("No network connection available!", CreateAccountActivity.this);
             return;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent myIntent = new Intent(CreateAccountActivity.this, LoReActivity.class);
+        startActivity(myIntent);
+        finish();
     }
 }

@@ -10,6 +10,41 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
  */
 public class ABSharedPreference {
 
+
+    public enum CURRENTSCREEN {
+        WALK_THROUGH_ACTIVITY,
+        LORE_ACTIVITY,
+        LOGIN_ACTIVITY,
+        DOMAIN_ACTIVITY,
+        CENTER_ACTIVITY,
+        CREATE_ACCOUNT_ACTIVITY,
+        FORGOT_PASSWORD_ACTIVITY
+    }
+
+    public static void triggerCurrentScreen(CURRENTSCREEN currentScreen) {
+        if (currentScreen.equals(CURRENTSCREEN.WALK_THROUGH_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.WALK_THROUGH_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.LORE_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.LORE_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.LOGIN_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.LOGIN_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.DOMAIN_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.DOMAIN_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.CENTER_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.CENTER_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.CREATE_ACCOUNT_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.CREATE_ACCOUNT_ACTIVITY.toString());
+        }
+        if (currentScreen.equals(CURRENTSCREEN.FORGOT_PASSWORD_ACTIVITY)) {
+            save(KEY_CURRENT_SCREEN, CURRENTSCREEN.FORGOT_PASSWORD_ACTIVITY.toString());
+        }
+    }
+
     private static final String NAME_AB_SHARED_PREFERENCE = "NAME_AB_SHARED_PREFERENCE";
 
     // Auth
@@ -28,6 +63,8 @@ public class ABSharedPreference {
     // Setting
     public static final String KEY_REMEMBER_PASSWORD = "KEY_REMEMBER_PASSWORD";
     public static final String KEY_IS_LOGIN = "KEY_IS_LOGIN";
+
+    public static final String KEY_CURRENT_SCREEN = "KEY_CURRENT_SCREEN";
 
     public static ABAccountConfig getAccountConfig() {
         ABAccountConfig accountConfig = new ABAccountConfig();

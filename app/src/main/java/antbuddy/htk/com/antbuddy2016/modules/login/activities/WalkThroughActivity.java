@@ -17,6 +17,7 @@ import java.util.List;
 import antbuddy.htk.com.antbuddy2016.R;
 
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.WalkThroughAdapder;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -41,8 +42,8 @@ public class WalkThroughActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_walkthrough);
+        ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.WALK_THROUGH_ACTIVITY);
 
         initViews();
 

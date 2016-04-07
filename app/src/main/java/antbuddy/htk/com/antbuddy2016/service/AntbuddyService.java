@@ -34,13 +34,7 @@ public class AntbuddyService extends Service {
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
-		mXmppConnection = AntbuddyXmppConnection.getInstance();
-
-//		try {
-//			mXmppConnection.connectXMPP();
-//		} catch (XMPPException e) {
-//			e.printStackTrace();
-//		}
+		loginXMPP();
 	}
 
 	@Override
