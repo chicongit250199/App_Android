@@ -269,7 +269,7 @@ public class CenterActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mIRemoteService.loginXMPP(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_USERNAME), ABSharedPreference.get(ABSharedPreference.KEY_XMPP_PASSWORD));
+                    mIRemoteService.loginXMPP();
                 }
             }).start();
         }

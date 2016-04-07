@@ -37,6 +37,7 @@ import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
+import antbuddy.htk.com.antbuddy2016.setting.ABXMPPConfig;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -117,15 +118,8 @@ public class AntbuddyXmppConnection {
 	}
 
 	public void connectXMPP() throws XMPPException {
-		String hostXMPP   = ABSharedPreference.getXMPPConfig().getHOST_XMPP();
-		int    portXMPP   = ABSharedPreference.getXMPPConfig().getPORT_XMPP();
-		String domainXMPP = ABSharedPreference.getXMPPConfig().getDOMAIN_XMPP();
-
-		LogHtk.i("asdf", "Constants.HOST_XMPP = " + hostXMPP);
-		LogHtk.i("asdf", "Constants.PORT_XMPP = " + portXMPP);
-		LogHtk.i("asdf", "Constants.DOMAIN_XMPP = " + domainXMPP);
-
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(hostXMPP, portXMPP, domainXMPP);
+		ABXMPPConfig config = getABXMPPConfig();
+		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 		xmppConnection = new XMPPConnection(connConfig);
 		try {
 			xmppConnection.connect();
@@ -134,7 +128,7 @@ public class AntbuddyXmppConnection {
 		}
 	}
 
-	public void connectXMPP(final Context context, final String username, final String pass , final XMPPReceiver receiver) {
+	public void connectXMPP(final Context context, final XMPPReceiver receiver) {
 		if (xmppConnection != null) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
 			return;
@@ -156,7 +150,8 @@ public class AntbuddyXmppConnection {
 		try {
 			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-			xmppConnection.login(username, pass, android_id);
+			ABXMPPConfig config = getABXMPPConfig();
+			xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
 
 			// After connect successful
 			// set connectionXmpp
@@ -869,5 +864,9 @@ public class AntbuddyXmppConnection {
         if(componentInfo.getPackageName().equals(myPackage)) return true;
         return false;
     }
+
+	private ABXMPPConfig getABXMPPConfig() {
+		return ABSharedPreference.getXMPPConfig();
+	}
 
 }

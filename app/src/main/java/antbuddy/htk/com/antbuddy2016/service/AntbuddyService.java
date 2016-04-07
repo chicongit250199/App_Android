@@ -79,9 +79,9 @@ public class AntbuddyService extends Service {
 		super.onDestroy();
 	}
 
-	public void loginXMPP(String usernameXMPP, String passwordXMPP) {
+	public void loginXMPP() {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
-		mXmppConnection.connectXMPP(AntbuddyService.this, usernameXMPP, passwordXMPP, new XMPPReceiver() {
+		mXmppConnection.connectXMPP(AntbuddyService.this, new XMPPReceiver() {
 			@Override
 			public void onSuccess(String result) {
 				LogHtk.d(LogHtk.XMPP_TAG, "Login and Connect XMPP:  " + result);

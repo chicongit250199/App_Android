@@ -47,6 +47,7 @@ public class LoginActivity extends Activity {
 
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();
         passwordStr = ABSharedPreference.getAccountConfig().getPassword();
+        ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);
 
         LogHtk.i(LogHtk.Test1, "emailStr=" + emailStr);
         LogHtk.i(LogHtk.Test1, "passwordStr=" + passwordStr);
@@ -99,9 +100,9 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    ABSharedPreference.saveRememberPass(true);
+                    ABSharedPreference.save(ABSharedPreference.KEY_REMEMBER_PASSWORD, true);
                 } else {
-                    ABSharedPreference.saveRememberPass(false);
+                    ABSharedPreference.save(ABSharedPreference.KEY_REMEMBER_PASSWORD, false);
                 }
             }
         });
@@ -127,7 +128,7 @@ public class LoginActivity extends Activity {
         if (emailStr.length() > 0) {
             etEmail.setText(emailStr);
         }
-        if (ABSharedPreference.getRememberPass()) {
+        if (ABSharedPreference.getBoolean(ABSharedPreference.KEY_REMEMBER_PASSWORD)) {
             cbRememberPassword.setChecked(true);
             etPassword.setText(passwordStr);
         }
@@ -150,6 +151,8 @@ public class LoginActivity extends Activity {
                 tokenStr = "Bearer " + token.getToken();
                 if (tokenStr.length() > 0) {
                     ABSharedPreference.saveABAcountConfig(emailStr, passwordStr, tokenStr, null);
+                    ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
+
                     Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                     startActivity(myIntent);
                     finish();

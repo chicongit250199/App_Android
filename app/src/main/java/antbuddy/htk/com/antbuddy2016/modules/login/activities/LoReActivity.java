@@ -138,8 +138,8 @@ public class LoReActivity extends Activity {
 
     // Reset
     public static void resetAccountInSharedPreferences() {
-        ABSharedPreference.saveToken("");
-        ABSharedPreference.saveDomain("");
+        ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
 
         Constants.USERNAME_XMPP = "";
         Constants.PASSWORD_XMPP = "";
@@ -148,7 +148,7 @@ public class LoReActivity extends Activity {
     }
 
     public static void resetXMPP() {
-        ABSharedPreference.saveDomain("");
+        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
 
         Constants.USERNAME_XMPP = "";
         Constants.PASSWORD_XMPP = "";

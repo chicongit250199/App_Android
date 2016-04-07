@@ -64,7 +64,7 @@ public class DomainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String domain = domainList.get(position).getDomain();
                 if (domain.length() > 0) {
-                    ABSharedPreference.saveDomain(domain);
+                    ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, domain);
                     AntbuddyApplication.getInstance().restartAPIServiceWithDomain(domain);
                     Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
                     startActivity(myIntent);

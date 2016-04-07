@@ -27,6 +27,7 @@ public class ABSharedPreference {
 
     // Setting
     public static final String KEY_REMEMBER_PASSWORD = "KEY_REMEMBER_PASSWORD";
+    public static final String KEY_IS_LOGIN = "KEY_IS_LOGIN";
 
     public static ABAccountConfig getAccountConfig() {
         ABAccountConfig accountConfig = new ABAccountConfig();
@@ -70,56 +71,6 @@ public class ABSharedPreference {
         return xmppConfig;
     }
 
-    public static void saveEmailAndPass(String email, String password) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putString(KEY_EMAIL, email);
-        edit.putString(KEY_PASSWORD, password);
-        edit.apply();
-    }
-
-    public static void saveToken(String token) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putString(KEY_TOKEN, token);
-        edit.apply();
-    }
-
-    public static void saveDomain(String domain) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putString(KEY_DOMAIN, domain);
-        edit.apply();
-    }
-
-    public static void saveRememberPass(boolean isSave) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putBoolean(KEY_REMEMBER_PASSWORD, isSave);
-        edit.apply();
-    }
-
-    public static boolean getRememberPass() {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        return sharedSetting.getBoolean(KEY_REMEMBER_PASSWORD, false);
-    }
-
-    // XMPP
-
-    public static void saveHostXMPP(String hostXMPP) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putString(KEY_XMPP_HOST, hostXMPP);
-        edit.apply();
-    }
-
-    public static void savePortXMPP(int port) {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putInt(KEY_XMPP_PORT, port);
-        edit.apply();
-    }
-
     public static void save(String key, String value) {
         SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedSetting.edit();
@@ -134,9 +85,21 @@ public class ABSharedPreference {
         edit.apply();
     }
 
+    public static void save(String key, boolean value) {
+        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedSetting.edit();
+        edit.putBoolean(key, value);
+        edit.apply();
+    }
+
     public static String get(String key) {
         SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
         return sharedSetting.getString(key, "");
+    }
+
+    public static boolean getBoolean(String key) {
+        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+        return sharedSetting.getBoolean(key, false);
     }
 
     public static int getInt(String key) {
