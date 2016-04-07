@@ -11,6 +11,7 @@ import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import retrofit.Call;
@@ -22,34 +23,8 @@ import retrofit.Response;
  */
 public class LoginAPI {
 
-    public static void POSTLogin(String email, String password, HttpRequestReceiver receiver) {
-        ABRequest.POSTLogin(email, password, receiver);
-    }
-
-    public static void GETOrganizations(HttpRequestReceiver receiver) {
-        ABRequest.GETOrganizations(receiver);
-    }
-
-    public static void GETUserProfile(HttpRequestReceiver receiver) {
-        ABRequest.GETOrganizationUserProfile(receiver);
-    }
-
-//    public static void GETListUsers(HttpRequestReceiver receiver) {
-//        ABRequest.GETListUsers(receiver);
-//    }
-
-//    public static void GETListGroups(HttpRequestReceiver receiver) {
-//        ABRequest.GETListGroups(receiver);
-//    }
-
-    // Create new account
-    public static void POSTCheckExistOrganizations(HttpRequestReceiver receiver) {
-        //ABRequest.POSTCheckExistOrganizations(receiver);
-    }
-
-
     public static void GETUserMe(final HttpRequestReceiver receiver) {
-        Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(Constants.token);
+        Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<UserMe>() {
             @Override
             public void onResponse(Response<UserMe> response) {
@@ -64,7 +39,7 @@ public class LoginAPI {
     }
 
     public static void GETUsers(final HttpRequestReceiver receiver) {
-        Call<List<User>> call = AntbuddyApplication.getInstance().getApiService().GETUsers(Constants.token);
+        Call<List<User>> call = AntbuddyApplication.getInstance().getApiService().GETUsers(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Response<List<User>> response) {
@@ -79,7 +54,7 @@ public class LoginAPI {
     }
 
     public static void GETGroups(final HttpRequestReceiver receiver) {
-        Call<List<Room>> call = AntbuddyApplication.getInstance().getApiService().GETRooms(Constants.token);
+        Call<List<Room>> call = AntbuddyApplication.getInstance().getApiService().GETRooms(ABSharedPreference.getAccoungConfig().getToken());
         call.enqueue(new Callback<List<Room>>() {
             @Override
             public void onResponse(Response<List<Room>> response) {
@@ -104,7 +79,7 @@ public class LoginAPI {
         body.put("type", chatMessage.getType());
         body.put("id", id);
 
-        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(Constants.token, body);
+        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccoungConfig().getToken(), body);
         call.enqueue(new Callback<ChatMessage>() {
             @Override
             public void onResponse(Response<ChatMessage> response) {
@@ -115,12 +90,6 @@ public class LoginAPI {
             }
         });
     }
-
-
-
-
-
-
 
 //    // Check su ton tai
 //    https://antbuddy.com/api/organizations/checkexist POST

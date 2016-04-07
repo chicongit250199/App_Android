@@ -16,6 +16,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
 import antbuddy.htk.com.antbuddy2016.service.LocalService;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -50,7 +51,7 @@ public class LoReActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loreactivity);
 
-        reset();
+        resetAccountInSharedPreferences();
         initViews();
         getBunldeAndProcess();
 
@@ -136,9 +137,10 @@ public class LoReActivity extends Activity {
     }
 
     // Reset
-    public static void reset() {
-        Constants.token = "";
-        Constants.domain = "";
+    public static void resetAccountInSharedPreferences() {
+        ABSharedPreference.saveToken("");
+        ABSharedPreference.saveDomain("");
+
         Constants.USERNAME_XMPP = "";
         Constants.PASSWORD_XMPP = "";
         Constants.HOST_XMPP = "";
@@ -146,7 +148,8 @@ public class LoReActivity extends Activity {
     }
 
     public static void resetXMPP() {
-        Constants.domain = "";
+        ABSharedPreference.saveDomain("");
+
         Constants.USERNAME_XMPP = "";
         Constants.PASSWORD_XMPP = "";
         Constants.HOST_XMPP = "";

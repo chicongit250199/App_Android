@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 
@@ -47,7 +48,8 @@ public class User {
 
 	public String getAvatar() {
 		if (!avatar.startsWith("http")) {
-			avatar = "https://" + Constants.domain + ".antbuddy.com/"+avatar;
+			String domain = ABSharedPreference.getAccoungConfig().getDomain();
+			avatar = "https://" + domain + ".antbuddy.com/"+avatar;
 		}
 		return avatar;
 	}
@@ -159,7 +161,8 @@ public class User {
 		avatar = AndroidHelper.getString(json, key_avatar, null);
 		//fix avatar defaul
 		if (!avatar.startsWith("http")) {
-			avatar = "https://" + Constants.domain + ".antbuddy.com/"+avatar;
+			String domain = ABSharedPreference.getAccoungConfig().getDomain();
+			avatar = "https://" + domain + ".antbuddy.com/"+avatar;
 		}
 		username = AndroidHelper.getString(json, key_username, null);
 		key = AndroidHelper.getString(json, key_key, null);

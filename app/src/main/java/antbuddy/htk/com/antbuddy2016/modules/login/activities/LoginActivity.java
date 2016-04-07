@@ -19,11 +19,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.api.ParseJson;
 import antbuddy.htk.com.antbuddy2016.model.Token;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.JSONKey;
@@ -46,10 +48,18 @@ public class LoginActivity extends Activity {
     private CheckBox cbShowPassword;
     private Button btnForgotPassword;
 
+    private String emailStr;
+    private String passwordStr;
+    private String tokenStr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        emailStr    = ABSharedPreference.getAccoungConfig().getEmail();
+        passwordStr = ABSharedPreference.getAccoungConfig().getPassword();
+
 
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -68,7 +78,7 @@ public class LoginActivity extends Activity {
 
         cbRememberPassword = (CheckBox) findViewById(R.id.cbRememberPassword);
 
-        if (Constants.password.length() > 0) {
+        if (passwordStr.length() > 0) {
             cbRememberPassword.setChecked(true);
         }
 
@@ -86,12 +96,12 @@ public class LoginActivity extends Activity {
 
         btnForgotPassword = (Button) findViewById(R.id.btnForgotPassword);
 
-        if (Constants.email.length() > 0) {
-            etEmail.setText(Constants.email);
+        if (emailStr.length() > 0) {
+            etEmail.setText(emailStr);
         }
 
-        if (Constants.password.length() > 0) {
-            etPassword.setText(Constants.password);
+        if (passwordStr.length() > 0) {
+            etPassword.setText(passwordStr);
         }
 
         progressBar_Login = (ProgressBar) findViewById(R.id.progressBar_Login);
@@ -99,13 +109,6 @@ public class LoginActivity extends Activity {
         accept_login_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Constants.email = etEmail.getText().toString().trim();
-
-                if (cbRememberPassword.isChecked()) {
-                    Constants.password = etPassword.getText().toString().trim();
-                } else {
-                    Constants.password = "";
-                }
 
                 AndroidHelper.hideSoftKeyboard(LoginActivity.this);
                 requestAPI();
@@ -119,7 +122,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        LoReActivity.reset();
+        LoReActivity.resetAccountInSharedPreferences();
         LoReActivity.resetXMPP();
 
         AndroidHelper.warningInternetConnection(this);
@@ -135,16 +138,21 @@ public class LoginActivity extends Activity {
 
         AndroidHelper.showProgressBar(LoginActivity.this, progressBar_Login);
         AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, false);
-//        Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin(etEmail.getText().toString().trim(), etPassword.getText().toString().trim());
-        Call<Token> call = AntbuddyApplication.getInstance().getApiService().GETLogin("thanh.nguyen@htklabs.com", "doipasshoairuatroi");
-        call.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Response<Token> response) {
-                Token token = response.body();
-                if (token != null && response.isSuccess()) {
-                    Constants.token = "Bearer " + response.body().getToken();
 
-                    if (Constants.token.length() > 0) {
+//      etEmail.getText().toString().trim()
+//      etPassword.getText().toString().trim());
+        APIManager.GETLogin("thanh.nguyen@htklabs.com", "doipasshoairuatroi", new HttpRequestReceiver<Token>() {
+            @Override
+            public void onSuccess(Token token) {
+                if (token != null) {
+                    //Constants.token = "Bearer " + response.body().getToken();
+                    tokenStr = "Bearer " + token.getToken();
+                    if (tokenStr.length() > 0) {
+                        emailStr = etEmail.getText().toString().trim();
+                        passwordStr = etPassword.getText().toString().trim();
+
+                        saveInShared(emailStr, passwordStr, tokenStr);
+
                         Intent myIntent = new Intent(LoginActivity.this, DomainActivity.class);
                         startActivity(myIntent);
                         finish();
@@ -158,8 +166,8 @@ public class LoginActivity extends Activity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                LogHtk.e(LogHtk.API_TAG, "Login error: " + t.toString());
+            public void onError(String error) {
+                LogHtk.e(LogHtk.API_TAG, "Login error: " + error.toString());
                 warningTryLogin();
             }
         });
@@ -169,5 +177,9 @@ public class LoginActivity extends Activity {
         AndroidHelper.hideProgressBar(LoginActivity.this, progressBar_Login);
         AndroidHelper.setEnabledWithView(LoginActivity.this, accept_login_Button, true);
         AndroidHelper.showToast("Please try again!", LoginActivity.this);
+    }
+
+    private void saveInShared(String email, String password, String token) {
+        ABSharedPreference.saveABAcountConfig(email, password, token, null);
     }
 }

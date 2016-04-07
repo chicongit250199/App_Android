@@ -22,6 +22,7 @@ import antbuddy.htk.com.antbuddy2016.api.API;
 import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -137,7 +138,8 @@ public class ObjectManager {
     public void setOnListenerRoom(Class<?> cls, OnListenerGroup onListenerGroup) {
         mListenerRoom.put(cls.getName(), onListenerGroup);
         if (listRooms.size() == 0) {
-            String API_USERS_URL = "https://" + Constants.domain + ".antbuddy.com/api/rooms/";
+            String domain = ABSharedPreference.getAccoungConfig().getDomain();
+            String API_USERS_URL = "https://" + domain + ".antbuddy.com/api/rooms/";
             JsonArrayRequest req = new JsonArrayRequest(API_USERS_URL,
                     new Listener<JSONArray>() {
                         @Override
@@ -157,8 +159,9 @@ public class ObjectManager {
                     }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("authorization", Constants.token);
+                    Map<String, String> params = new HashMap<>();
+                    String token = ABSharedPreference.getAccoungConfig().getToken();
+                    params.put("authorization", token);
                     return params;
                 }
             };
@@ -173,7 +176,8 @@ public class ObjectManager {
 
     public void getUserMe(final OnObjectManagerListener listener) {
         if (userMe == null) {
-            String API_USER_ME_URL = "https://" + Constants.domain + ".antbuddy.com/api/me/";
+            String domain = ABSharedPreference.getAccoungConfig().getDomain();
+            String API_USER_ME_URL = "https://" + domain + ".antbuddy.com/api/me/";
 
             LoginAPI.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override

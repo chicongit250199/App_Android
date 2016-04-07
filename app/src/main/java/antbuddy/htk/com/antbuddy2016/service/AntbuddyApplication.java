@@ -9,6 +9,8 @@ import com.android.volley.toolbox.Volley;
 
 import antbuddy.htk.com.antbuddy2016.api.ABRequest;
 import antbuddy.htk.com.antbuddy2016.api.API;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -31,7 +33,7 @@ public class AntbuddyApplication extends Application {
 		LogHtk.e(TAG, "Created AntbuddyApplication!");
 
 		retrofit = new Retrofit.Builder()
-				.baseUrl(ABRequest.BASE_URL)			//"https://antbuddy.com"
+				.baseUrl(APIManager.BASE_URL)			//"https://antbuddy.com"
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);
@@ -54,7 +56,8 @@ public class AntbuddyApplication extends Application {
 	}
 
 	public API restartAPIServiceWithDomain(String domain) {
-		final String URLWithDomain = "https://" + Constants.domain + ".antbuddy.com";
+
+		final String URLWithDomain = "https://" + ABSharedPreference.getAccoungConfig().getDomain() + ".antbuddy.com";
 		retrofit = new Retrofit.Builder()
 				.baseUrl(URLWithDomain)			//"https://antbuddy.com"
 				.addConverterFactory(GsonConverterFactory.create())
@@ -62,8 +65,6 @@ public class AntbuddyApplication extends Application {
 		apiService = retrofit.create(API.class);
 		return apiService;
 	}
-
-
 
 	public RequestQueue getRequestQueue() {
 		if (mRequestQueue == null) {

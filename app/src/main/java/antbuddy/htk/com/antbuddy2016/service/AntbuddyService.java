@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 
+import org.jivesoftware.smack.XMPPException;
+
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -32,31 +34,12 @@ public class AntbuddyService extends Service {
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
+		mXmppConnection = AntbuddyXmppConnection.getInstance();
 
-		//prefWrapper = getSharedPreferences(SettingAB.SHARED_SETTING, Context.MODE_MULTI_PROCESS);
-		//AntbuddyConfig.COOKIE = prefWrapper.getString(SHARED_TOKEN, "");
-
-//		LogHtk.i(TAG, "Get Cookie from SharedPreferences: " + ((AntbuddyConfig.COOKIE == null)? "NULL":AntbuddyConfig.COOKIE));
-//		if (!TextUtils.isEmpty(AntbuddyConfig.COOKIE)) {
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try {
-//						String result = login(AntbuddyConfig.COOKIE);
-//						if (result.equals(AntbuddyXmppConnection.SERVICE_START_SUCCESS) || result.equals(AntbuddyXmppConnection.SERVICE_ALREADY_START)) {
-//							String result1 = loadingRoom();
-//							if (result1.equals("Success")) {
-//								LogHtk.i(TAG, "AntbuddyService/onCreate:");
-//								saveService();
-//							} else {
-//								LogHtk.i(TAG, result1);
-//							}
-//						}
-//					} catch (RemoteException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}).start();
+//		try {
+//			mXmppConnection.connectXMPP();
+//		} catch (XMPPException e) {
+//			e.printStackTrace();
 //		}
 	}
 
@@ -101,12 +84,12 @@ public class AntbuddyService extends Service {
 		mXmppConnection.connectXMPP(AntbuddyService.this, usernameXMPP, passwordXMPP, new XMPPReceiver() {
 			@Override
 			public void onSuccess(String result) {
-				LogHtk.d(LogHtk.XMPP_TAG, "OnSuccess/ result = " + result);
+				LogHtk.d(LogHtk.XMPP_TAG, "Login and Connect XMPP:  " + result);
 			}
 
 			@Override
 			public void onError(String error) {
-				LogHtk.e(LogHtk.XMPP_TAG, "OnSuccess/ error = " + error);
+				LogHtk.e(LogHtk.XMPP_TAG, "Login and Connect XMPP " + error);
 			}
 		});
 

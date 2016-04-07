@@ -25,7 +25,6 @@ import retrofit.http.Query;
  */
 public interface API {
 
-
     @FormUrlEncoded
     @POST("/users/session/")
     Call<Token> GETLogin(@Field(RequestKey.email)String  email, @Field(RequestKey.password)String  password);

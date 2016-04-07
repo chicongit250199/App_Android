@@ -2,6 +2,9 @@ package org.jivesoftware.smack;
 
 import org.jivesoftware.smack.packet.StreamError;
 import java.util.Random;
+
+import htklog.Log;
+
 /**
  * Handles the automatic reconnection process. Every time a connection is dropped without
  * the application explictly closing it, the manager automatically tries to reconnect to
@@ -101,6 +104,7 @@ public class ReconnectionManager implements ConnectionListener {
                     // The process will try to reconnect until the connection is established or
                     // the user cancel the reconnection process {@link Connection#disconnect()}
                     while (ReconnectionManager.this.isReconnectionAllowed()) {
+                        System.out.print("Loop1!");
                         // Find how much time we should wait until the next reconnection
                         int remainingSeconds = timeDelay();
                         // Sleep until we're ready for the next reconnection attempt. Notify

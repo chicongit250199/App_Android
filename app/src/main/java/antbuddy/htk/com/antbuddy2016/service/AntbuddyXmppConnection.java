@@ -70,6 +70,7 @@ public class AntbuddyXmppConnection {
 	synchronized public static AntbuddyXmppConnection getInstance() {
 		if (instance == null) {
 			instance = new AntbuddyXmppConnection();
+			LogHtk.i(LogHtk.XMPP_TAG, "Created a new XMPP connection!");
 			//historyMessages = new HashMap<String, List<ChatMessage>>();
 		}
 		return instance;
@@ -102,61 +103,6 @@ public class AntbuddyXmppConnection {
 
 	SharedPreferences sharedSetting;
 
-//	//Information about User
-//	private UserInfo mUserInfo;
-//
-//	//List all of rooms user can joint it.
-//	private List<Room> listRoom;
-//
-//	//List all of users user can chat with them.
-//	private List<User> listUser;
-//
-//	private OpeningChatRoom mCurrentRouter;
-//
-//	public OpeningChatRoom getmCurrentRouter() {
-//		return mCurrentRouter;
-//	}
-//
-//	public void setmCurrentRouter(OpeningChatRoom mCurrentRouter) {
-//		this.mCurrentRouter = mCurrentRouter;
-//	}
-//
-//	public UserInfo getmUserInfo() {
-//		return mUserInfo;
-//	}
-//
-//	public void setmUserInfo(UserInfo mUserInfo) {
-//		this.mUserInfo = mUserInfo;
-//	}
-//
-//	/**
-//	 * @return the listRoom
-//	 */
-//	public List<Room> getListRoom() {
-//		return listRoom;
-//	}
-//
-//	/**
-//	 * @param listRoom the listRoom to set
-//	 */
-//	public void setListRoom(List<Room> listRoom) {
-//		this.listRoom = listRoom;
-//	}
-//
-//	/**
-//	 * @return the listUser
-//	 */
-//	public List<User> getListUser() {
-//		return listUser;
-//	}
-//
-//	/**
-//	 * @param listUser the listUser to set
-//	 */
-//	public void setListUser(List<User> listUser) {
-//		this.listUser = listUser;
-//	}
-
 	/**
 	 * should be called from _xmpp thread only
 	 */
@@ -172,6 +118,19 @@ public class AntbuddyXmppConnection {
 		xmppConnection = connection;
 	}
 
+	public void connectXMPP() throws XMPPException {
+		LogHtk.i("asdf", "Constants.HOST_XMPP = " + Constants.HOST_XMPP);
+		LogHtk.i("asdf", "Constants.PORT_XMPP = " + Constants.PORT_XMPP);
+		LogHtk.i("asdf", "Constants.DOMAIN_XMPP = " + Constants.DOMAIN_XMPP);
+		ConnectionConfiguration connConfig = new ConnectionConfiguration(Constants.HOST_XMPP, Constants.PORT_XMPP, Constants.DOMAIN_XMPP);
+		xmppConnection = new XMPPConnection(connConfig);
+		try {
+			xmppConnection.connect();
+		} catch (XMPPException ex) {
+			throw ex;
+		}
+	}
+
 	public void connectXMPP(final Context context, final String username, final String pass , final XMPPReceiver receiver) {
 		if (xmppConnection != null) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
@@ -179,14 +138,12 @@ public class AntbuddyXmppConnection {
 		}
 
 		mContext = context;
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(Constants.HOST_XMPP, Constants.PORT_XMPP, Constants.DOMAIN_XMPP);
-		XMPPConnection connection = new XMPPConnection(connConfig);
 		try {
-			connection.connect();
-		} catch (XMPPException ex) {
-            ex.printStackTrace();
+			connectXMPP();
+		} catch (XMPPException e) {
+			e.printStackTrace();
 			xmppConnection = null;
-			receiver.onError("Failed to connect to " + connection.getHost());
+			receiver.onError(e.toString());
 			return;
 		}
 
@@ -196,11 +153,10 @@ public class AntbuddyXmppConnection {
 		try {
 			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-            connection.login(username, pass, android_id);
+			xmppConnection.login(username, pass, android_id);
 
 			// After connect successful
 			// set connectionXmpp
-			xmppConnection = connection;
 			xmppConnection.setConnected(true);
 
 			// Register: MessageListener, ConnectionListener, PresenceListener
@@ -324,7 +280,8 @@ public class AntbuddyXmppConnection {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
-				System.out.println("reconnectionSuccessful");
+				new Exception().printStackTrace();
+				LogHtk.i(LogHtk.XMPP_TAG, "Successfully reconnected to the XMPP server.");
 				sendPresenceOutFromOpeningRooms();
 			}
 
@@ -334,6 +291,7 @@ public class AntbuddyXmppConnection {
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_FAIL_MESSAGE);
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectionFailed");
+				LogHtk.i(LogHtk.XMPP_TAG, "Failed to reconnect to the XMPP server.");
 			}
 
 			@Override
@@ -342,11 +300,12 @@ public class AntbuddyXmppConnection {
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_RECONNECTING_MESSAGE + seconds + " seconds");
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectingIn " + seconds);
+				LogHtk.i(LogHtk.XMPP_TAG, "Reconnecting in " + seconds + " seconds.");
 			}
 
 			@Override
 			public void connectionClosedOnError(Exception e) {
-				System.out.println("connectionClosedOnError");
+				LogHtk.i(LogHtk.XMPP_TAG, "Connection to XMPP server was lost.");
 			}
 
 			@Override
@@ -355,9 +314,15 @@ public class AntbuddyXmppConnection {
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_CLOSED_MESSAGE);
 //				mContext.sendBroadcast(intent);
 //				System.out.println("connectionClosed");
+				LogHtk.i(LogHtk.XMPP_TAG, "XMPP connection was closed.");
 			}
 		};
-		xmppConnection.addConnectionListener(mConnectionListener);
+		try {
+			xmppConnection.addConnectionListener(mConnectionListener);
+		} catch (IllegalStateException ex) {
+			LogHtk.i(LogHtk.XMPP_TAG, "loi Gi day: " + ex.toString());
+		}
+
 	}
 
 	/**

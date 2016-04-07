@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.modules.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -56,9 +59,11 @@ public class DomainActivity extends Activity {
         domainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Constants.domain = domainList.get(position).getDomain();
-                if (Constants.domain.length() > 0) {
-                    AntbuddyApplication.getInstance().restartAPIServiceWithDomain(Constants.domain);
+
+                ABSharedPreference.saveDomain(domainList.get(position).getDomain());
+                String domain = ABSharedPreference.getAccoungConfig().getDomain();
+                if (domain.length() > 0) {
+                    AntbuddyApplication.getInstance().restartAPIServiceWithDomain(domain);
                     Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
                     startActivity(myIntent);
                     finish();
@@ -73,7 +78,7 @@ public class DomainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                LoReActivity.reset();
+                LoReActivity.resetAccountInSharedPreferences();
                 LoReActivity.resetXMPP();
 
                 Intent myIntent = new Intent(DomainActivity.this, LoginActivity.class);
@@ -89,16 +94,16 @@ public class DomainActivity extends Activity {
             return;
         }
 
-        if (Constants.token.length() > 0) {
+        if (ABSharedPreference.getAccoungConfig().getToken().length() > 0) {
             AndroidHelper.showProgressBar(DomainActivity.this, progressBar_Domain);
-            Call<List<Organization>> call = AntbuddyApplication.getInstance().getApiService().GETOrganizations(Constants.token);
-            call.enqueue(new Callback<List<Organization>>() {
+
+            APIManager.GETOrganizations(new HttpRequestReceiver<List<Organization>>() {
                 @Override
-                public void onResponse(Response<List<Organization>> response) {
-                    LogHtk.d(TAG_THISCLASS, "Domain response !: " + response.body());
+                public void onSuccess(List<Organization> listOrgs) {
+                    LogHtk.d(TAG_THISCLASS, "Domain response !: " + listOrgs.size());
 
                     domainList.clear();
-                    domainList.addAll(response.body());
+                    domainList.addAll(listOrgs);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -110,8 +115,8 @@ public class DomainActivity extends Activity {
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
-                    LogHtk.e(TAG_THISCLASS, "Domain onFailure!: " + t.toString());
+                public void onError(String error) {
+                    LogHtk.e(TAG_THISCLASS, "Domain onFailure!: " + error.toString());
                     AndroidHelper.hideProgressBar(DomainActivity.this, progressBar_Domain);
                 }
             });
