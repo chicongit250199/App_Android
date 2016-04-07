@@ -7,11 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.Settings;
-import android.util.Log;
 
-import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.ConnectionCreationListener;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SASLAuthentication;
@@ -32,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
@@ -378,7 +375,7 @@ public class AntbuddyXmppConnection {
 		msg.setWith(chatMessage.getReceiverKey());
 		xmppConnection.sendPacket(msg);
 
-		LoginAPI.newMessageToHistory(chatMessage);
+		APIManager.newMessageToHistory(chatMessage);
 		//fix not update in other device
 		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
 			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, Constants.DOMAIN_XMPP);

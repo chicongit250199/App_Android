@@ -1,14 +1,10 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
-import android.util.Log;
-
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,12 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import antbuddy.htk.com.antbuddy2016.api.API;
-import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
@@ -105,7 +99,7 @@ public class ObjectManager {
         }
         if (listUsers.size() == 0) {
 
-            LoginAPI.GETUsers(new HttpRequestReceiver<List<User>>() {
+            APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
                 @Override
                 public void onSuccess(List<User> _listUsers) {
                     listUsers.addAll(_listUsers);
@@ -179,7 +173,7 @@ public class ObjectManager {
             String domain = ABSharedPreference.getAccoungConfig().getDomain();
             String API_USER_ME_URL = "https://" + domain + ".antbuddy.com/api/me/";
 
-            LoginAPI.GETUserMe(new HttpRequestReceiver<UserMe>() {
+            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
                     LogHtk.d(LogHtk.API_TAG, "Error 11");

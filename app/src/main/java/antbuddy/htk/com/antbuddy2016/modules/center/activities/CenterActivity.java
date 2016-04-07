@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.ProgressBar;
 
 import android.support.v4.app.Fragment;
@@ -20,8 +19,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.api.LoginAPI;
 import antbuddy.htk.com.antbuddy2016.customview.TabBarView;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
@@ -171,7 +170,7 @@ public class CenterActivity extends AppCompatActivity {
     private void getUserMe() {
         AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-        LoginAPI.GETUserMe(new HttpRequestReceiver<UserMe>() {
+        APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
             public void onSuccess(UserMe me) {
                 LogHtk.d(LogHtk.API_TAG, "onSuccess 12");
@@ -196,7 +195,7 @@ public class CenterActivity extends AppCompatActivity {
 
     private void getListUsers() {
         AndroidHelper.showToast("Loading users...", CenterActivity.this);
-        LoginAPI.GETUsers(new HttpRequestReceiver<List<User>>() {
+        APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
             @Override
             public void onSuccess(List<User> listUsers) {
                 getListGroups();
@@ -212,7 +211,7 @@ public class CenterActivity extends AppCompatActivity {
 
     private void getListGroups() {
         AndroidHelper.showToast("Loading groups...", CenterActivity.this);
-        LoginAPI.GETGroups(new HttpRequestReceiver<List<Room>>() {
+        APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
             @Override
             public void onSuccess(List<Room> listRooms) {
                 LogHtk.i(LogHtk.API_TAG, "List Groups: " + listRooms.toString());
