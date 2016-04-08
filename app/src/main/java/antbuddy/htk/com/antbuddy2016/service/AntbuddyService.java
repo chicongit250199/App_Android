@@ -34,7 +34,7 @@ public class AntbuddyService extends Service {
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
-		loginXMPP();
+
 	}
 
 	@Override
@@ -46,6 +46,13 @@ public class AntbuddyService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onStartCommand SERVICE<----------------");
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				loginXMPP();
+			}
+		}).start();
 		return START_STICKY;
 	}
 

@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 
 /**
@@ -454,11 +455,13 @@ public class ChatMessage implements Parcelable {
     public ChatMessage(String receiverKey, String body, Boolean isMuc) {
         UserMe userMe = ObjectManager.getInstance().getUserMe();
         if (userMe == null) {
+            LogHtk.e(LogHtk.ChatMessage, "Warning! UserMe is not exist!");
             return;
         }
 
         UserMe.Org currentOrg = userMe.getCurrentOrg();
         if (currentOrg == null) {
+            LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
             return;
         }
         type = (isMuc? "groupchat": "chat");
@@ -478,5 +481,14 @@ public class ChatMessage implements Parcelable {
         public int compare(ChatMessage left, ChatMessage right) {
             return left.getDatetime().compareTo(right.getDatetime());
         }
+    }
+
+    public void showLog() {
+        LogHtk.i(LogHtk.ChatMessage, "--------ChatMessage------");
+        LogHtk.i(LogHtk.ChatMessage, "receiverKey = " + receiverKey);
+        LogHtk.i(LogHtk.ChatMessage, "senderKey = " + senderKey);
+        LogHtk.i(LogHtk.ChatMessage, "body = " + body);
+        LogHtk.i(LogHtk.ChatMessage, "org = " + org);
+        LogHtk.i(LogHtk.ChatMessage, "type = " + type);
     }
 }

@@ -367,7 +367,7 @@ public class AntbuddyXmppConnection {
 			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, chatMucDomain);
 			type = Message.Type.groupchat;
 		} else {
-			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, Constants.DOMAIN_XMPP);
+			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
 			type = Message.Type.chat;
 		}
 
@@ -379,7 +379,7 @@ public class AntbuddyXmppConnection {
 		APIManager.newMessageToHistory(chatMessage);
 		//fix not update in other device
 		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
-			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, Constants.DOMAIN_XMPP);
+			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
 			msg.setTo(mReceiverJid);
 			xmppConnection.sendPacket(msg);
 		}

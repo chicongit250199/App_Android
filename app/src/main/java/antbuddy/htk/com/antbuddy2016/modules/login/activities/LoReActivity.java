@@ -143,18 +143,18 @@ public class LoReActivity extends Activity {
         ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
         ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
 
-        Constants.USERNAME_XMPP = "";
-        Constants.PASSWORD_XMPP = "";
-        Constants.HOST_XMPP = "";
-        Constants.DOMAIN_XMPP = "";
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
     }
 
     public static void resetXMPP() {
         ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
 
-        Constants.USERNAME_XMPP = "";
-        Constants.PASSWORD_XMPP = "";
-        Constants.HOST_XMPP = "";
-        Constants.DOMAIN_XMPP = "";
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
     }
 }

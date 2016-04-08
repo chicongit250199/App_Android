@@ -11,8 +11,10 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
  */
 public class LogHtk {
     public static String SERVICE_TAG = "AntbuddyService";
+    public static String ChatActivity = "ChatActivity";
     public static String XMPP_TAG = "XMPP";
     public static String API_TAG = "API";
+    public static String ChatMessage = "ChatMessage";
 
     public static String Test1 = "Test1";
     public static String Test2 = "Test2";
@@ -33,6 +35,8 @@ public class LogHtk {
             Test3,
             AntbuddyApplication,
             RecentFragment,
+            ChatActivity,
+            ChatMessage,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,
