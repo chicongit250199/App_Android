@@ -18,6 +18,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Token;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -45,7 +46,9 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
-
+        if(AntbuddyService.mAntbuddyService == null) {
+            startService(new Intent(this, AntbuddyService.class));
+        }
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();
         passwordStr = ABSharedPreference.getAccountConfig().getPassword();
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);

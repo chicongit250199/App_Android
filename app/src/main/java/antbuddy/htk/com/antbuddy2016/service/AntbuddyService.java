@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 
-import org.jivesoftware.smack.XMPPException;
-
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -77,7 +75,7 @@ public class AntbuddyService extends Service {
 	@Override
 	public void onDestroy() {
 		LogHtk.e(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
-		super.onDestroy();
+		startService(new Intent(this, AntbuddyService.class));
 	}
 
 	public void loginXMPP() {
