@@ -15,6 +15,7 @@ public class LogHtk {
     public static String XMPP_TAG = "XMPP";
     public static String API_TAG = "API";
     public static String ChatMessage = "ChatMessage";
+    public static String GroupsFragment = "GroupsFragment";
 
     public static String Test1 = "Test1";
     public static String Test2 = "Test2";
@@ -37,6 +38,7 @@ public class LogHtk {
             RecentFragment,
             ChatActivity,
             ChatMessage,
+            GroupsFragment,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

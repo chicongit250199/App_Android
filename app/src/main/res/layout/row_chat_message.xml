@@ -6,10 +6,7 @@
     android:background="@drawable/bg_chat"
     android:clickable="true"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="0dp">
+    android:padding="5dp">
 
     <LinearLayout
         android:id="@+id/ll_message_left"

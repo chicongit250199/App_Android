@@ -30,8 +30,6 @@ public class APIManager {
             codeInt = Integer.parseInt(code);
             AndroidHelper.showToast("Request error with code: " + codeInt, activity);
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
-            codeInt = -1;
             AndroidHelper.showToast("Warning: " + code, activity);
         }
     }

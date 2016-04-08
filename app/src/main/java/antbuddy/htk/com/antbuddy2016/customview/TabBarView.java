@@ -65,6 +65,7 @@ public class TabBarView extends LinearLayout {
 
             @Override
             public void onPageSelected(int position) {
+
                 if (mOnPageSelectedListener != null) {
                     mOnPageSelectedListener.onPageSelected(position);
                 }

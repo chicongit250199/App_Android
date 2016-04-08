@@ -7,13 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.UserAdapter;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
@@ -28,6 +33,11 @@ public class MembersFragment extends Fragment {
     private ListView lv_member;
     private UserAdapter mUserAdapter;
     private SearchView searchView;
+
+    private RelativeLayout backgroundTry;
+    private LinearLayout backgroundViews;
+    private ProgressBar prb_Loading;
+    private Button btnTry;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,8 +64,6 @@ public class MembersFragment extends Fragment {
             }
         });
 
-
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -69,24 +77,66 @@ public class MembersFragment extends Fragment {
             }
         });
 
+        initViews(rootView);
+        viewsListener();
+
         updateUI();
 
         return rootView;
     }
 
-    @Override
-    public void onDestroy() {
-        ObjectManager.getInstance().removeOnListenerUser(this.getClass());
-        super.onDestroy();
+    private void initViews(View root) {
+        backgroundTry = (RelativeLayout) root.findViewById(R.id.backgroundTry);
+        backgroundViews = (LinearLayout) root.findViewById(R.id.backgroundViews);
+        btnTry = (Button) root.findViewById(R.id.btnTry);
+        prb_Loading = (ProgressBar) root.findViewById(R.id.prb_Loading);
     }
 
-    protected void updateUI() {
-        ObjectManager.getInstance().setOnListenerUser(this.getClass(), new ObjectManager.OnListenerUser() {
+    private void viewsListener() {
+        btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(List<User> listUsers) {
-                mUserAdapter.filter(searchView.getQuery().toString(), listUsers);
+            public void onClick(View v) {
+                prb_Loading.setVisibility(View.VISIBLE);
+                btnTry.setVisibility(View.GONE);
+                if (!AndroidHelper.isInternetAvailable(getContext())) {
+                    AndroidHelper.warningInternetConnection(getActivity());
+                    prb_Loading.setVisibility(View.GONE);
+                    btnTry.setVisibility(View.VISIBLE);
+                } else {
+                    updateUI();
+                }
             }
         });
     }
 
+    @Override
+    public void onDestroy() {
+        ObjectManager.getInstance().removeOnListenerUsers(this.getClass());
+        super.onDestroy();
+    }
+
+    protected void updateUI() {
+        ObjectManager.getInstance().setOnListenerUsers(this.getClass(), new ObjectManager.OnObjectManagerListener<List<User>>() {
+            @Override
+            public void onSuccess(List<User> users) {
+                mUserAdapter.filter(searchView.getQuery().toString(), users);
+
+                backgroundTry.setVisibility(View.GONE);
+                prb_Loading.setVisibility(View.GONE);
+                btnTry.setVisibility(View.VISIBLE);
+                backgroundViews.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onError(String error) {
+                APIManager.showToastWithCode(error, getActivity());
+                if (!AndroidHelper.isInternetAvailable(getContext())) {
+                    backgroundTry.setVisibility(View.VISIBLE);
+                    prb_Loading.setVisibility(View.GONE);
+                    btnTry.setVisibility(View.VISIBLE);
+                    backgroundViews.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
 }

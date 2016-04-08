@@ -1,128 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imgAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_avatar_defaul"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:layout_marginBottom="20dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e0e0e0"
+        android:id="@+id/backgroundTry"
+        android:visibility="gone">
 
-        <ImageView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ic_status"
-            android:src="@drawable/ic_online"
-            android:visibility="visible"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:id="@+id/tv_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bean"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:gravity="center"
+            android:text="Try again!"
+            android:id="@+id/btnTry"
+            android:layout_centerInParent="true"
+            android:background="@drawable/backgroundbutton1"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
             android:textColor="@color/black"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_user"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center|left"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:weightSum="10">
-
-        <ImageView
-            android:id="@+id/imageView"
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_user"
+            android:id="@+id/prb_Loading"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:id="@+id/backgroundViews">
+
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_avatar_defaul"
             android:layout_gravity="center"
-            android:layout_weight="1"/>
+            android:layout_marginTop="20dp" />
 
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Personal Setting"
-            android:layout_weight="9"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_swap"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center|left"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:weightSum="10">
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_swap"
             android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Switch company"
-            android:layout_weight="9"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ic_status"
+                android:src="@drawable/ic_online"
+                android:visibility="visible"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bean"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_user"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center|left"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_user"
+                android:layout_gravity="center"
+                android:layout_weight="1"/>
+
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Personal Setting"
+                android:layout_weight="9"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_swap"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center|left"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_swap"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Switch company"
+                android:layout_weight="9"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center|left"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:src="@drawable/ic_sign_out"
+                android:weightSum="1"
+                android:layout_marginLeft="15dp" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Sign out"
+                android:weightSum="9"
+                android:layout_marginLeft="10dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_sign_out"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center|left"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:weightSum="10">
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:src="@drawable/ic_sign_out"
-            android:weightSum="1"
-            android:layout_marginLeft="15dp" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Sign out"
-            android:weightSum="9"
-            android:layout_marginLeft="10dp" />
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

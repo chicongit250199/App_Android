@@ -27,6 +27,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -37,15 +38,25 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     private final Context ctx;
     private final ListView mListView;
-    private ArrayList<ChatMessage> mMessages = new ArrayList<>();
-    private String keyMe = ObjectManager.getInstance().getUserMe().getKey();
+    private ArrayList<ChatMessage> mMessages;
+    private String keyMe;
 
     public ChatAdapter(Context context, ListView listView) {
         super(context, R.layout.row_chat_message);
         this.ctx = context;
-//        sizeAvatar = getContext().getResources().getDimensionPixelSize(R.dimen.dp60);
         mListView = listView;
-//        bitmapIconDefault = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.empty_avatar);
+        mMessages = new ArrayList<>();
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+            @Override
+            public void onSuccess(UserMe me) {
+                keyMe = me.getKey();
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.e(LogHtk.API_TAG, "Error at ChatAdapter : " + error);
+            }
+        });
     }
 
     @Override
@@ -123,7 +134,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             String url_avatar = "";
             User user;
             if (!senderKey.isEmpty()) {
-                user = ObjectManager.getInstance().findUsers(senderKey);
+                user = ObjectManager.getInstance().findUser(senderKey);
                 if (user != null) {
                     url_avatar = user.getAvatar();
                 }

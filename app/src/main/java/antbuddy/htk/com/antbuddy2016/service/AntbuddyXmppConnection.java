@@ -446,10 +446,10 @@ public class AntbuddyXmppConnection {
 	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
-		ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
+		ObjectManager.getInstance().setOnListenerRooms(this.getClass(), new ObjectManager.OnObjectManagerListener<List<Room>>() {
 			@Override
-			public void onResponse(List<Room> listRooms) {
-				for (Room room : listRooms) {
+			public void onSuccess(List<Room> rooms) {
+				for (Room room : rooms) {
 					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
 					presence.setTo(room.getKey() + "_475a400a-292b-440c-981a-57af0b3f9a2c" + "@conference.antbuddy.com/756651f0-9196-11e5-a569-fdc7cdc19515_475a400a-292b-440c-981a-57af0b3f9a2c");
 					if (xmppConnection != null) {
@@ -463,8 +463,13 @@ public class AntbuddyXmppConnection {
 					}
 				}
 			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.e(LogHtk.XMPP_TAG, "ERROR: " + error);
+			}
 		});
-//
+
 	}
 
 	/**

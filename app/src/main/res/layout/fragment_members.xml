@@ -3,56 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar_Users"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e0e0e0"
+        android:id="@+id/backgroundTry"
+        android:visibility="gone">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:id="@+id/btnRefreshUsers"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Try again!"
+            android:id="@+id/btnTry"
+            android:layout_centerInParent="true"
+            android:background="@drawable/backgroundbutton1"
+            android:layout_gravity="center"
+            android:textColor="@color/black"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Empty"
-        android:id="@+id/tvEmptyUsers"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true" />
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/prb_Loading"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:background="@color/white"
-        android:layout_height="match_parent">
-
-    <SearchView
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:background="#cccccc"
-        android:layout_height="wrap_content"
-        android:queryHint="Search"
-        >
-    </SearchView>
-
-    <ListView
-        android:id="@+id/lv_member"
-        android:background="@color/white"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animationCache="false"
-        android:scrollingCache="false"
-        android:smoothScrollbar="false"
-        android:transcriptMode="disabled" />
+        android:id="@+id/backgroundViews">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:background="#cccccc"
+            android:layout_height="wrap_content"
+            android:queryHint="Search"
+            >
+        </SearchView>
+
+        <ListView
+            android:id="@+id/lv_member"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animationCache="false"
+            android:scrollingCache="false"
+            android:smoothScrollbar="false"
+            android:transcriptMode="disabled" />
     </LinearLayout>
 
 </RelativeLayout>

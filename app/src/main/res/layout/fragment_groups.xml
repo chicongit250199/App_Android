@@ -4,36 +4,37 @@
     android:layout_height="match_parent"
 	android:background="@color/white">
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar_Groups"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e0e0e0"
+        android:id="@+id/backgroundTry"
+        android:visibility="gone">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:id="@+id/refresh_Groups_Button"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Try again!"
+            android:id="@+id/btnTry"
+            android:layout_centerInParent="true"
+            android:background="@drawable/backgroundbutton1"
+            android:layout_gravity="center"
+            android:textColor="@color/black"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Empty"
-        android:id="@+id/empty_groups_TextView"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true" />
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/prb_Loading"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
 
     <LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:gravity="center|top">
+	android:gravity="center|top"
+        android:id="@+id/backgroundViews">
 
         <GridView
         android:id="@+id/gridView"

@@ -82,7 +82,7 @@ public class CenterActivity extends AppCompatActivity {
         }
 
         initView();
-        loadData();
+        //loadData();
     }
 
     private void initView() {

@@ -218,10 +218,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        // TODO: Check Internet
+        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
+            return;
+        }
 
         // Send message
-        String text_body = etTypingMessage.getText().toString();
+        String text_body = etTypingMessage.getText().toString().trim();
         LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
         if (!TextUtils.isEmpty(text_body)) {
             LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);

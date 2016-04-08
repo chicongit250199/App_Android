@@ -10,12 +10,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.adapters.GroupAdapter;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
@@ -28,20 +32,57 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 public class GroupsFragment extends Fragment {
 
     private GridView groupsView;
-    private Button refresh_Groups_Button;
-    private TextView empty_groups_TextView;
 
     GroupAdapter adapter;
+
+    private RelativeLayout backgroundTry;
+    private LinearLayout backgroundViews;
+    private ProgressBar prb_Loading;
+    private Button btnTry;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_groups, container, false);
+        LogHtk.i(LogHtk.Test1, "onCreateView");
         initViews(rootView);
+        viewsListener();
 
+        updateUI();
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogHtk.i(LogHtk.Test1, "onResume");
+    }
+
+    protected void initViews(View rootView) {
+        backgroundTry = (RelativeLayout) rootView.findViewById(R.id.backgroundTry);
+        backgroundViews = (LinearLayout) rootView.findViewById(R.id.backgroundViews);
+        btnTry = (Button) rootView.findViewById(R.id.btnTry);
+        prb_Loading = (ProgressBar) rootView.findViewById(R.id.prb_Loading);
         groupsView=(GridView)rootView.findViewById(R.id.gridView);
         adapter = new GroupAdapter(getContext(), groupsView, ObjectManager.getInstance().getListRooms());
         groupsView.setAdapter(adapter);
+    }
+
+    private void viewsListener() {
+        btnTry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prb_Loading.setVisibility(View.VISIBLE);
+                btnTry.setVisibility(View.GONE);
+                if (!AndroidHelper.isInternetAvailable(getContext())) {
+                    AndroidHelper.warningInternetConnection(getActivity());
+                    prb_Loading.setVisibility(View.GONE);
+                    btnTry.setVisibility(View.VISIBLE);
+                } else {
+                    updateUI();
+                }
+            }
+        });
 
         groupsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -54,46 +95,41 @@ public class GroupsFragment extends Fragment {
                 AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);
             }
         });
+    }
 
-        ObjectManager.getInstance().setOnListenerRoom(this.getClass(), new ObjectManager.OnListenerGroup() {
+    protected void updateUI() {
+        LogHtk.i(LogHtk.Test1, "updateUI");
+        ObjectManager.getInstance().setOnListenerRooms(this.getClass(), new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
-            public void onResponse(List<Room> listRooms) {
+            public void onSuccess(List<Room> rooms) {
+                LogHtk.i(LogHtk.Test1, "ERROR! = " + rooms.size());
                 adapter.notifyDataSetChanged();
-                checkRooms();
+
+                if (rooms.size() == 0) {
+                    // TODO show ra giao dien Empty
+
+                } if (rooms.size() > 0) {
+                    adapter.setListRooms(rooms);
+                    adapter.notifyDataSetChanged();
+                }
+
+                backgroundTry.setVisibility(View.GONE);
+                prb_Loading.setVisibility(View.GONE);
+                btnTry.setVisibility(View.VISIBLE);
+                backgroundViews.setVisibility(View.VISIBLE);
             }
-        });
 
-
-        return rootView;
-    }
-
-    protected void initViews(View rootView) {
-        refresh_Groups_Button = (Button) rootView.findViewById(R.id.refresh_Groups_Button);
-        refresh_Groups_Button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                checkRooms();
+            public void onError(String error) {
+                LogHtk.e(LogHtk.Test1, "ERROR! = " + error);
+                APIManager.showToastWithCode(error, getActivity());
+                if (!AndroidHelper.isInternetAvailable(getContext())) {
+                    backgroundTry.setVisibility(View.VISIBLE);
+                    prb_Loading.setVisibility(View.GONE);
+                    btnTry.setVisibility(View.VISIBLE);
+                    backgroundViews.setVisibility(View.GONE);
+                }
             }
         });
-
-        empty_groups_TextView = (TextView) rootView.findViewById(R.id.empty_groups_TextView);
-    }
-
-    private void checkRooms() {
-        List<Room> listRooms = ObjectManager.getInstance().getListRooms();
-        if (listRooms.size() == 0) {
-            // show ra giao dien Empty
-            empty_groups_TextView.setVisibility(View.VISIBLE);
-
-        } if (listRooms.size() > 0) {
-            empty_groups_TextView.setVisibility(View.GONE);
-            adapter.setListRooms(ObjectManager.getInstance().getListRooms());
-            adapter.notifyDataSetChanged();
-        }
-        refresh_Groups_Button.setVisibility(View.GONE);
-
-//        if (ObjectManager.getInstance().isGroupsNeedToReload()) {
-//            refresh_Groups_Button.setVisibility(View.VISIBLE);
-//        }
     }
 }

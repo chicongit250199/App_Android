@@ -98,10 +98,12 @@ public class AndroidHelper {
         builder.show();
     }
 
-    public static void warningInternetConnection(Activity activity) {
+    public static boolean warningInternetConnection(Activity activity) {
         if (!AndroidHelper.isInternetAvailable(activity.getApplicationContext())) {
             AndroidHelper.showToast("No network connection available!", activity);
+            return false;
         }
+        return true;
     }
 
     //goto activity
