@@ -2,6 +2,7 @@ package antbuddy.htk.com.antbuddy2016.adapters;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,9 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +27,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -70,8 +75,12 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         }
 
         ChatMessage message = mMessages.get(position);
-        //set data to GUI
+        String body = message.getBody();
 
+        // DECODE
+        body = Html.fromHtml(body).toString();
+
+        //set data to GUI
         String senderKey = message.getSenderKey();
         boolean isMe = (TextUtils.isEmpty(message.getSubtype()) || message.getSubtype().equals("null")) && senderKey.equals(keyMe);
         Boolean isFile = message.getFileAntBuddy() != null && message.getFileAntBuddy().getMimeType().startsWith("image");
@@ -83,7 +92,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             holder.textMessage_right.setVisibility(isFile?View.GONE:View.VISIBLE);
             holder.rl_message_image_right.setVisibility(!isFile?View.GONE:View.VISIBLE);
             if (!isFile) {
-                holder.textMessage_right.setText(message.getBody());
+                holder.textMessage_right.setText(body);
             } else {
                 Glide.with(ctx)
                         .load(message.getFileAntBuddy().getThumbnailUrl())
@@ -96,7 +105,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             holder.textMessage_left.setVisibility(isFile?View.GONE:View.VISIBLE);
             holder.rl_message_image_left.setVisibility(!isFile?View.GONE:View.VISIBLE);
             if (!isFile) {
-                holder.textMessage_left.setText(message.getBody());
+                holder.textMessage_left.setText(body);
             } else {
                 Glide.with(ctx)
                         .load(message.getFileAntBuddy().getThumbnailUrl())
