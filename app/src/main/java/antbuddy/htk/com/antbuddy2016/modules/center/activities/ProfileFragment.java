@@ -52,9 +52,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         imgAvatar    = (ImageView) rootView.findViewById(R.id.imgAvatar);
         tv_user_name = (TextView) rootView.findViewById(R.id.tv_user_name);
-//        ll_user      = (LinearLayout) rootView.findViewById(R.id.ll_user);
-//        ll_user      = (LinearLayout) rootView.findViewById(R.id.ll_swap);
-//        ll_user.setOnClickListener(this);
 
         initViews(rootView);
 

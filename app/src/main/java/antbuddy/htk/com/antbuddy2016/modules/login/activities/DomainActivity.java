@@ -1,6 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -67,9 +68,7 @@ public class DomainActivity extends Activity {
                 String domain = domainList.get(position).getDomain();
                 if (domain.length() > 0) {
                     ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, domain);
-                    Intent myIntent = new Intent(DomainActivity.this, CenterActivity.class);
-                    startActivity(myIntent);
-                    finish();
+                    AndroidHelper.gotoActivity(DomainActivity.this, CenterActivity.class, true);
                 }
             }
         });

@@ -96,6 +96,7 @@ public class LoReActivity extends Activity {
                 Intent myIntent = new Intent(LoReActivity.this, LoginActivity.class);
                 startActivity(myIntent);
             }
+            finish();
         }
     }
 

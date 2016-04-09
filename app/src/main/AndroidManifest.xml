@@ -82,6 +82,13 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity
+            android:name=".modules.center.activities.OpeningRoomActivity"
+            android:label="@string/app_name"
+            android:theme ="@style/WelcomeTheme"
+            android:screenOrientation="portrait">
+        </activity>
+
 		<!-- Chat -->
         <activity
             android:name=".modules.chat.ChatActivity"

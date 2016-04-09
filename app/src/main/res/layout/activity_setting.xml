@@ -1,6 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#e0e0e0"
+        android:id="@+id/backgroundTry"
+        android:visibility="gone">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Try again!"
+            android:id="@+id/btnTry"
+            android:layout_centerInParent="true"
+            android:background="@drawable/backgroundbutton1"
+            android:layout_gravity="center"
+            android:textColor="@color/black"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/prb_Loading"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:id="@+id/backgroundViews">
+
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/ic_avatar_defaul"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ic_status"
+                android:src="@drawable/ic_online"
+                android:visibility="visible"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bean"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Personal Setting"
+            android:id="@+id/btnSetting"
+            android:layout_marginLeft="20dp"
+            android:drawableLeft="@drawable/ic_user"
+            android:drawablePadding="15dp"
+            android:background="#00000000"
+            android:textColor="@color/black"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch company"
+            android:id="@+id/btnSwithCompany"
+            android:layout_marginLeft="25dp"
+            android:drawableLeft="@drawable/ic_swap"
+            android:drawablePadding="20dp"
+            android:background="#00000000"
+            android:textColor="@color/black"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign out"
+            android:id="@+id/btnSignOut"
+            android:layout_marginLeft="23dp"
+            android:drawableLeft="@drawable/ic_sign_out"
+            android:drawablePadding="15dp"
+            android:background="#00000000"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

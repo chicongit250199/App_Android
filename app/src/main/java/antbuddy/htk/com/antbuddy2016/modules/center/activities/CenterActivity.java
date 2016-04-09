@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -33,12 +35,16 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
  * Created by thanhnguyen on 29/03/2016.
  */
 public class CenterActivity extends AppCompatActivity {
-    final String[] titles = {"Recent", "Members", "Groups", "Profile"};
+    final String[] titles = {"RECENT", "CALLS", "GROUPS", "MEMBERS"};
     public static final String TAG_THISCLASS = "CenterActivity";
     private ProgressBar progressBar_Center;
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
     PagerSlidingTabStrip tabs;
+
+    private Button btnSearch;
+    private Button btnAlwaysChange;
+    private Button btnSetting;
 
 	// Work with service
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
@@ -73,10 +79,15 @@ public class CenterActivity extends AppCompatActivity {
         }
 
         initView();
+        viewsListener();
         loadData();
     }
 
     private void initView() {
+        btnSearch       = (Button) findViewById(R.id.btnSearch);
+        btnAlwaysChange = (Button) findViewById(R.id.btnAlwaysChange);
+        btnSetting      = (Button) findViewById(R.id.btnSetting);
+
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
         mViewPager         = (ViewPager) findViewById(R.id.id_viewpager);
 
@@ -113,7 +124,6 @@ public class CenterActivity extends AppCompatActivity {
         //set title
         setTitle(titles[0]);
 
-
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(mViewPager);
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -126,11 +136,63 @@ public class CenterActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 setTitle(titles[position]);
                 AndroidHelper.hideSoftKeyboard(CenterActivity.this);
+
+                if (position == 0) {
+                    btnAlwaysChange.setBackgroundResource(R.drawable.open_chat_2);
+                    btnAlwaysChange.setTag(0);
+                }
+
+                if (position == 1) {
+                    btnAlwaysChange.setBackgroundResource(R.drawable.call2);
+                    btnAlwaysChange.setTag(1);
+                    btnAlwaysChange.setWidth(54);
+                    btnAlwaysChange.setHeight(54);
+                    return;
+                }
+
+                if (position == 2) {
+                    btnAlwaysChange.setBackgroundResource(R.drawable.addgroup);
+                    btnAlwaysChange.setTag(2);
+                }
+
+                if (position == 3) {
+                    btnAlwaysChange.setBackgroundResource(R.drawable.addperson);
+                    btnAlwaysChange.setTag(3);
+                }
+                btnAlwaysChange.setWidth(64);
+                btnAlwaysChange.setHeight(64);
+                // Change icon
+
+
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+    }
+
+    private void viewsListener() {
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnAlwaysChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btnAlwaysChange.getTag() == 0) {
+                }
+            }
+        });
+
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidHelper.gotoActivity(CenterActivity.this, SettingActivity.class, false);
             }
         });
     }

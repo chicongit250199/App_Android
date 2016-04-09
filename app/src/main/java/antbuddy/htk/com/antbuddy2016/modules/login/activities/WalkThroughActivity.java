@@ -138,18 +138,17 @@ public class WalkThroughActivity extends AppCompatActivity {
                 case R.id.signUpFree_Button:
                     myIntent.putExtra(Constants.LOGIN_TYPE, 1);  // sign up free
                     startActivity(myIntent);
-                    finish();
                     break;
 
                 case R.id.login_Button:
                     myIntent.putExtra(Constants.LOGIN_TYPE, 2);  // login
                     startActivity(myIntent);
-                    finish();
                     break;
 
                 default:
                     break;
             }
+            finish();
         }
     };
 }
