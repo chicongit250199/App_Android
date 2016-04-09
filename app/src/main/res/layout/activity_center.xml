@@ -34,6 +34,7 @@
             android:background="@color/walkthough_background"
             app:pstsIndicatorColor="@color/white_ab"
             app:pstsIndicatorHeight="6dp"
+            app:pstsDividerColor ="@color/transparent"
             app:pstsShouldExpand="true"
             app:pstsTabPaddingLeftRight="5dp"/>
 
