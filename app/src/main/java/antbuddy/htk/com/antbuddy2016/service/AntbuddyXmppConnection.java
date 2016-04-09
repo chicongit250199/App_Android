@@ -64,7 +64,7 @@ public class AntbuddyXmppConnection {
 	//private static Map<String, List<ChatMessage>> historyMessages;
 	private static Context mContext;
 
-	public static AntbuddyXmppConnection instance;
+	protected static AntbuddyXmppConnection instance;
 
 	synchronized public static AntbuddyXmppConnection getInstance() {
 		if (instance == null) {

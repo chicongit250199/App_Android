@@ -85,16 +85,7 @@ public class DomainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        AndroidHelper.alertDialogShow(this, "Do you want to sign out?", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                LoReActivity.resetAccountInSharedPreferences();
-                LoReActivity.resetXMPP();
-                Intent myIntent = new Intent(DomainActivity.this, LoginActivity.class);
-                startActivity(myIntent);
-                finish();
-            }
-        }, null);
+        finish();
     }
 
     private void requestAPIToGetOrganizations() {

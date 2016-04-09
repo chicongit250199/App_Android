@@ -60,8 +60,8 @@ public class LoginActivity extends Activity {
         registerListeners();
         setUpUIState();
 
-        LoReActivity.resetAccountInSharedPreferences();
-        LoReActivity.resetXMPP();
+        ABSharedPreference.resetAccountInSharedPreferences();
+        ABSharedPreference.resetXMPP();
 
         AndroidHelper.warningInternetConnection(this);
     }

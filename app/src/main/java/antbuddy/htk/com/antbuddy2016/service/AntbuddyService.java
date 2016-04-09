@@ -92,31 +92,6 @@ public class AntbuddyService extends Service {
 				LogHtk.e(LogHtk.XMPP_TAG, "Login and Connect XMPP " + error);
 			}
 		});
-
-
-
-
-//		try {
-//			LogHtk.i(TAG, "Cookie at AntbuddyService/login() set agian:");
-//			AntbuddyConfig.setCOOKIE(cookie);
-//			mAntbuddyService = AntbuddyService.this;
-//			mXmppConnection = AntbuddyXmppConnection.getInstance();
-//			UserInfo userInfo = mXmppConnection.getmUserInfo();
-//			if (userInfo == null) {
-//				String result = Request.connect("/api/users/me");
-//				//Log.i("SERVICE", "String /api/users/me response: " + result);
-//				userInfo = UserInfo.parseUser(new JSONObject(result));
-//				mXmppConnection.setmUserInfo(userInfo);
-//			}
-//			return mXmppConnection.connect(AntbuddyService.this, userInfo.getXmppUsername(), userInfo.getXmppPassword());
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//			return "Error";
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return "Error";
-//		}
-
 	}
 
 	public void sendMessageOut(ChatMessage chatMessage) {

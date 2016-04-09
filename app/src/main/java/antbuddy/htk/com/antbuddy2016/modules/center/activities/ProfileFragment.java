@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,10 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
+import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
+import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
+import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -31,6 +37,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ImageView imgAvatar;
     private TextView tv_user_name;
     private LinearLayout ll_user;
+
+    private Button btnSwithCompany;
+    private Button btnSetting;
+    private Button btnSignOut;
 
     private RelativeLayout backgroundTry;
     private LinearLayout backgroundViews;
@@ -54,6 +64,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews(View root) {
+        btnSignOut = (Button) root.findViewById(R.id.btnSignOut);
+        btnSetting = (Button) root.findViewById(R.id.btnSetting);
+        btnSwithCompany = (Button) root.findViewById(R.id.btnSwithCompany);
+
         backgroundTry = (RelativeLayout) root.findViewById(R.id.backgroundTry);
         backgroundViews = (LinearLayout) root.findViewById(R.id.backgroundViews);
         btnTry = (Button) root.findViewById(R.id.btnTry);
@@ -73,6 +87,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 } else {
                     updateUI();
                 }
+            }
+        });
+
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        btnSwithCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidHelper.alertDialogShow(getContext(), "Do you want to switch company?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ABSharedPreference.resetXMPP();
+
+                        // Reset Object Manager
+                        ObjectManager.getInstance().clear();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                CenterActivity.mIRemoteService.resetXMPP();
+                            }
+                        }).start();
+
+                        Intent myIntent = new Intent(getActivity(), DomainActivity.class);
+                        startActivity(myIntent);
+                        getActivity().finish();
+                    }
+                }, null);
+            }
+        });
+        btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidHelper.alertDialogShow(getContext(), "Do you want to sign out?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ABSharedPreference.resetAccountInSharedPreferences();
+                        ABSharedPreference.resetXMPP();
+                        Intent myIntent = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(myIntent);
+                        getActivity().finish();
+                    }
+                }, null);
             }
         });
     }

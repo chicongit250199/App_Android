@@ -52,7 +52,7 @@ public class LoReActivity extends Activity {
         setContentView(R.layout.activity_loreactivity);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LORE_ACTIVITY);
 
-        resetAccountInSharedPreferences();
+        ABSharedPreference.resetAccountInSharedPreferences();
         initViews();
         getBunldeAndProcess();
 
@@ -136,25 +136,5 @@ public class LoReActivity extends Activity {
             LogHtk.e(LogHtk.SERVICE_TAG, "Bind service ERROR!");
             e.printStackTrace();
         }
-    }
-
-    // Reset
-    public static void resetAccountInSharedPreferences() {
-        ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
-
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
-    }
-
-    public static void resetXMPP() {
-        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
-
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
-        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
     }
 }

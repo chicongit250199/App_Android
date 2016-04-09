@@ -21,6 +21,26 @@ public class ABSharedPreference {
         FORGOT_PASSWORD_ACTIVITY
     }
 
+    // Reset
+    public static void resetAccountInSharedPreferences() {
+        ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
+
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
+    }
+
+    public static void resetXMPP() {
+        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
+
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, "");
+    }
+
     public static void triggerCurrentScreen(CURRENTSCREEN currentScreen) {
         if (currentScreen.equals(CURRENTSCREEN.WALK_THROUGH_ACTIVITY)) {
             save(KEY_CURRENT_SCREEN, CURRENTSCREEN.WALK_THROUGH_ACTIVITY.toString());
@@ -144,16 +164,16 @@ public class ABSharedPreference {
         return sharedSetting.getInt(key, 0);
     }
 
-    public static void resetXMPP() {
-        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedSetting.edit();
-        edit.putString(KEY_XMPP_HOST, "");
-        edit.putInt(KEY_XMPP_PORT, 0);
-        edit.putString(KEY_XMPP_DOMAIN, "");
-        edit.putString(KEY_XMPP_USERNAME, "");
-        edit.putString(KEY_XMPP_PASSWORD, "");
-        edit.apply();
-    }
+//    public static void resetXMPP() {
+//        SharedPreferences sharedSetting = AntbuddyApplication.getInstance().getApplicationContext().getSharedPreferences(NAME_AB_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor edit = sharedSetting.edit();
+//        edit.putString(KEY_XMPP_HOST, "");
+//        edit.putInt(KEY_XMPP_PORT, 0);
+//        edit.putString(KEY_XMPP_DOMAIN, "");
+//        edit.putString(KEY_XMPP_USERNAME, "");
+//        edit.putString(KEY_XMPP_PASSWORD, "");
+//        edit.apply();
+//    }
 
     public static void resetAccount() {
         resetXMPP();

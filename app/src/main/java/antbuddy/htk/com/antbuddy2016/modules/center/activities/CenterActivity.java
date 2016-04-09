@@ -143,26 +143,7 @@ public class CenterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AndroidHelper.alertDialogShow(this, "Do you want to switch company?", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                LoReActivity.resetXMPP();
-
-                // Reset Object Manager
-                ObjectManager.getInstance().clear();
-                AntbuddyApplication.getInstance().cancelPendingRequests(AntbuddyApplication.TAG);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mIRemoteService.resetXMPP();
-                    }
-                }).start();
-
-                Intent myIntent = new Intent(CenterActivity.this, DomainActivity.class);
-                startActivity(myIntent);
-                finish();
-            }
-        }, null);
+        finish();
     }
 
     protected void loadData() {
