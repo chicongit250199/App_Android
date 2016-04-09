@@ -47,7 +47,7 @@ public class CenterActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
     private TabBarView tabBarView;
-    private TextView tv_title;
+//    private TextView tv_title;
 
 	// Work with service
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
@@ -89,7 +89,7 @@ public class CenterActivity extends AppCompatActivity {
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
         mViewPager         = (ViewPager) findViewById(R.id.id_viewpager);
         tabBarView         = (TabBarView) findViewById(R.id.change_color_tab);
-        tv_title           = (TextView) findViewById(R.id.tv_title);
+//        tv_title           = (TextView) findViewById(R.id.tv_title);
 
         RecentFragment recentFragment = new RecentFragment();
         mTabFragments.add(recentFragment);
@@ -130,7 +130,7 @@ public class CenterActivity extends AppCompatActivity {
 
     @Override
     public void setTitle(CharSequence title) {
-        tv_title.setText(title);
+//        tv_title.setText(title);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class TabBarItem  extends View {
                 - getPaddingBottom() - mTextBound.height());
 
         int left = getMeasuredWidth() / 2 - iconWidth / 2;
-        int top = getMeasuredHeight() / 2 - (mTextBound.height() + iconWidth) / 2;
+        int top = getMeasuredHeight() / 2 - iconWidth / 2;
         mIconRect.set(left, top, left + iconWidth, top + iconWidth);
     }
 
@@ -100,8 +100,8 @@ public class TabBarItem  extends View {
         canvas.drawBitmap(mIconBitmap, null, mIconRect, null);
         int alpha = (int) Math.ceil(255 * mAlpha);
         setupTargetBitmap(alpha);
-        drawSourceText(canvas, alpha);
-        drawTargetText(canvas, alpha);
+//        drawSourceText(canvas, alpha);
+//        drawTargetText(canvas, alpha);
         canvas.drawBitmap(mBitmap, 0, 0, null);
     }
 

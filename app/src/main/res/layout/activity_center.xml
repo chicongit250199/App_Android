@@ -21,21 +21,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/action_bar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/id_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
         <antbuddy.htk.com.antbuddy2016.customview.TabBarView
             android:id="@+id/change_color_tab"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:background="@color/walkthough_background"
             android:translationZ="5dp"
             >
 
@@ -44,7 +34,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:padding="5dp"
-                app:item_color="@color/color_green"
+                app:item_color="@color/white_ab"
                 app:item_icon="@drawable/ic_recent"
                 app:item_text="Recent"
                 app:item_text_size="12sp"/>
@@ -55,7 +45,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:padding="5dp"
-                app:item_color="@color/color_green"
+                app:item_color="@color/white_ab"
                 app:item_icon="@drawable/ic_members"
                 app:item_text="Members"
                 app:item_text_size="12sp"/>
@@ -65,7 +55,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:padding="5dp"
-                app:item_color="@color/color_green"
+                app:item_color="@color/white_ab"
                 app:item_icon="@drawable/ic_group"
                 app:item_text="Groups"
                 app:item_text_size="12sp"/>
@@ -75,11 +65,20 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:padding="5dp"
-                app:item_color="@color/color_green"
+                app:item_color="@color/white_ab"
                 app:item_icon="@drawable/ic_profile"
                 app:item_text="Profile"
                 app:item_text_size="12sp"/>
         </antbuddy.htk.com.antbuddy2016.customview.TabBarView>
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/id_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
 
     </LinearLayout>
 

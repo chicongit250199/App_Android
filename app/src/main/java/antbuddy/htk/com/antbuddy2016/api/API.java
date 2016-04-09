@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.NewAccount;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
+import antbuddy.htk.com.antbuddy2016.model.OrganizationExist;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.Token;
 import antbuddy.htk.com.antbuddy2016.model.User;
@@ -36,6 +38,21 @@ public interface API {
     @GET("/api/organizations/")
     Call<List<Organization>> GETOrganizations(@Header("authorization") String token);
 
+    @FormUrlEncoded
+    @POST("/api/organizations/checkexist/")
+    Call<OrganizationExist> POSTCheckOrganizationExist(@Field("name")String name);
+
+    @FormUrlEncoded
+    @POST("/api/users/create/")
+    Call<NewAccount> POSTCreateNewAccount(
+            @Field("username")    String userName,
+            @Field("name")        String fullName,
+            @Field("email")       String email,
+            @Field("password")    String password,
+            @Field("organization")String organization,
+            @Field("domain")      String domain
+            );
+
     /* ----Request API with domain --- */
 
     @GET("/api/users/me/")
@@ -53,5 +70,6 @@ public interface API {
     @GET("/api/messages?limit=50")
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     Call<List<ChatMessage>> GETMessages(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
+
 
 }

@@ -7,7 +7,9 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.NewAccount;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
+import antbuddy.htk.com.antbuddy2016.model.OrganizationExist;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.Token;
 import antbuddy.htk.com.antbuddy2016.model.User;
@@ -39,6 +41,50 @@ public class APIManager {
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Response<Token> response) {
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                receiver.onError(t.toString());
+            }
+        });
+    }
+
+    public static void POSTCheckOrganizationExist(final String domainName, final HttpRequestReceiver<OrganizationExist> receiver) {
+        Call<OrganizationExist> call = AntbuddyApplication.getInstance().getApiService().POSTCheckOrganizationExist(domainName);
+        call.enqueue(new Callback<OrganizationExist>() {
+            @Override
+            public void onResponse(Response<OrganizationExist> response) {
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                receiver.onError(t.toString());
+            }
+        });
+    }
+
+    public static void POSTCreateNewAccount(final String userName,
+                                            final String fullName,
+                                            final String email,
+                                            final String password,
+                                            final String organization,
+                                            final String domain,
+                                            final HttpRequestReceiver<NewAccount> receiver) {
+        Call<NewAccount> call = AntbuddyApplication.getInstance().getApiService().POSTCreateNewAccount(userName, fullName, email, password, organization, domain);
+        call.enqueue(new Callback<NewAccount>() {
+            @Override
+            public void onResponse(Response<NewAccount> response) {
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {
