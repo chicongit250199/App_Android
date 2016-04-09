@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,39 +18,37 @@ import github.ankushsachdeva.emojicon.EmojiconHandler;
  */
 public class UserMe {
 
-    private final static String key__id = "_id";
-    private final static String key_avatar = "avatar";
-    private final static String key_username = "username";
-    private final static String key_key = "key";
-    private final static String key_provider = "provider";
-    private final static String key_email = "email";
-    private final static String key_name = "name";
-    private final static String key_nonce = "nonce";
-    private final static String key_modified = "modified";
-    private final static String key_active = "active";
-    private final static String key_tourStep = "tourStep";
-    private final static String key_orgs = "orgs";
-    private final static String key_forceChangePassw = "forceChangePassw";
-    private final static String key_created = "created";
-    private final static String key_chatDomain = "chatDomain";
-    private final static String key_chatMucDomain = "chatMucDomain";
-    private final static String key_chatUrl = "chatUrl";
-    private final static String key_currentOrg = "currentOrg";
-    private final static String key_chatToken = "chatToken";
-    private final String nonce;
-    private final String modified;
-    private final Boolean active;
-    private final int tourStep;
+    //    private final static String key__id = "_id";
+//    private final static String key_avatar = "avatar";
+//    private final static String key_username = "username";
+//    private final static String key_key = "key";
+//    private final static String key_provider = "provider";
+//    private final static String key_email = "email";
+//    private final static String key_name = "name";
+//    private final static String key_nonce = "nonce";
+//    private final static String key_modified = "modified";
+//    private final static String key_active = "active";
+//    private final static String key_tourStep = "tourStep";
+//    private final static String key_orgs = "orgs";
+//    private final static String key_forceChangePassw = "forceChangePassw";
+//    private final static String key_created = "created";
+//    private final static String key_chatDomain = "chatDomain";
+//    private final static String key_chatMucDomain = "chatMucDomain";
+//    private final static String key_chatUrl = "chatUrl";
+//    private final static String key_currentOrg = "currentOrg";
+//    private final static String key_chatToken = "chatToken";
+    private String nonce;
+    private String modified;
+    private Boolean active;
+    private int tourStep;
     private ArrayList<Org> orgs = null;
-    private final Boolean forceChangePassw;
-    private final String created;
+    private Boolean forceChangePassw;
+    private String created;
     private CurrentOrg currentOrg = null;
 
 
     private String key;
     private String chatToken; // 53893e8c497468d3453f6d5a:27f00feeeb03a35e5dd0b44f6ae7c9bebc43a045880c92d0d03e7b5bb05da02e06628b1c07f3a3f3
-    private String xmppUsername;
-    private String xmppPassword;
     private String chatMucDomain; // conference.htklabs.com
     private String chatDomain; // htklabs.com
     private String _id; // 53893e8c497468d3453f6d5a
@@ -105,22 +104,6 @@ public class UserMe {
         this.chatToken = chatToken;
     }
 
-    public String getXmppUsername() {
-        return xmppUsername;
-    }
-
-    public void setXmppUsername(String xmppUsername) {
-        this.xmppUsername = xmppUsername;
-    }
-
-    public String getXmppPassword() {
-        return xmppPassword;
-    }
-
-    public void setXmppPassword(String xmppPassword) {
-        this.xmppPassword = xmppPassword;
-    }
-
     public String getChatMucDomain() {
         return chatMucDomain;
     }
@@ -151,7 +134,7 @@ public class UserMe {
 
     public void setName(String name) {
         this.name = name;
-        if(!TextUtils.isEmpty(name)) {
+        if (!TextUtils.isEmpty(name)) {
             EmojiconHandler.myName = "@" + name.replace(" ", "");
         }
     }
@@ -291,40 +274,40 @@ public class UserMe {
 //        return me;
 //    }
 
-    public UserMe(JSONObject json){
-        _id = AndroidHelper.getString(json, key__id, null);
-        avatar = AndroidHelper.getString(json, key_avatar, null);
-        username = AndroidHelper.getString(json, key_username, null);
-        key = AndroidHelper.getString(json, key_key, null);
-        provider = AndroidHelper.getString(json, key_provider, null);
-        email = AndroidHelper.getString(json, key_email, null);
-        name = AndroidHelper.getString(json, key_name, null);
-        nonce = AndroidHelper.getString(json, key_nonce, null);
-        modified = AndroidHelper.getString(json, key_modified, null);
-        active = AndroidHelper.getBoolean(json, key_active, false);
-        tourStep = AndroidHelper.getInt(json, key_tourStep, 0);
-        if (json.has(key_orgs)) {
-            try {
-                orgs = Org.parse(json.getJSONArray(key_orgs));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        forceChangePassw = AndroidHelper.getBoolean(json, key_forceChangePassw, false);
-        created = AndroidHelper.getString(json, key_created, null);
-        chatDomain = AndroidHelper.getString(json, key_chatDomain, null);
-        chatMucDomain = AndroidHelper.getString(json, key_chatMucDomain, null);
-        chatUrl = AndroidHelper.getString(json, key_chatUrl, null);
-        if (json.has(key_currentOrg)) {
-            try {
-                currentOrg = new CurrentOrg(json.getJSONObject(key_currentOrg));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        chatToken = AndroidHelper.getString(json, key_chatToken, null);
-
-    }
+//    public UserMe(JSONObject json){
+//        new Exception().printStackTrace();
+//        _id = AndroidHelper.getString(json, key__id, null);
+//        avatar = AndroidHelper.getString(json, key_avatar, null);
+//        username = AndroidHelper.getString(json, key_username, null);
+//        key = AndroidHelper.getString(json, key_key, null);
+//        provider = AndroidHelper.getString(json, key_provider, null);
+//        email = AndroidHelper.getString(json, key_email, null);
+//        name = AndroidHelper.getString(json, key_name, null);
+//        nonce = AndroidHelper.getString(json, key_nonce, null);
+//        modified = AndroidHelper.getString(json, key_modified, null);
+//        active = AndroidHelper.getBoolean(json, key_active, false);
+//        tourStep = AndroidHelper.getInt(json, key_tourStep, 0);
+//        if (json.has(key_orgs)) {
+//            try {
+//                orgs = Org.parse(json.getJSONArray(key_orgs));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        forceChangePassw = AndroidHelper.getBoolean(json, key_forceChangePassw, false);
+//        created = AndroidHelper.getString(json, key_created, null);
+//        chatDomain = AndroidHelper.getString(json, key_chatDomain, null);
+//        chatMucDomain = AndroidHelper.getString(json, key_chatMucDomain, null);
+//        chatUrl = AndroidHelper.getString(json, key_chatUrl, null);
+//        if (json.has(key_currentOrg)) {
+//            try {
+//                currentOrg = new CurrentOrg(json.getJSONObject(key_currentOrg));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        chatToken = AndroidHelper.getString(json, key_chatToken, null);
+//    }
 
     public static class Org {
 
@@ -349,9 +332,10 @@ public class UserMe {
                 }
             }
         }
+
         public static ArrayList<Org> parse(JSONArray jsonArray) {
             ArrayList<Org> orgs = new ArrayList<>();
-            for(int i=0; i<jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     JSONObject json = jsonArray.getJSONObject(i);
                     Org org = new Org(json);
@@ -366,6 +350,7 @@ public class UserMe {
         public String getOrgKey() {
             return orgKey;
         }
+
         public ArrayList<OpeningChatRoom> getOpeningChatrooms() {
             return openingChatrooms;
         }
@@ -395,20 +380,19 @@ public class UserMe {
         private String modified;
         private String created;
 
-        public CurrentOrg(JSONObject json) {
-            _id = AndroidHelper.getString(json, key__id, null);
-            name = AndroidHelper.getString(json, key_name, null);
-            domain = AndroidHelper.getString(json, key_domain, null);
-            key = AndroidHelper.getString(json, key_key, null);
-            createdBy = AndroidHelper.getString(json, key_createdBy, null);
-            isDefaultLogo = AndroidHelper.getBoolean(json, key_isDefaultLogo, false);
-            allowSelfRegister = AndroidHelper.getBoolean(json, key_allowSelfRegister, false);
-            logo = AndroidHelper.getString(json, key_logo, null);
-            status = AndroidHelper.getString(json, key_status, null);
-            modified = AndroidHelper.getString(json, key_modified, null);
-            created = AndroidHelper.getString(json, key_created, null);
-
-        }
+//        public CurrentOrg(JSONObject json) {
+//            _id = AndroidHelper.getString(json, key__id, null);
+//            name = AndroidHelper.getString(json, key_name, null);
+//            domain = AndroidHelper.getString(json, key_domain, null);
+//            key = AndroidHelper.getString(json, key_key, null);
+//            createdBy = AndroidHelper.getString(json, key_createdBy, null);
+//            isDefaultLogo = AndroidHelper.getBoolean(json, key_isDefaultLogo, false);
+//            allowSelfRegister = AndroidHelper.getBoolean(json, key_allowSelfRegister, false);
+//            logo = AndroidHelper.getString(json, key_logo, null);
+//            status = AndroidHelper.getString(json, key_status, null);
+//            modified = AndroidHelper.getString(json, key_modified, null);
+//            created = AndroidHelper.getString(json, key_created, null);
+//        }
 
         public String getKey() {
             return key;
@@ -431,5 +415,34 @@ public class UserMe {
             }
         }
         return listChatsOpening;
+    }
+
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        String newLine = System.getProperty("line.separator");
+
+        result.append( this.getClass().getName() );
+        result.append( " Object {" );
+        result.append(newLine);
+
+        //determine fields declared in this class only (no fields of superclass)
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        //print field names paired with their values
+        for ( Field field : fields  ) {
+            result.append("  ");
+            try {
+                result.append( field.getName() );
+                result.append(": ");
+                //requires access to private field:
+                result.append( field.get(this) );
+            } catch ( IllegalAccessException ex ) {
+                System.out.println(ex);
+            }
+            result.append(newLine);
+        }
+        result.append("}");
+
+        return result.toString();
     }
 }

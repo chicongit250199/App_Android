@@ -64,8 +64,6 @@ public class ObjectManager {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    LogHtk.i(LogHtk.Test1, "me = " + me.getUsername());
-                    LogHtk.i(LogHtk.Test1, "getOpeningChatrooms = " + me.getOpeningChatrooms());
                     userMe = me;
 
                     if (listener != null) {

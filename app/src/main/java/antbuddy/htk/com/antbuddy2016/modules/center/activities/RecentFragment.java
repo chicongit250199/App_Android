@@ -147,6 +147,7 @@ public class RecentFragment extends Fragment {
         ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
             public void onSuccess(final UserMe me) {
+                LogHtk.i(LogHtk.Test1, "Userme = " + me.toString());
                 loadUsers();
             }
 
@@ -156,20 +157,19 @@ public class RecentFragment extends Fragment {
                 processUIWhenError(error);
             }
         });
-
-
     }
 
     private void loadUsers() {
-        ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener() {
+        ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<User>>() {
             @Override
-            public void onSuccess(Object object) {
+            public void onSuccess(List<User> users) {
+                LogHtk.e(LogHtk.Test1, "rooms = " + users.toString());
                 loadRooms();
             }
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
+                LogHtk.e(LogHtk.RecentFragment, "ERROR to loading users : " + error);
                 processUIWhenError(error);
             }
         });
@@ -180,8 +180,12 @@ public class RecentFragment extends Fragment {
             @Override
             public void onSuccess(List<Room> rooms) {
 
+                LogHtk.e(LogHtk.Test1, "rooms = " + rooms.toString());
+
                 UserMe me = ObjectManager.getInstance().getUserMe();
                 if (me.getOpeningChatrooms() != null) {
+                    recentsData.get(ChatType.Group.getValue()).clear();
+                    recentsData.get(ChatType.OneToOne.getValue()).clear();
                     recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
                     recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
                     recentsAdapter.notifyDataSetChanged();
