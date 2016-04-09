@@ -82,7 +82,7 @@ public class CenterActivity extends AppCompatActivity {
         }
 
         initView();
-        //loadData();
+        loadData();
     }
 
     private void initView() {
@@ -174,63 +174,18 @@ public class CenterActivity extends AppCompatActivity {
     }
 
     private void getUserMe() {
-        //AndroidHelper.showToast("Loading user profile...", CenterActivity.this);
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-        APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
             public void onSuccess(UserMe me) {
-                // Connect XMPP
-                connectXMPP(me);
-
-                // Load List Users
-                getListUsers();
-
-                // Save data into single ton
-                ObjectManager.getInstance().setUserMe(me);
+                //connectXMPP(me);
                 AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
             }
 
             @Override
             public void onError(String error) {
                 LogHtk.e(LogHtk.API_TAG, "Load UserMe Error!!" + error);
-                APIManager.showToastWithCode(error, CenterActivity.this);
-            }
-        });
-    }
-
-    private void getListUsers() {
-        //AndroidHelper.showToast("Loading users...", CenterActivity.this);
-        APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
-            @Override
-            public void onSuccess(List<User> listUsers) {
-                getListGroups();
-                ObjectManager.getInstance().setListUsers(listUsers);
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Can not get list Users!");
-                APIManager.showToastWithCode(error, CenterActivity.this);
-            }
-        });
-    }
-
-    private void getListGroups() {
-        //AndroidHelper.showToast("Loading groups...", CenterActivity.this);
-        APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
-            @Override
-            public void onSuccess(List<Room> listRooms) {
-                LogHtk.i(LogHtk.API_TAG, "List Groups: " + listRooms.toString());
-                ObjectManager.getInstance().setListRooms(listRooms);
-
-                // Update Recent
-                RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
-                recentFragment.updateUI();
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Can not get list Groups!" + error);
+                AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
                 APIManager.showToastWithCode(error, CenterActivity.this);
             }
         });
@@ -246,7 +201,7 @@ public class CenterActivity extends AppCompatActivity {
         return mIRemoteService != null;
     }
 
-    private void connectXMPP(UserMe me) {
+    protected static void connectXMPP(UserMe me) {
         LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());
 
         String[] accountXMPP = me.getChatToken().split(":");

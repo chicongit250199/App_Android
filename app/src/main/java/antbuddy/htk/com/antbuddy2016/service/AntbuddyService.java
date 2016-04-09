@@ -79,6 +79,7 @@ public class AntbuddyService extends Service {
 	}
 
 	public void loginXMPP() {
+		LogHtk.i(LogHtk.SERVICE_TAG, "------------------>loginXMPP<----------------");
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
 		mXmppConnection.connectXMPP(AntbuddyService.this, new XMPPReceiver() {
 			@Override
@@ -126,6 +127,7 @@ public class AntbuddyService extends Service {
 	public void resetXMPP() {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
 		mXmppConnection.disconnect();
+		AntbuddyXmppConnection.instance = null;
 	}
 
 //	public String logout() throws RemoteException {

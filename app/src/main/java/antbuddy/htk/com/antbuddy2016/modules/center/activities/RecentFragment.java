@@ -1,6 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class RecentFragment extends Fragment {
     private LinearLayout backgroundViews;
     private ProgressBar prb_Loading;
     private Button btnTry;
+    private ProgressBar prb_LoadingFisrt;
 
     public enum ChatType {
         Group(0), OneToOne(1);
@@ -112,6 +114,7 @@ public class RecentFragment extends Fragment {
         backgroundViews = (LinearLayout) root.findViewById(R.id.backgroundViews);
         btnTry = (Button) root.findViewById(R.id.btnTry);
         prb_Loading = (ProgressBar) root.findViewById(R.id.prb_Loading);
+        prb_LoadingFisrt = (ProgressBar) root.findViewById(R.id.prb_LoadingFisrt);
     }
 
     private void viewsListener() {
@@ -137,67 +140,79 @@ public class RecentFragment extends Fragment {
     }
 
     protected void updateUI() {
-
+        LogHtk.i(LogHtk.RecentFragment, "updateUI");
+        prb_LoadingFisrt.setVisibility(View.VISIBLE);
+        // LOGIN XMPP
         //UserMe
         ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
             public void onSuccess(final UserMe me) {
-
-                // Users
-                ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener() {
-                    @Override
-                    public void onSuccess(Object object) {
-
-                        // Rooms
-                        ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
-                            @Override
-                            public void onSuccess(List<Room> rooms) {
-
-                                if (me.getOpeningChatrooms() != null) {
-                                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
-                                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
-                                    recentsAdapter.notifyDataSetChanged();
-
-                                    backgroundTry.setVisibility(View.GONE);
-                                    prb_Loading.setVisibility(View.GONE);
-                                    btnTry.setVisibility(View.VISIBLE);
-                                    backgroundViews.setVisibility(View.VISIBLE);
-                                }
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                LogHtk.d(LogHtk.RecentFragment, "error = " + error);
-                                APIManager.showToastWithCode(error, getActivity());
-                                processUIWhenError(error);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        LogHtk.d(LogHtk.RecentFragment, "error = " + error);
-                        processUIWhenError(error);
-                    }
-                });
+                loadUsers();
             }
 
             @Override
             public void onError(String error) {
-                LogHtk.d(LogHtk.RecentFragment, "error = " + error);
+                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
+                processUIWhenError(error);
+            }
+        });
+
+
+    }
+
+    private void loadUsers() {
+        ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener() {
+            @Override
+            public void onSuccess(Object object) {
+                loadRooms();
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
                 processUIWhenError(error);
             }
         });
     }
 
-    private void processUIWhenError(String error) {
-        LogHtk.d(LogHtk.RecentFragment, "error = " + error);
+    private void loadRooms() {
+        ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
+            @Override
+            public void onSuccess(List<Room> rooms) {
+
+                UserMe me = ObjectManager.getInstance().getUserMe();
+                if (me.getOpeningChatrooms() != null) {
+                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
+                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
+                    recentsAdapter.notifyDataSetChanged();
+                    backgroundTry.setVisibility(View.GONE);
+                    prb_Loading.setVisibility(View.GONE);
+                    btnTry.setVisibility(View.VISIBLE);
+                    backgroundViews.setVisibility(View.VISIBLE);
+                    prb_LoadingFisrt.setVisibility(View.GONE);
+                }
+
+                CenterActivity.connectXMPP(me);
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
+                APIManager.showToastWithCode(error, getActivity());
+                processUIWhenError(error);
+            }
+        });
+    }
+
+    private void processUIWhenError(final String error) {
+        LogHtk.e(LogHtk.RecentFragment, "error = " + error);
         APIManager.showToastWithCode(error, getActivity());
         if (!AndroidHelper.isInternetAvailable(getContext())) {
             backgroundTry.setVisibility(View.VISIBLE);
             prb_Loading.setVisibility(View.GONE);
             btnTry.setVisibility(View.VISIBLE);
             backgroundViews.setVisibility(View.GONE);
+            prb_LoadingFisrt.setVisibility(View.GONE);
         }
     }
 }

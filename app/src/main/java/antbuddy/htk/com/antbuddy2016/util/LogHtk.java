@@ -89,4 +89,6 @@ public class LogHtk {
         if(isExist(classNameTag))
             Log.e("___" + classNameTag, text);
     }
+
+
 }

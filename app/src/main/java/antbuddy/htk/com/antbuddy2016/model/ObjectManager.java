@@ -46,9 +46,7 @@ public class ObjectManager {
     }
 
     public void clear() {
-        if (userMe != null) {
-            userMe.getOpeningChatrooms().clear();
-        }
+        userMe = null;
         if (listRooms != null) {
             listRooms.clear();
         }
@@ -66,6 +64,10 @@ public class ObjectManager {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
+                    LogHtk.i(LogHtk.Test1, "me = " + me.getUsername());
+                    LogHtk.i(LogHtk.Test1, "getOpeningChatrooms = " + me.getOpeningChatrooms());
+                    userMe = me;
+
                     if (listener != null) {
                         listener.onSuccess(me);
                     }
@@ -119,6 +121,7 @@ public class ObjectManager {
             APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
                 @Override
                 public void onSuccess(List<User> _listUsers) {
+                    listUsers.clear();
                     listUsers.addAll(_listUsers);
                     if (keyRegister == null) {
                         listener.onSuccess(listUsers);
@@ -145,7 +148,7 @@ public class ObjectManager {
         mListenerUser.remove(cls.getName());
     }
 
-    public void setOnListenerRooms(final Class<?> keyRegister, final OnObjectManagerListener onListenerGroup) {
+    synchronized public void setOnListenerRooms(final Class<?> keyRegister, final OnObjectManagerListener onListenerGroup) {
         if (keyRegister != null) {
             mListenerRoom.put(keyRegister.getName(), onListenerGroup);
         }
@@ -157,9 +160,10 @@ public class ObjectManager {
             APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
                 @Override
                 public void onSuccess(List<Room> rooms) {
+                    listRooms.clear();
                     listRooms.addAll(rooms);
                     if (keyRegister == null) {
-                        onListenerGroup.onSuccess(listUsers);
+                        onListenerGroup.onSuccess(listRooms);
                     }
                     for (String key : mListenerRoom.keySet()) {
                         if (mListenerRoom.get(key) != null) {
@@ -185,55 +189,5 @@ public class ObjectManager {
 
     public void setListRooms(List<Room> listRooms) {
         this.listRooms = listRooms;
-    }
-
-    public void setListUsers(List<User> listUsers) {
-        this.listUsers = listUsers;
-    }
-
-    public void setUserMe(UserMe userMe) {
-        this.userMe = userMe;
-    }
-
-
-    // Userme, Users, Rooms
-    public void reloadData() {
-
-        if (listRooms.size() == 0) {
-            APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
-                @Override
-                public void onSuccess(List<Room> rooms) {
-                    listRooms.addAll(rooms);
-                    for (String key : mListenerRoom.keySet()) {
-                        if (mListenerRoom.get(key) != null) {
-                            mListenerRoom.get(key).onSuccess(listRooms);
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                }
-            });
-        }
-
-        if (listUsers.size() == 0) {
-            APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
-                @Override
-                public void onSuccess(List<User> users) {
-                    listUsers.addAll(users);
-                    for (String key : mListenerUser.keySet()) {
-                        if (mListenerUser.get(key) != null) {
-                            mListenerUser.get(key).onSuccess(listUsers);
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                }
-            });
-        }
-
     }
 }

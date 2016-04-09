@@ -64,7 +64,7 @@ public class AntbuddyXmppConnection {
 	//private static Map<String, List<ChatMessage>> historyMessages;
 	private static Context mContext;
 
-	private static AntbuddyXmppConnection instance;
+	public static AntbuddyXmppConnection instance;
 
 	synchronized public static AntbuddyXmppConnection getInstance() {
 		if (instance == null) {
@@ -114,6 +114,7 @@ public class AntbuddyXmppConnection {
 	 * @param connection
 	 */
 	public void setConnection(XMPPConnection connection) {
+		LogHtk.i(LogHtk.Test1, "setConnection ");
 		xmppConnection = connection;
 	}
 
@@ -345,21 +346,23 @@ public class AntbuddyXmppConnection {
 		xmppConnection.addPacketListener(presenceListener, presenceFilter);
 	}
 
-	public void sendMessageOut(ChatMessage chatMessage) {
-		if(!xmppConnection.isConnected()) return;
-		Message msg = null;
+	public void sendMessageOut(final ChatMessage chatMessage) {
+		if(xmppConnection == null || !xmppConnection.isConnected()) {
+			LogHtk.e(LogHtk.API_TAG, "ERROR! XMPPConnection is null or do not connect!");
+			return;
+		}
 		UserMe userMe = ObjectManager.getInstance().getUserMe();
 		if (userMe == null) {
+			LogHtk.e(LogHtk.API_TAG, "ERROR! Userme is Null!");
 			return;
 		}
 
 		UserMe.Org currentOrg = userMe.getCurrentOrg();
 		if (currentOrg == null) {
+			LogHtk.e(LogHtk.API_TAG, "Warning! Oragnization is null in UserMe: ");
 			return;
 		}
 		String orgKey = currentOrg.getOrgKey();
-
-		final String userMeKey = userMe.getKey();
 		final String chatMucDomain = userMe.getChatMucDomain();
 		String receiverJid;
 		Message.Type type;
@@ -371,11 +374,12 @@ public class AntbuddyXmppConnection {
 			type = Message.Type.chat;
 		}
 
-		msg = new Message(receiverJid, type);
+
+		Message msg = new Message(receiverJid, type);
 		msg.setBody(chatMessage.getBody());
 		msg.setWith(chatMessage.getReceiverKey());
 		xmppConnection.sendPacket(msg);
-
+		LogHtk.i(LogHtk.Test1, "send == > " + msg.toXML());
 		APIManager.newMessageToHistory(chatMessage);
 		//fix not update in other device
 		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
@@ -383,49 +387,6 @@ public class AntbuddyXmppConnection {
 			msg.setTo(mReceiverJid);
 			xmppConnection.sendPacket(msg);
 		}
-
-	}
-
-	/**
-	 * Send message out
-	 * @param messageChatting
-	 */
-	public void sendMessageOut(XMPPMessage messageChatting) {
-//		if(!mConnection.isConnected()) return;
-//		Message msg = null;
-//
-//        // GROUP
-//		if (messageChatting.getType().equals(ChatMessage.TYPE.groupchat.toString())) {
-//			msg = new Message(messageChatting.getReceiverJid(), Message.Type.groupchat);
-//		}addConnectionCreationListener
-//
-//        // 1-1
-//        if (messageChatting.getType().equals(ChatMessage.TYPE.chat.toString())) {
-//			msg = new Message(messageChatting.getReceiverJid(), Message.Type.chat);
-//            sendToMyself(messageChatting, messageChatting.getReceiverId());
-//		}
-//
-//        if(messageChatting.getFileAntBuddy() != null) {
-//            FileAntBuddy file = messageChatting.getFileAntBuddy();
-//            msg.setFile(new AntBuddyFile(file.getName(), file.getSize(), file.getFileUrl(), file.getMimeType(), file.getThumbnailUrl()));
-//            msg.setBody(file.getName());
-//        }
-//        else {
-//            msg.setBody(messageChatting.getBody());
-//        }
-//
-//		mConnection.sendPacket(msg);
-//        LogHtk.i(TAG, "====> MESSAGE SENT OUT: " + msg.toXML());
-//
-//		try {
-//            String result = Request.requestURLSendMessageOut(messageChatting);
-//            if (result.equals(Request.RESPONSE_RESULT.ERROR_REQUEST+"")) {
-//                Toast.makeText(mContext, "Timeout send message out!", Toast.LENGTH_SHORT).show();
-//            }
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 	}
 
     public void sendToMyself(XMPPMessage messageChatting, String with) {
@@ -446,19 +407,23 @@ public class AntbuddyXmppConnection {
 	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
-		ObjectManager.getInstance().setOnListenerRooms(this.getClass(), new ObjectManager.OnObjectManagerListener<List<Room>>() {
+		ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
 			@Override
 			public void onSuccess(List<Room> rooms) {
 				for (Room room : rooms) {
+					String key_org = ObjectManager.getInstance().getUserMe().getCurrentOrg().getOrgKey();
+					String key_me = ObjectManager.getInstance().getUserMe().getKey();
 					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
-					presence.setTo(room.getKey() + "_475a400a-292b-440c-981a-57af0b3f9a2c" + "@conference.antbuddy.com/756651f0-9196-11e5-a569-fdc7cdc19515_475a400a-292b-440c-981a-57af0b3f9a2c");
-					if (xmppConnection != null) {
+					presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
+					if (xmppConnection != null && xmppConnection.isConnected()) {
 						xmppConnection.sendPacket(presence);
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
+						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+					} else {
 						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
 					}
 				}
