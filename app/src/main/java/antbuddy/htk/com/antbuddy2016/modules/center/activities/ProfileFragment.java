@@ -93,7 +93,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AndroidHelper.showToast("This feature will be available soon!", getActivity());
             }
         });
         btnSwithCompany.setOnClickListener(new View.OnClickListener() {
