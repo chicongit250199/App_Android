@@ -93,12 +93,12 @@ public class CenterActivity extends AppCompatActivity {
 
         RecentFragment recentFragment = new RecentFragment();
         mTabFragments.add(recentFragment);
-        MembersFragment membersFragment = new MembersFragment();
-        mTabFragments.add(membersFragment);
+        CallsFragment callsFragment = new CallsFragment();
+        mTabFragments.add(callsFragment);
         GroupsFragment groupsFragment = new GroupsFragment();
         mTabFragments.add(groupsFragment);
-        ProfileFragment profileFragment = new ProfileFragment();
-        mTabFragments.add(profileFragment);
+        MembersFragment membersFragment = new MembersFragment();
+        mTabFragments.add(membersFragment);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -145,8 +145,8 @@ public class CenterActivity extends AppCompatActivity {
                 if (position == 1) {
                     btnAlwaysChange.setBackgroundResource(R.drawable.call2);
                     btnAlwaysChange.setTag(1);
-                    btnAlwaysChange.setWidth(54);
-                    btnAlwaysChange.setHeight(54);
+                    btnAlwaysChange.setWidth(44);
+                    btnAlwaysChange.setHeight(44);
                     return;
                 }
 
@@ -161,9 +161,6 @@ public class CenterActivity extends AppCompatActivity {
                 }
                 btnAlwaysChange.setWidth(64);
                 btnAlwaysChange.setHeight(64);
-                // Change icon
-
-
             }
 
             @Override
@@ -185,6 +182,17 @@ public class CenterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (btnAlwaysChange.getTag() == 0) {
+                    AndroidHelper.gotoActivity(CenterActivity.this, OpeningRoomActivity.class, false);
+                }
+
+                if (btnAlwaysChange.getTag() == 1) {
+                    AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
+                }
+                if (btnAlwaysChange.getTag() == 2) {
+                    AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
+                }
+                if (btnAlwaysChange.getTag() == 3) {
+                    AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
                 }
             }
         });

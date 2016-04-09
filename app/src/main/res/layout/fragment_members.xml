@@ -36,15 +36,6 @@
         android:layout_height="match_parent"
         android:id="@+id/backgroundViews">
 
-        <SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:background="#cccccc"
-            android:layout_height="wrap_content"
-            android:queryHint="Search"
-            >
-        </SearchView>
-
         <ListView
             android:id="@+id/lv_member"
             android:background="@color/white"

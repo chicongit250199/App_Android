@@ -32,7 +32,6 @@ public class MembersFragment extends Fragment {
 
     private ListView lv_member;
     private UserAdapter mUserAdapter;
-    private SearchView searchView;
 
     private RelativeLayout backgroundTry;
     private LinearLayout backgroundViews;
@@ -49,8 +48,6 @@ public class MembersFragment extends Fragment {
         }
         lv_member.setAdapter(mUserAdapter);
         lv_member.setDividerHeight(0);
-        searchView = (SearchView)rootView.findViewById(R.id.searchView);
-        searchView.setQueryHint("Type something...");
 
         lv_member.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,19 +58,6 @@ public class MembersFragment extends Fragment {
                 args.putBoolean(ChatActivity.key_type, false);
                 args.putString(ChatActivity.key_title, user.getName());
                 AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mUserAdapter.filter(newText, ObjectManager.getInstance().getListUsers());
-                return true;
             }
         });
 
@@ -119,7 +103,7 @@ public class MembersFragment extends Fragment {
         ObjectManager.getInstance().setOnListenerUsers(this.getClass(), new ObjectManager.OnObjectManagerListener<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                mUserAdapter.filter(searchView.getQuery().toString(), users);
+                mUserAdapter.filter("", users);
 
                 backgroundTry.setVisibility(View.GONE);
                 prb_Loading.setVisibility(View.GONE);
