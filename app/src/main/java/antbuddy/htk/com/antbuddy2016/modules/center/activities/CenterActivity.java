@@ -2,39 +2,31 @@ package antbuddy.htk.com.antbuddy2016.modules.center.activities;
 
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.widget.ProgressBar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+
+import com.astuetz.PagerSlidingTabStrip;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.customview.TabBarView;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
-import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.model.UserMe;
-import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
-
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoReActivity;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
@@ -46,8 +38,7 @@ public class CenterActivity extends AppCompatActivity {
     private ProgressBar progressBar_Center;
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
-    private TabBarView tabBarView;
-    private TextView tv_title;
+    PagerSlidingTabStrip tabs;
 
 	// Work with service
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
@@ -88,8 +79,6 @@ public class CenterActivity extends AppCompatActivity {
     private void initView() {
         progressBar_Center = (ProgressBar) findViewById(R.id.progressBar_Center);
         mViewPager         = (ViewPager) findViewById(R.id.id_viewpager);
-        tabBarView         = (TabBarView) findViewById(R.id.change_color_tab);
-        tv_title           = (TextView) findViewById(R.id.tv_title);
 
         RecentFragment recentFragment = new RecentFragment();
         mTabFragments.add(recentFragment);
@@ -100,12 +89,16 @@ public class CenterActivity extends AppCompatActivity {
         ProfileFragment profileFragment = new ProfileFragment();
         mTabFragments.add(profileFragment);
 
-        tabBarView.setViewpager(mViewPager);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return titles[position];
+            }
+
             @Override
             public int getCount() {
                 return mTabFragments.size();
@@ -119,18 +112,32 @@ public class CenterActivity extends AppCompatActivity {
 
         //set title
         setTitle(titles[0]);
-        tabBarView.setOnPageSelectedListener(new TabBarView.OnPageSelectedListener() {
+
+
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setViewPager(mViewPager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
             @Override
             public void onPageSelected(int position) {
                 setTitle(titles[position]);
                 AndroidHelper.hideSoftKeyboard(CenterActivity.this);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
     }
 
     @Override
     public void setTitle(CharSequence title) {
-        tv_title.setText(title);
+//        tv_title.setText(title);
     }
 
     @Override
