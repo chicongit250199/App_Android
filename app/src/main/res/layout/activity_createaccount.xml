@@ -5,12 +5,14 @@
     android:background="@color/walkthough_background">
 
     <ProgressBar
+        android:id="@+id/progressBar_CreateAccount"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar_CreateAccount"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:visibility="gone"
+        android:layout_centerInParent="true" />
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
@@ -40,25 +42,25 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/etUserName"
             android:layout_gravity="center_horizontal"
-            android:hint="USERNAME"
+            android:hint="USERNAME*"
             android:singleLine="true"
             android:lines="1"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText2"
-            android:hint="FULL NAME"
+            android:id="@+id/etFullName"
+            android:hint="FULL NAME*"
             android:singleLine="true"
             android:lines="1" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText3"
-            android:hint="EMAIL"
+            android:id="@+id/etEmail"
+            android:hint="EMAIL*"
             android:singleLine="true"
             android:lines="1" />
 
@@ -67,16 +69,16 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/editText4"
-            android:hint="PASSWORD"
+            android:id="@+id/etPassword"
+            android:hint="PASSWORD*"
             android:singleLine="true"
             android:lines="1" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText5"
-            android:hint="COMPANY NAME"
+            android:id="@+id/etCompanyName"
+            android:hint="COMPANY NAME*"
             android:singleLine="true"
             android:lines="1" />
 
@@ -88,8 +90,8 @@
             <EditText
                 android:layout_width="233dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText6"
-                android:hint="COMPANY DOMAIN"
+                android:id="@+id/etCompanyDomain"
+                android:hint="COMPANY DOMAIN*"
                 android:singleLine="true"
                 android:lines="1" />
 
@@ -109,7 +111,7 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/accept_CreateAccount_Button"
+            android:id="@+id/btnCreateAccount"
             android:background="@drawable/backgroundbutton4_forward"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"

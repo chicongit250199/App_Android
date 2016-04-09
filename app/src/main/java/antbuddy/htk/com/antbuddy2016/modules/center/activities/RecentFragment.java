@@ -121,6 +121,8 @@ public class RecentFragment extends Fragment {
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CenterActivity.mIRemoteService.resetXMPP();
+
                 prb_Loading.setVisibility(View.VISIBLE);
                 btnTry.setVisibility(View.GONE);
                 if (!AndroidHelper.isInternetAvailable(getContext())) {
