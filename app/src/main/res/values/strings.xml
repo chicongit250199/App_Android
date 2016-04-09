@@ -7,4 +7,6 @@
 
     <string name="sign_up_free">Sign up free</string>
     <string name="login">Login</string>
+
+    <string name="setting_activity">Setting</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -35,7 +36,7 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
  * Created by thanhnguyen on 29/03/2016.
  */
 public class CenterActivity extends AppCompatActivity {
-    final String[] titles = {"RECENT", "CALLS", "GROUPS", "MEMBERS"};
+    final String[] titles = {"RECENT", "GROUPS", "MEMBERS"};
     public static final String TAG_THISCLASS = "CenterActivity";
     private ProgressBar progressBar_Center;
     private ViewPager mViewPager;
@@ -93,10 +94,10 @@ public class CenterActivity extends AppCompatActivity {
 
         RecentFragment recentFragment = new RecentFragment();
         mTabFragments.add(recentFragment);
-        CallsFragment callsFragment = new CallsFragment();
-        mTabFragments.add(callsFragment);
+
         GroupsFragment groupsFragment = new GroupsFragment();
         mTabFragments.add(groupsFragment);
+
         MembersFragment membersFragment = new MembersFragment();
         mTabFragments.add(membersFragment);
 
@@ -125,6 +126,7 @@ public class CenterActivity extends AppCompatActivity {
         setTitle(titles[0]);
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setTextColorResource(R.color.white_ab);
         tabs.setViewPager(mViewPager);
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -155,10 +157,10 @@ public class CenterActivity extends AppCompatActivity {
                     btnAlwaysChange.setTag(2);
                 }
 
-                if (position == 3) {
-                    btnAlwaysChange.setBackgroundResource(R.drawable.addperson);
-                    btnAlwaysChange.setTag(3);
-                }
+//                if (position == 3) {
+//                    btnAlwaysChange.setBackgroundResource(R.drawable.addperson);
+//                    btnAlwaysChange.setTag(3);
+//                }
                 btnAlwaysChange.setWidth(64);
                 btnAlwaysChange.setHeight(64);
             }
@@ -191,9 +193,9 @@ public class CenterActivity extends AppCompatActivity {
                 if (btnAlwaysChange.getTag() == 2) {
                     AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
                 }
-                if (btnAlwaysChange.getTag() == 3) {
-                    AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
-                }
+//                if (btnAlwaysChange.getTag() == 3) {
+//                    AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
+//                }
             }
         });
 
