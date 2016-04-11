@@ -138,7 +138,6 @@ public class CreateAccountActivity extends Activity {
         APIManager.POSTCheckOrganizationExist(etCompanyDomain.getText().toString().trim(), new HttpRequestReceiver<OrganizationExist>() {
             @Override
             public void onSuccess(OrganizationExist orgExist) {
-                LogHtk.i(LogHtk.Test1, "orgExist = " + orgExist.toString());
                 if (orgExist.isExist()) {
                     createNewAccount();
                 } else {

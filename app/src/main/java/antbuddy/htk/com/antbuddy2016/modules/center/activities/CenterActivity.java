@@ -70,6 +70,7 @@ public class CenterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_center);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY);
+        ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, true);
 
         AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);

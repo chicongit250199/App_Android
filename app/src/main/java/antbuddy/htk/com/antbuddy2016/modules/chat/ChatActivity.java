@@ -203,7 +203,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onError(String error) {
-                LogHtk.i(LogHtk.Test2, "-->Error");
+                LogHtk.i(LogHtk.ChatActivity, "-->Error");
                 mSwipyRefreshLayout.setRefreshing(false);
             }
         });

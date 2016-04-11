@@ -149,7 +149,6 @@ public class RecentFragment extends Fragment {
         ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
             public void onSuccess(final UserMe me) {
-                LogHtk.i(LogHtk.Test1, "Userme = " + me.toString());
                 loadUsers();
             }
 
@@ -162,10 +161,9 @@ public class RecentFragment extends Fragment {
     }
 
     private void loadUsers() {
-        ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<User>>() {
+        ObjectManager.getInstance().setOnListenerUsers(null, new ObjectManager.OnObjectManagerListener<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                LogHtk.e(LogHtk.Test1, "rooms = " + users.toString());
                 loadRooms();
             }
 
@@ -178,27 +176,35 @@ public class RecentFragment extends Fragment {
     }
 
     private void loadRooms() {
-        ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
+        ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
                 CenterActivity.mIRemoteService.resetXMPP();
-                LogHtk.e(LogHtk.Test1, "rooms = " + rooms.toString());
 
                 UserMe me = ObjectManager.getInstance().getUserMe();
-                if (me.getOpeningChatrooms() != null) {
-                    recentsData.get(ChatType.Group.getValue()).clear();
-                    recentsData.get(ChatType.OneToOne.getValue()).clear();
-                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
-                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
-                    recentsAdapter.notifyDataSetChanged();
-                    backgroundTry.setVisibility(View.GONE);
+                if (me == null) {
+                    LogHtk.e(LogHtk.RecentFragment, "UserMe is null!");
+                    backgroundTry.setVisibility(View.VISIBLE);
                     prb_Loading.setVisibility(View.GONE);
                     btnTry.setVisibility(View.VISIBLE);
-                    backgroundViews.setVisibility(View.VISIBLE);
+                    backgroundViews.setVisibility(View.GONE);
                     prb_LoadingFisrt.setVisibility(View.GONE);
-                }
+                } else {
+                    if (me.getOpeningChatrooms() != null) {
+                        recentsData.get(ChatType.Group.getValue()).clear();
+                        recentsData.get(ChatType.OneToOne.getValue()).clear();
+                        recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
+                        recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
+                        recentsAdapter.notifyDataSetChanged();
+                        backgroundTry.setVisibility(View.GONE);
+                        prb_Loading.setVisibility(View.GONE);
+                        btnTry.setVisibility(View.VISIBLE);
+                        backgroundViews.setVisibility(View.VISIBLE);
+                        prb_LoadingFisrt.setVisibility(View.GONE);
+                    }
 
-                CenterActivity.connectXMPP(me);
+                    CenterActivity.connectXMPP(me);
+                }
             }
 
             @Override

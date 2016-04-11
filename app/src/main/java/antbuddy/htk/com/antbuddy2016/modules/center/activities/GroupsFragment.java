@@ -44,18 +44,11 @@ public class GroupsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_groups, container, false);
-        LogHtk.i(LogHtk.Test1, "onCreateView");
         initViews(rootView);
         viewsListener();
 
         updateUI();
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        LogHtk.i(LogHtk.Test1, "onResume");
     }
 
     protected void initViews(View rootView) {
@@ -98,11 +91,10 @@ public class GroupsFragment extends Fragment {
     }
 
     protected void updateUI() {
-        LogHtk.i(LogHtk.Test1, "updateUI");
         ObjectManager.getInstance().setOnListenerRooms(this.getClass(), new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-                LogHtk.i(LogHtk.Test1, "ERROR! = " + rooms.size());
+                LogHtk.i(LogHtk.GroupsFragment, "Size of rooms = " + rooms.size());
                 adapter.notifyDataSetChanged();
 
                 if (rooms.size() == 0) {
@@ -121,7 +113,7 @@ public class GroupsFragment extends Fragment {
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.Test1, "ERROR! = " + error);
+                LogHtk.e(LogHtk.GroupsFragment, "ERROR! = " + error);
                 APIManager.showToastWithCode(error, getActivity());
                 if (!AndroidHelper.isInternetAvailable(getContext())) {
                     backgroundTry.setVisibility(View.VISIBLE);

@@ -16,6 +16,7 @@ public class LogHtk {
     public static String API_TAG = "API";
     public static String ChatMessage = "ChatMessage";
     public static String GroupsFragment = "GroupsFragment";
+    public static String UserMe = "UserMe";
 
     public static String Test1 = "Test1";
     public static String Test2 = "Test2";
@@ -39,6 +40,7 @@ public class LogHtk {
             ChatActivity,
             ChatMessage,
             GroupsFragment,
+            UserMe,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

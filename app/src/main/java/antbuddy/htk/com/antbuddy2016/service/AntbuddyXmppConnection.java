@@ -114,7 +114,6 @@ public class AntbuddyXmppConnection {
 	 * @param connection
 	 */
 	public void setConnection(XMPPConnection connection) {
-		LogHtk.i(LogHtk.Test1, "setConnection ");
 		xmppConnection = connection;
 	}
 
@@ -126,10 +125,6 @@ public class AntbuddyXmppConnection {
 
 		mContext = context;
 		ABXMPPConfig config = getABXMPPConfig();
-
-		LogHtk.i(LogHtk.Test1, "host =" + config.getHOST_XMPP());
-		LogHtk.i(LogHtk.Test1, "config.getPORT_XMPP() =" + config.getPORT_XMPP());
-		LogHtk.i(LogHtk.Test1, "getDOMAIN_XMPP =" + config.getDOMAIN_XMPP());
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 		xmppConnection = new XMPPConnection(connConfig);
 		try {
@@ -152,8 +147,6 @@ public class AntbuddyXmppConnection {
 		try {
 			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-			LogHtk.i(LogHtk.Test1, "getUSERNAME_XMPP =" + config.getUSERNAME_XMPP());
-			LogHtk.i(LogHtk.Test1, "getPASSWORD_XMPP =" + config.getPASSWORD_XMPP());
 			xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
 
 			// After connect successful
@@ -379,7 +372,6 @@ public class AntbuddyXmppConnection {
 		msg.setBody(chatMessage.getBody());
 		msg.setWith(chatMessage.getReceiverKey());
 		xmppConnection.sendPacket(msg);
-		LogHtk.i(LogHtk.Test1, "send == > " + msg.toXML());
 		APIManager.newMessageToHistory(chatMessage);
 		//fix not update in other device
 		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {

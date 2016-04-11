@@ -30,13 +30,18 @@ public class AntbuddyApplication extends Application {
 		mInstance = this;
 		LogHtk.e(TAG, "Created AntbuddyApplication!");
 
+		createAPIService();
+
+		//AndroidHelper.showLogSizeDevice(getApplicationContext());
+	}
+
+	private API createAPIService() {
 		retrofit = new Retrofit.Builder()
 				.baseUrl(API.BASE_URL)			//"https://antbuddy.com"
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);
-
-		AndroidHelper.showLogSizeDevice(getApplicationContext());
+		return apiService;
 	}
 
 	@Override
@@ -50,7 +55,20 @@ public class AntbuddyApplication extends Application {
 	}
 
 	public API getApiService() {
+		if (apiService == null) {
+			boolean isDomainExist = ABSharedPreference.getBoolean(ABSharedPreference.KEY_IS_DOMAIN_EXIST);
+			if (isDomainExist) {
+				apiService = restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
+			} else {
+				apiService = createAPIService();
+			}
+		}
+
 		return apiService;
+	}
+
+	public void resetApiService() {
+		apiService = null;
 	}
 
 	public API restartAPIServiceWithDomain(String domain) {
@@ -61,29 +79,5 @@ public class AntbuddyApplication extends Application {
 				.build();
 		apiService = retrofit.create(API.class);
 		return apiService;
-	}
-
-	public RequestQueue getRequestQueue() {
-		if (mRequestQueue == null) {
-			mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-		}
-
-		return mRequestQueue;
-	}
-
-	public <T> void addToRequestQueue(Request<T> req, String tag) {
-		req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-		getRequestQueue().add(req);
-	}
-
-	public <T> void addToRequestQueue(Request<T> req) {
-		req.setTag(TAG);
-		getRequestQueue().add(req);
-	}
-
-	public void cancelPendingRequests(Object tag) {
-		if (mRequestQueue != null) {
-			mRequestQueue.cancelAll(tag);
-		}
 	}
 }

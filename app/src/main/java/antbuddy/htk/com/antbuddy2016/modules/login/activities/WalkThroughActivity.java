@@ -70,19 +70,19 @@ public class WalkThroughActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 if (checkedId == radioButton.getId()) {
-                    LogHtk.d(LogHtk.Test2, "-->Xuc 1");
+                    //LogHtk.d(LogHtk.Test2, "-->Xuc 1");
                 }
 
                 if (checkedId == radioButton2.getId()) {
-                    LogHtk.d(LogHtk.Test2, "-->Xuc 2");
+                    //LogHtk.d(LogHtk.Test2, "-->Xuc 2");
                 }
 
                 if (checkedId == radioButton3.getId()) {
-                    LogHtk.d(LogHtk.Test2, "-->Xuc 3");
+                    //LogHtk.d(LogHtk.Test2, "-->Xuc 3");
                 }
 
                 if (checkedId == radioButton4.getId()) {
-                    LogHtk.d(LogHtk.Test2, "-->Xuc 4");
+                    //LogHtk.d(LogHtk.Test2, "-->Xuc 4");
                 }
             }
         });
@@ -96,7 +96,6 @@ public class WalkThroughActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                LogHtk.i(LogHtk.Test2, "----?onPageSelected + " + position);
                 switch (position) {
                     case 0:
                         radioButton.setChecked(true);
@@ -115,7 +114,7 @@ public class WalkThroughActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                LogHtk.i(LogHtk.Test2, "onPageScrollStateChanged");
+
             }
         });
         paper.setAdapter(adapder);

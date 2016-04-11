@@ -139,7 +139,6 @@ public class OpeningRoomActivity extends Activity{
         ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
             @Override
             public void onSuccess(final UserMe me) {
-                LogHtk.i(LogHtk.Test1, "Userme = " + me.toString());
                 loadUsers();
             }
 
@@ -155,7 +154,6 @@ public class OpeningRoomActivity extends Activity{
         ObjectManager.getInstance().setOnListenerUsers(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                LogHtk.e(LogHtk.Test1, "rooms = " + users.toString());
                 loadRooms();
             }
 
@@ -171,9 +169,6 @@ public class OpeningRoomActivity extends Activity{
         ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-
-                LogHtk.e(LogHtk.Test1, "rooms = " + rooms.toString());
-
                 UserMe me = ObjectManager.getInstance().getUserMe();
                 if (me.getOpeningChatrooms() != null) {
                     recentsData.get(ChatType.Group.getValue()).clear();

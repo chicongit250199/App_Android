@@ -20,6 +20,7 @@ import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -118,8 +119,11 @@ public class SettingActivity extends Activity {
                 AndroidHelper.alertDialogShow(SettingActivity.this, "Do you want to sign out?", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        ObjectManager.getInstance().clear();
                         ABSharedPreference.resetAccountInSharedPreferences();
                         ABSharedPreference.resetXMPP();
+                        CenterActivity.mIRemoteService.resetXMPP();
+                        AntbuddyApplication.getInstance().resetApiService();
                         AndroidHelper.gotoActivity(SettingActivity.this, LoginActivity.class, true, true);
                     }
                 }, null);

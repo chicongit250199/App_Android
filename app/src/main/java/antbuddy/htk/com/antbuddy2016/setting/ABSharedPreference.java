@@ -22,6 +22,11 @@ public class ABSharedPreference {
     }
 
     // Reset
+    public static void resetAccountLogin() {
+        ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
+        ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
+    }
+
     public static void resetAccountInSharedPreferences() {
         ABSharedPreference.save(ABSharedPreference.KEY_TOKEN, "");
         ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, "");
@@ -83,6 +88,7 @@ public class ABSharedPreference {
     // Setting
     public static final String KEY_REMEMBER_PASSWORD = "KEY_REMEMBER_PASSWORD";
     public static final String KEY_IS_LOGIN = "KEY_IS_LOGIN";
+    public static final String KEY_IS_DOMAIN_EXIST = "KEY_IS_DOMAIN_EXIST";
 
     public static final String KEY_CURRENT_SCREEN = "KEY_CURRENT_SCREEN";
 

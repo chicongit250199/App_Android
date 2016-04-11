@@ -49,15 +49,14 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
+        ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, false);
+
         if(AntbuddyService.mAntbuddyService == null) {
             startService(new Intent(this, AntbuddyService.class));
         }
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();
         passwordStr = ABSharedPreference.getAccountConfig().getPassword();
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);
-
-        LogHtk.i(LogHtk.Test1, "emailStr=" + emailStr);
-        LogHtk.i(LogHtk.Test1, "passwordStr=" + passwordStr);
 
         initViews();
         registerListeners();
@@ -159,6 +158,7 @@ public class LoginActivity extends Activity {
 
         emailStr    = etEmail.getText().toString().trim();
         passwordStr = etPassword.getText().toString().trim();
+
         APIManager.GETLogin(emailStr, passwordStr, new HttpRequestReceiver<Token>() {
             @Override
             public void onSuccess(Token token) {

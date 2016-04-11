@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconHandler;
 
 /**
@@ -68,6 +69,10 @@ public class UserMe {
     }
 
     public List<OpeningChatRoom> getOpeningChatrooms() {
+        if (currentOrg == null) {
+            LogHtk.i(LogHtk.UserMe, "Error! currentOrg is null in UserMe!");
+            return null;
+        }
         String key = currentOrg.getKey();
         for (Org org : orgs) {
             if (org.getOrgKey().equals(key)) {
