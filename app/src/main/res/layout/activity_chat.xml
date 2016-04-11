@@ -7,7 +7,7 @@
               android:layout_height="match_parent">
 
     <include
-        layout="@layout/action_bar"
+        layout="@layout/actiion_bar_chatmessage"
         android:layout_width="match_parent"
         android:layout_height="60dp"/>
 

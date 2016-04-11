@@ -77,7 +77,7 @@
 
         <activity
             android:name=".modules.center.activities.SettingActivity"
-            android:theme="@style/ABSettingTheme"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
             android:label="@string/setting_activity"
             android:screenOrientation="portrait">
         </activity>

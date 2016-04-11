@@ -17,7 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +71,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private ChatAdapter mChatAdapter;
     private SwipyRefreshLayout mSwipyRefreshLayout;
     private TextView tv_title;
+    private RelativeLayout areaBack;
 
     private EmojiconEditText etTypingMessage;
 
@@ -172,6 +175,14 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+        });
+
+        areaBack = (RelativeLayout) findViewById(R.id.areaBack);
+        areaBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

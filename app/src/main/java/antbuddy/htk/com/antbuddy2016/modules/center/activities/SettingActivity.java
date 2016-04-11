@@ -36,6 +36,8 @@ public class SettingActivity extends Activity {
     private Button btnSetting;
     private Button btnSignOut;
 
+    private RelativeLayout areaBack;
+
     private RelativeLayout backgroundTry;
     private LinearLayout backgroundViews;
     private ProgressBar prb_Loading;
@@ -63,6 +65,7 @@ public class SettingActivity extends Activity {
         backgroundViews = (LinearLayout) findViewById(R.id.backgroundViews);
         btnTry = (Button) findViewById(R.id.btnTry);
         prb_Loading = (ProgressBar) findViewById(R.id.prb_Loading);
+        areaBack = (RelativeLayout) findViewById(R.id.areaBack);
     }
 
     private void viewsListener() {
@@ -120,6 +123,12 @@ public class SettingActivity extends Activity {
                         AndroidHelper.gotoActivity(SettingActivity.this, LoginActivity.class, true, true);
                     }
                 }, null);
+            }
+        });
+        areaBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

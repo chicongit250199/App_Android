@@ -181,7 +181,7 @@ public class RecentFragment extends Fragment {
         ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-
+                CenterActivity.mIRemoteService.resetXMPP();
                 LogHtk.e(LogHtk.Test1, "rooms = " + rooms.toString());
 
                 UserMe me = ObjectManager.getInstance().getUserMe();
