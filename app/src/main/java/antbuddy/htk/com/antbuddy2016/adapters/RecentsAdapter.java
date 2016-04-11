@@ -141,7 +141,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.width = 160;
             layoutParams.height = 160;
             holder.imgAvatar.setLayoutParams(layoutParams);
-            holder.ic_status.setVisibility(View.VISIBLE);
+            //holder.ic_status.setVisibility(View.VISIBLE);
             for (User user : ObjectManager.getInstance().getListUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     Glide.with(context)

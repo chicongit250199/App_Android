@@ -26,7 +26,7 @@
                     android:id="@+id/imageView"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:src="@drawable/logo_shap"
+                    android:src="@drawable/logo_ab_while"
                     android:layout_gravity="top" />
 
                 <TextView
@@ -50,7 +50,7 @@
                     android:id="@+id/btnSearch"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/ic_search"
+                    android:background="@drawable/search_icon"
                     android:layout_margin="5dp" />
 
                 <Button
