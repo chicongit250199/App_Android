@@ -12,7 +12,8 @@
         android:id="@+id/ll_message_left"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:clickable="true">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -27,8 +28,8 @@
 
             <ImageView
                 android:id="@+id/imgAvatarLeft"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:gravity="top"
                 android:paddingLeft="4dp"
@@ -41,7 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp">
 
             <RelativeLayout
                 android:id="@+id/rl_message_image_left"
@@ -62,12 +64,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:autoLink="web"
-                android:background="@drawable/bg_message"
+                android:background="@drawable/ab_message_left"
                 android:gravity="center|left"
-                android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
+                android:text="Cong Hoa Xa Hoi Chu Nghia Viet Nam"
                 android:textColor="#ff000000"
                 android:textSize="14sp"
-            android:freezesText="true" />
+            android:freezesText="true"
+                android:layout_marginLeft="-5dp"
+                android:layout_marginBottom="7dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -85,7 +89,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top|right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:clickable="true">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -113,7 +118,9 @@
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:gravity="right"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp">
 
                     <RelativeLayout
                         android:id="@+id/rl_message_image_right"
@@ -135,24 +142,15 @@
                         android:layout_height="wrap_content"
                         android:autoLink="web"
                         android:gravity="center|left"
-                        android:background="@drawable/bg_message_right"
+                        android:background="@drawable/ab_message_right"
                         android:text="cho a hoi chut ace, ace co ai thay soi day chuyen doi tu cong usb cua mac ra vga khong???"
                         android:textColor="#ff000000"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:layout_marginRight="-5dp"
+                        android:layout_marginBottom="7dp" />
                 </LinearLayout>
 
-            </LinearLayout><![CDATA[
-
-
-
-
-
-
-            android:freezesText="true" />
-
-
-
-        ]]>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -168,8 +166,8 @@
 
             <ImageView
                 android:id="@+id/imgAvatarRight"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:gravity="top"
                 android:paddingLeft="4dp"

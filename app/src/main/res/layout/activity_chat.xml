@@ -27,60 +27,83 @@
             android:smoothScrollbar="false"
             android:transcriptMode="disabled" />
     </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:gravity="center"
-        android:paddingBottom="4dip">
-
-        <ImageButton
-            android:id="@+id/btn_smile"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/send"
-            android:drawablePadding="0dip"
-            android:padding="10dp"
-            android:src="@drawable/bt_attachment" />
-
-        <github.ankushsachdeva.emojicon.EmojiconEditText
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:id="@+id/text_send"
-            android:background="@drawable/bg_rounded_corners"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:hint="@string/type_message"
-            android:imeOptions="actionSend"
-            android:inputType="text|textMultiLine"
-            android:maxLines="4"
-            android:minHeight="48dip"
-            android:nextFocusRight="@+id/btn_send"
-            android:textCursorDrawable="@drawable/color_cursor"
-            android:textSize="16sp"
-            android:textColor="@color/black">
-            <requestFocus />
-        </github.ankushsachdeva.emojicon.EmojiconEditText>
-
+        android:layout_marginBottom="5dp"
+        android:paddingBottom="5dp">
 
         <LinearLayout
-            android:layout_width="80dp"
-            android:clickable="true"
-            android:onClick="onClick"
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ab_message_right"
+            android:layout_toLeftOf="@+id/imgSendMessage"
+            android:baselineAligned="false"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:layout_centerInParent="true"
             android:gravity="center"
-            android:layout_height="match_parent">
+            android:layout_marginBottom="5dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/btn_smile"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:contentDescription="@string/smile"
+                android:drawablePadding="0dip"
+                android:padding="10dp"
+                android:background="@drawable/ab_smile"
+                android:layout_margin="5dp" />
+
+            <github.ankushsachdeva.emojicon.EmojiconEditText
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/text_send"
+                android:background="#00000000"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:text="@string/send"
-                android:textColor="#0000ff"
-                android:textStyle="bold"
-                android:id="@+id/textView5"/>
+                android:layout_weight="1"
+                android:hint="@string/type_message"
+                android:imeOptions="actionSend"
+                android:inputType="text|textMultiLine"
+                android:maxLines="4"
+                android:minHeight="48dip"
+                android:nextFocusRight="@+id/btn_send"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp">
+                <requestFocus />
+            </github.ankushsachdeva.emojicon.EmojiconEditText>
+
+            <LinearLayout
+                android:layout_width="50dp"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imgCamera"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ab_camera"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgSendMessage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:background="@drawable/ab_send_message"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
 </LinearLayout>

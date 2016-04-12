@@ -9,4 +9,8 @@
     <string name="login">Login</string>
 
     <string name="setting_activity">Setting</string>
+
+
+    <!-- icon -->
+    <string name="smile">Smile</string>
 </resources>

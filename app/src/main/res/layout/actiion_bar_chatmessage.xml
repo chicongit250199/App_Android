@@ -55,13 +55,13 @@
             android:layout_margin="5dp">
 
             <Button
-                android:id="@+id/btnAlwaysChange"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/open_chat_2"
+                android:id="@+id/btnAttachment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ab_attachment"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <Button
                 android:id="@+id/btnSetting"

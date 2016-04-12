@@ -12,7 +12,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -27,6 +29,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.bumptech.glide.Glide;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
@@ -43,6 +46,8 @@ import antbuddy.htk.com.antbuddy2016.adapters.ChatAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -51,6 +56,7 @@ import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -67,13 +73,15 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     private Boolean isFister = true;
 
-    private ListView lv_messages;
-    private ChatAdapter mChatAdapter;
-    private SwipyRefreshLayout mSwipyRefreshLayout;
-    private TextView tv_title;
-    private RelativeLayout areaBack;
+    private ListView            lv_messages;
+    private ChatAdapter         mChatAdapter;
+    private SwipyRefreshLayout  mSwipyRefreshLayout;
+    private TextView            tv_title;
+    private RelativeLayout      areaBack;
+    private EmojiconEditText    etTypingMessage;
+    private ImageView           imgSendMessage;
 
-    private EmojiconEditText etTypingMessage;
+
 
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
     private boolean mBound;
@@ -92,7 +100,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +112,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_chat);
 
         initViews();
+        viewsListener();
+        updateUI();
 
         loadMoreMessages();
 
@@ -165,9 +174,27 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     public void run() {
                         LogHtk.i(LogHtk.ChatActivity, "");
                         lv_messages.setSelection(lv_messages.getCount() - 1);
+
+                        //
                     }
                 }, 300);
+            }
+        });
 
+        etTypingMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                LogHtk.i(LogHtk.Test1, "beforeTextChanged");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LogHtk.i(LogHtk.Test1, "onTextChanged");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                LogHtk.i(LogHtk.Test1, "afterTextChanged");
             }
         });
 
@@ -185,6 +212,42 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 finish();
             }
         });
+
+        imgSendMessage = (ImageView) findViewById(R.id.imgSendMessage);
+    }
+
+    private void viewsListener() {
+        imgSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
+                    return;
+                }
+
+                // Send message
+                String text_body = etTypingMessage.getText().toString().trim();
+                LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
+                if (!TextUtils.isEmpty(text_body)) {
+                    LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);
+                    LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isRoom);
+                    ChatMessage chatMessage = new ChatMessage(keyReceiver, text_body, isRoom);
+                    chatMessage.showLog();
+                    mIRemoteService.sendMessageOut(chatMessage);
+                    etTypingMessage.setText("");
+                }
+            }
+        });
+    }
+
+    private void updateUI() {
+//        UserMe me = ObjectManager.getInstance().getUserMe();
+//        Glide.with(getApplicationContext())
+//                .load(me.getAvatar())
+//                .override(50, 50)
+//                .placeholder(R.drawable.ic_avatar_defaul)
+//                .error(R.drawable.ic_avatar_defaul)
+//                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+//                .into(imgSendMessage);
     }
     
     //goi len webservice lay tin nhan cua room / uses
@@ -229,20 +292,20 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
-            return;
-        }
-
-        // Send message
-        String text_body = etTypingMessage.getText().toString().trim();
-        LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
-        if (!TextUtils.isEmpty(text_body)) {
-            LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);
-            LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isRoom);
-            ChatMessage chatMessage = new ChatMessage(keyReceiver, text_body, isRoom);
-            chatMessage.showLog();
-            mIRemoteService.sendMessageOut(chatMessage);
-            etTypingMessage.setText("");
-        }
+//        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
+//            return;
+//        }
+//
+//        // Send message
+//        String text_body = etTypingMessage.getText().toString().trim();
+//        LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
+//        if (!TextUtils.isEmpty(text_body)) {
+//            LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);
+//            LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isRoom);
+//            ChatMessage chatMessage = new ChatMessage(keyReceiver, text_body, isRoom);
+//            chatMessage.showLog();
+//            mIRemoteService.sendMessageOut(chatMessage);
+//            etTypingMessage.setText("");
+//        }
     }
 }
