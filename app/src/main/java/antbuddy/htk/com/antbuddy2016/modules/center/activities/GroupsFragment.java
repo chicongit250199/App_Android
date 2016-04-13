@@ -82,7 +82,7 @@ public class GroupsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Room room = ObjectManager.getInstance().getListRooms().get(position);
                 Bundle args = new Bundle();
-                args.putString(ChatActivity.key_key, room.getKey());
+                args.putString(ChatActivity.kKeyRoom, room.getKey());
                 args.putBoolean(ChatActivity.key_type, true);
                 args.putString(ChatActivity.key_title, room.getName());
                 AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);

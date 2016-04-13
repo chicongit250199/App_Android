@@ -54,7 +54,7 @@ public class MembersFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User user = mUserAdapter.getItem(position);
                 Bundle args = new Bundle();
-                args.putString(ChatActivity.key_key, user.getKey());
+                args.putString(ChatActivity.kKeyRoom, user.getKey());
                 args.putBoolean(ChatActivity.key_type, false);
                 args.putString(ChatActivity.key_title, user.getName());
                 AndroidHelper.gotoActivity(getActivity(), ChatActivity.class, args);

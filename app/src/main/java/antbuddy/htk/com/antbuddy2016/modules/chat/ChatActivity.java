@@ -69,14 +69,15 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by Micky on 4/1/2016.
  */
 public class ChatActivity extends Activity implements View.OnClickListener {
-    public final static String key_key = "key";
+    public final static String kKeyRoom = "Key of Room";
     public final static String key_type = "type";
     public final static String key_title = "title";
 
-    private String keyReceiver = ""; //ex: a667b2a0-d636-11e5-9bc1-25a4e1ac232c, key group hoac key cua user != jid (cua xmpp)
-    private String before = NationalTime.getLocalTimeToUTCTime(); //last time : set bang time hien tai neu null
-    private boolean isRoom = true; //true: la room ; false: chat 1-1
+    // This fields need in a Chat Room
+    private String keyRoom = ""; //ex: a667b2a0-d636-11e5-9bc1-25a4e1ac232c, key group hoac key cua user != jid (cua xmpp)
+    private boolean isGroup = true; //true: la room ; false: chat 1-1
     private String title;
+    private String keyMe = "";
 
     private Boolean isFister = true;
 
@@ -118,24 +119,21 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            keyReceiver = bundle.getString(key_key);
-            isRoom = bundle.getBoolean(key_type);
+            keyRoom = bundle.getString(kKeyRoom);
+            isGroup = bundle.getBoolean(key_type);
             title = bundle.getString(key_title);
+            keyMe = ObjectManager.getInstance().getUserMe().getKey();
         }
         setContentView(R.layout.activity_chat);
-        LogHtk.i(LogHtk.Test1, "111");
-        realm = Realm.getDefaultInstance();
-        LogHtk.i(LogHtk.Test1, "222");
+
+        loadingDatabase();
 
         initViews();
         viewsListener();
         updateUI();
 
-        LogHtk.i(LogHtk.Test1, "888");
-
         loadMoreMessages1();
 //        loadMoreMessages();
-        LogHtk.i(LogHtk.Test1, "999");
         registerReceiver(messageReceiver, new IntentFilter(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT));
 
         boolean isConnectService = connectServiceInAndroid();
@@ -166,6 +164,35 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         tv_title.setText(title);
     }
 
+    private void loadingDatabase() {
+        realm = Realm.getDefaultInstance();
+
+        if (isGroup) {  // Groups
+            LogHtk.i(LogHtk.Test1, "Load group!");
+            chatMessages = realm.where(RChatMassage.class).equalTo("fromKey", keyRoom).findAll();
+        } else {    // 1-1, myseft
+            if (keyMe == keyRoom) {
+                LogHtk.i(LogHtk.Test1, "Load Myself!");
+                chatMessages = realm.where(RChatMassage.class)
+                        .equalTo("fromKey", keyRoom)
+                        .equalTo("senderKey", keyRoom)
+                        .equalTo("receiverKey", keyRoom)
+                        .findAll();
+            } else {   // 1-1
+                LogHtk.i(LogHtk.Test1, "Load one-one!");
+                chatMessages = realm.where(RChatMassage.class)
+                        .equalTo("senderKey", keyMe)
+                        .equalTo("receiverKey", keyRoom)
+                        .or()
+                        .equalTo("senderKey", keyRoom)
+                        .equalTo("receiverKey", keyMe)
+                        .findAll();
+            }
+        }
+
+        chatMessages.sort("time", Sort.ASCENDING);
+    }
+
     private void initViews() {
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
@@ -173,25 +200,16 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         lv_messages = (ListView) findViewById(R.id.lv_messages);
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
 
-        LogHtk.i(LogHtk.Test1, "333");
-        chatMessages = realm.where(RChatMassage.class).findAllSorted("time", Sort.ASCENDING);
-        LogHtk.i(LogHtk.Test1, "Size chatMessages: " + chatMessages.size());
-
-
-        LogHtk.i(LogHtk.Test1, "444");
         if (mChatAdapter1 == null) {
-            mChatAdapter1 = new RChatAdapter(this, realm, chatMessages, true);
+            mChatAdapter1 = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
         }
-        LogHtk.i(LogHtk.Test1, "555");
 
         if (mChatAdapter == null) {
             mChatAdapter = new ChatAdapter(this, lv_messages);
         }
 //        lv_messages.setAdapter(mChatAdapter);
 
-        LogHtk.i(LogHtk.Test1, "666");
         lv_messages.setAdapter(mChatAdapter1);
-        LogHtk.i(LogHtk.Test1, "777");
 
         lv_messages.setDividerHeight(0);
         lv_messages.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
@@ -199,7 +217,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                //loadMoreMessages1();
+                loadMoreMessages1();
             }
         });
 
@@ -265,9 +283,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 String text_body = etTypingMessage.getText().toString().trim();
                 LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
                 if (!TextUtils.isEmpty(text_body)) {
-                    LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);
-                    LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isRoom);
-                    ChatMessage chatMessage = new ChatMessage(keyReceiver, text_body, isRoom);
+                    LogHtk.i(LogHtk.ChatActivity, "key =" + keyRoom);
+                    LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isGroup);
+                    ChatMessage chatMessage = new ChatMessage(keyRoom, text_body, isGroup);
                     chatMessage.showLog();
                     mIRemoteService.sendMessageOut(chatMessage);
                     etTypingMessage.setText("");
@@ -289,33 +307,30 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     
     //goi len webservice lay tin nhan cua room / uses
     public void loadMoreMessages(){
-        APIManager.GETMessages(before, keyReceiver, (isRoom ? "groupchat" : "chat"), new HttpRequestReceiver<List<ChatMessage>>() {
-            @Override
-            public void onSuccess(List<ChatMessage> listMessages) {
-                // Save into DB
-                //realm.allObjects()
-                LogHtk.i(LogHtk.Test1, "----loadMoreMessages---");
-                LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
-
-                Collections.reverse(listMessages);
-                mSwipyRefreshLayout.setRefreshing(false);
-                mChatAdapter.addMessages(listMessages, isFister);
-                isFister = false;
-                if (listMessages.size() > 0) {
-                    before = listMessages.get(0).getDatetime();
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.i(LogHtk.ChatActivity, "-->Error");
-                mSwipyRefreshLayout.setRefreshing(false);
-            }
-        });
+//        APIManager.GETMessages(mChatAdapter1.getBefore(), keyReceiver, (isRoom ? "groupchat" : "chat"), new HttpRequestReceiver<List<ChatMessage>>() {
+//            @Override
+//            public void onSuccess(List<ChatMessage> listMessages) {
+//
+//                Collections.reverse(listMessages);
+//                mSwipyRefreshLayout.setRefreshing(false);
+//                mChatAdapter.addMessages(listMessages, isFister);
+//
+//                isFister = false;
+//                if (listMessages.size() > 0) {
+//                    before = listMessages.get(0).getDatetime();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                LogHtk.i(LogHtk.ChatActivity, "-->Error");
+//                mSwipyRefreshLayout.setRefreshing(false);
+//            }
+//        });
     }
 
     public void loadMoreMessages1(){
-        APIManager.GETMessages1(before, keyReceiver, (isRoom ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
+        APIManager.GETMessages1(mChatAdapter1.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
             @Override
             public void onSuccess(List<GChatMassage> listMessages) {
                 // Save into DB
@@ -325,10 +340,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
                 //Collections.reverse(listMessages);
                 mSwipyRefreshLayout.setRefreshing(false);
-//                mChatAdapter1.saveMessagesIntoDB(listMessages, isFister);
 
                 mChatAdapter1.saveMessagesIntoDB(listMessages);
-                isFister = false;
+                mChatAdapter1.updateAdapter();
 //                if (listMessages.size() > 0) {
 //                    before = listMessages.get(0).getDatetime();
 //                }
@@ -350,7 +364,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             try {
                 ChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
-                if (keyReceiver.equals(chatMessage.getFromKey())) {
+                if (keyRoom.equals(chatMessage.getFromKey())) {
                     mChatAdapter.addMessage(chatMessage, true);
                     isFister = false;
                 }

@@ -84,13 +84,13 @@ public class OpeningRoomActivity extends Activity{
                 if (groupPosition == 0) {
                     OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
                     Room room = ObjectManager.getInstance().findRoom(openingChatRoom.getChatRoomKey());
-                    args.putString(ChatActivity.key_key, room.getKey());
+                    args.putString(ChatActivity.kKeyRoom, room.getKey());
                     args.putBoolean(ChatActivity.key_type, true);
                     args.putString(ChatActivity.key_title, room.getName());
                 } else {
                     OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
                     User user = ObjectManager.getInstance().findUser(openingChatRoom.getChatRoomKey());
-                    args.putString(ChatActivity.key_key, user.getKey());
+                    args.putString(ChatActivity.kKeyRoom, user.getKey());
                     args.putBoolean(ChatActivity.key_type, false);
                     args.putString(ChatActivity.key_title, user.getName());
                 }

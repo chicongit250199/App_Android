@@ -28,6 +28,7 @@ import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
@@ -39,11 +40,14 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  */
 public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
     private final Context ctx;
-//    private final ListView mListView;
+    private final ListView mListView;
 //    private ArrayList<RChatMassage> mMessages;
     RealmResults<RChatMassage> realmResults;
     private String keyMe;
     Realm realm;
+
+    private String before = "";  //last time : set bang time hien tai neu null
+    private Boolean isTheFisrtTimeLoadMessage;
 
     public class Holder {
         public EmojiconTextView textMessage_left;
@@ -58,10 +62,11 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         public RelativeLayout rl_message_image_left;
     }
 
-    public RChatAdapter(Context context, Realm realm, RealmResults<RChatMassage> realmResults, boolean automaticUpdate) {
+    public RChatAdapter(Context context,  ListView mListView, Realm realm, RealmResults<RChatMassage> realmResults, boolean automaticUpdate) {
         super(context, realmResults, automaticUpdate);
         this.realmResults = realmResults;
 
+        this.mListView = mListView;
         this.realm = realm;
         this.ctx = context;
 //        mListView = listView;
@@ -176,22 +181,22 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
     }
 
     public void addMessages(List<RChatMassage> messages, boolean isGotoBottom) {
-//        Rect corners = new Rect();
-//        if (isGotoBottom == false) {
-//            View view = mListView.getChildAt(0);
-//            mListView.getLocalVisibleRect(corners);
-//        }
-//        //update data in view
-//        realmResults.addAll(0, messages);
-//        notifyDataSetChanged();
-//
-//        if (isGotoBottom == false) {
-//            mListView.setSelected(true);
-//            mListView.setSelectionFromTop(messages.size(), corners.top);
-//        } else {
-//            mListView.setSelected(true);
-//            mListView.setSelection(realmResults.size());
-//        }
+        Rect corners = new Rect();
+        if (isGotoBottom == false) {
+            View view = mListView.getChildAt(0);
+            mListView.getLocalVisibleRect(corners);
+        }
+        //update data in view
+        realmResults.addAll(0, messages);
+        notifyDataSetChanged();
+
+        if (isGotoBottom == false) {
+            mListView.setSelected(true);
+            mListView.setSelectionFromTop(messages.size(), corners.top);
+        } else {
+            mListView.setSelected(true);
+            mListView.setSelection(realmResults.size());
+        }
     }
 
     public void saveMessagesIntoDB(List<GChatMassage> messages) {
@@ -301,5 +306,40 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
 //            mListView.setSelected(true);
 //            mListView.setSelection(realmResults.size());
 //        }
+    }
+
+    public String getBefore() {
+        if (before.length() == 0) {
+            LogHtk.i(LogHtk.Test1, "before 1");
+            before = NationalTime.getLocalTimeToUTCTime();
+            isTheFisrtTimeLoadMessage = true;
+        } else {
+            LogHtk.i(LogHtk.Test1, "before 2");
+            isTheFisrtTimeLoadMessage = false;
+        }
+        LogHtk.i(LogHtk.Test1, "before: " + before);
+        return before;
+    }
+
+    public void setBefore(String before) {
+        this.before = before;
+    }
+
+    public void updateBefore() {
+        this.before = realmResults.last().getTime();
+    }
+
+    public void updateAdapter() {
+        if (isTheFisrtTimeLoadMessage) {    // the first time
+            LogHtk.i(LogHtk.Test1, "updateAdapter 1");
+            mListView.setSelected(true);
+            mListView.setSelection(realmResults.size());
+        } else {        // Load more
+            LogHtk.i(LogHtk.Test1, "updateAdapter 2");
+            Rect corners = new Rect();
+            mListView.getLocalVisibleRect(corners);
+            mListView.setSelectionFromTop(50, corners.top);
+        }
+        this.before = realmResults.first().getTime();
     }
 }
