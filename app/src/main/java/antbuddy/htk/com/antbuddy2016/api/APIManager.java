@@ -2,9 +2,14 @@ package antbuddy.htk.com.antbuddy2016.api;
 
 import android.app.Activity;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
 
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;
@@ -17,6 +22,8 @@ import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -125,6 +132,26 @@ public class APIManager {
         call.enqueue(new Callback<List<ChatMessage>>() {
             @Override
             public void onResponse(Response<List<ChatMessage>> response) {
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                receiver.onError(t.toString());
+            }
+        });
+    }
+
+    public static void GETMessages1(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<GChatMassage>> receiver) {
+        String token = ABSharedPreference.getAccountConfig().getToken();
+        Call<List<GChatMassage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages1(token, time, chatRoomKey, typeChat);
+        call.enqueue(new Callback<List<GChatMassage>>() {
+            @Override
+            public void onResponse(Response<List<GChatMassage>> response) {
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {

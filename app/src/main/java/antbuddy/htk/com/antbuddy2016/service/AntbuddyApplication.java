@@ -12,6 +12,8 @@ import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -33,6 +35,9 @@ public class AntbuddyApplication extends Application {
 		createAPIService();
 
 		//AndroidHelper.showLogSizeDevice(getApplicationContext());
+		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+		Realm.deleteRealm(realmConfig);
+		Realm.setDefaultConfiguration(realmConfig);
 	}
 
 	private API createAPIService() {

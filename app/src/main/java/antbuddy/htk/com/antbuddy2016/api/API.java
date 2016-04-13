@@ -1,8 +1,13 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
 
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
@@ -71,5 +76,11 @@ public interface API {
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     Call<List<ChatMessage>> GETMessages(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
 
+//    @GET("/api/messages?limit=50")
+//    @Headers({ "Content-Type: application/json;charset=UTF-8"})
+//    Call<List<RChatMassage>> GETMessages1(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
 
+    @GET("/api/messages?limit=50")
+    @Headers({ "Content-Type: application/json;charset=UTF-8"})
+    Call<List<GChatMassage>> GETMessages1(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
 }
