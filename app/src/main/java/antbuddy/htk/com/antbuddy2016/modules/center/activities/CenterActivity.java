@@ -48,7 +48,7 @@ public class CenterActivity extends AppCompatActivity {
     private Button btnSetting;
 
 	// Work with service
-    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
+    public static AntbuddyService mIRemoteService;
     private boolean mBound;
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {

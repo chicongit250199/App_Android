@@ -1,5 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.service;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,15 +20,24 @@ public class AntbuddyService extends Service {
     public class LocalBinder extends Binder {
         public AntbuddyService getService() {
             mAntbuddyService = AntbuddyService.this;
+			LogHtk.i(LogHtk.Test2, "LocalBinder return service!");
             return mAntbuddyService;
         }
     }
+
+	public synchronized static AntbuddyService getInstance() {
+		if (mAntbuddyService == null) {
+			AntbuddyApplication.getInstance().startService(new Intent(AntbuddyApplication.getInstance().getApplicationContext(), AntbuddyService.class));
+		}
+		return mAntbuddyService;
+	}
 
 	private SharedPreferences prefWrapper;
 //	private ReceiverBroadCast mReceiver;
 
 	@Override
 	public void onCreate() {
+		LogHtk.i(LogHtk.Test2, "Service onCreate!");
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onCreate SERVICE<----------------");
 		super.onCreate();
 
@@ -37,6 +47,7 @@ public class AntbuddyService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
+		LogHtk.i(LogHtk.Test2, "Service onBind!");
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onBind SERVICE<----------------");
 		return serviceBinder;
 	}

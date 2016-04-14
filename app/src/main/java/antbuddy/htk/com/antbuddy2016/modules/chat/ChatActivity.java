@@ -191,6 +191,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
 
         chatMessages.sort("time", Sort.ASCENDING);
+        LogHtk.i(LogHtk.Test1, "Size from db: " + chatMessages.size());
+
     }
 
     private void initViews() {
@@ -210,6 +212,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //        lv_messages.setAdapter(mChatAdapter);
 
         lv_messages.setAdapter(mChatAdapter1);
+        lv_messages.setSelection(chatMessages.size());
 
         lv_messages.setDividerHeight(0);
         lv_messages.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);

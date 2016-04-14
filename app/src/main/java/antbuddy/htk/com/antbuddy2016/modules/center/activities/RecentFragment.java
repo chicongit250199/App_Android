@@ -25,6 +25,7 @@ import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -57,7 +58,6 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
         ArrayList<String> groupNames = new ArrayList<>();
@@ -105,6 +105,14 @@ public class RecentFragment extends Fragment {
 
         initViews(rootView);
         viewsListener();
+
+        // Service created at Application, but we need to check it again
+        if (AntbuddyService.getInstance() != null) {
+            AntbuddyService.getInstance().resetXMPP();
+        } else {
+            LogHtk.e(LogHtk.RecentFragment, "Warning! Android Local Service is null at recentFragment!");
+        }
+
         updateUI();
         return rootView;
     }
@@ -130,6 +138,7 @@ public class RecentFragment extends Fragment {
                     prb_Loading.setVisibility(View.GONE);
                     btnTry.setVisibility(View.VISIBLE);
                 } else {
+                    CenterActivity.mIRemoteService.resetXMPP();
                     updateUI();
                 }
             }
@@ -179,7 +188,7 @@ public class RecentFragment extends Fragment {
         ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-                CenterActivity.mIRemoteService.resetXMPP();
+//                CenterActivity.mIRemoteService.resetXMPP();
 
                 UserMe me = ObjectManager.getInstance().getUserMe();
                 if (me == null) {

@@ -236,6 +236,8 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
                 rFile.setThumbnailHeight(gFile.getThumbnailHeight());
                 messageSaved.setFileAntBuddy(rFile);
             }
+
+            realm.copyToRealmOrUpdate(messageSaved);
             realm.commitTransaction();
         }
         LogHtk.i(LogHtk.Test1, "realmResults = " + realmResults.size());
@@ -262,6 +264,8 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         messageSaved.setFromKey(messages.getFromKey());
         messageSaved.setReceiverKey(messages.getReceiverKey());
         messageSaved.setFileAntBuddy(messages.getFileAntBuddy());
+
+        realm.copyToRealmOrUpdate(messageSaved);
         realm.commitTransaction();
     }
 

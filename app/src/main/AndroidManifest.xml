@@ -107,12 +107,17 @@
         </service>
 
         <receiver android:name=".service.CommonReceiver">
+            <!-- Turn on and off device-->
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
+
+            <!-- Have a change internet connection-->
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
+
+            <!-- Unlock device screen-->
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT"/>
             </intent-filter>

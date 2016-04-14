@@ -29,8 +29,11 @@ public class AntbuddyApplication extends Application {
 	@Override
 	public void onCreate() {
         super.onCreate();
-		mInstance = this;
 		LogHtk.e(TAG, "Created AntbuddyApplication!");
+		mInstance = this;
+
+		// Create Android Local Service
+		AntbuddyService.getInstance();
 
 		createAPIService();
 

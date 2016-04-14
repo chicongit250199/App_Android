@@ -426,7 +426,6 @@ public class AntbuddyXmppConnection {
 				LogHtk.e(LogHtk.XMPP_TAG, "ERROR: " + error);
 			}
 		});
-
 	}
 
 	/**
