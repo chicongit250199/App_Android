@@ -205,8 +205,8 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         for (int i = 0; i < messages.size(); i++) {
             GChatMassage mess = messages.get(i);
 
-            realm.beginTransaction();
-            RChatMassage messageSaved = realm.createObject(RChatMassage.class);
+            RChatMassage messageSaved = new RChatMassage();
+            messageSaved.setId(mess.getId());
             messageSaved.setSenderJid(mess.getSenderJid());
             messageSaved.setSenderId(mess.getSenderId());
             messageSaved.setSenderName(mess.getSenderName());
@@ -237,6 +237,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
                 messageSaved.setFileAntBuddy(rFile);
             }
 
+            realm.beginTransaction();
             realm.copyToRealmOrUpdate(messageSaved);
             realm.commitTransaction();
         }

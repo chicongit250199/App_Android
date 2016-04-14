@@ -1,6 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.service;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -38,7 +39,7 @@ public class AntbuddyApplication extends Application {
 		createAPIService();
 
 		//AndroidHelper.showLogSizeDevice(getApplicationContext());
-		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).schemaVersion(1).build();
 		Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
 	}

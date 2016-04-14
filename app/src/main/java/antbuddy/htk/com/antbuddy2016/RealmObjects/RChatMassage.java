@@ -2,6 +2,7 @@ package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by thanhnguyen on 12/04/2016.
@@ -81,7 +82,10 @@ import io.realm.RealmObject;
 //        },
 
 public class RChatMassage extends RealmObject {
+
+    @PrimaryKey
     private String id;
+
     private String senderJid;
     private String senderId;
     private String senderName;
