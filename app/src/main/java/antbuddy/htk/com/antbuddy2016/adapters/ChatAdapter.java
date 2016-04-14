@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
@@ -42,9 +43,9 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         this.ctx = context;
         mListView = listView;
         mMessages = new ArrayList<>();
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe me) {
+            public void onSuccess(RUserMe me) {
                 keyMe = me.getKey();
             }
 

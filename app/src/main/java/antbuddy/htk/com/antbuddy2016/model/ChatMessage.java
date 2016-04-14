@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RCurrentOrg;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
@@ -416,9 +419,9 @@ public class ChatMessage implements Parcelable {
             receiverKey = m.group(1);
         }
 
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe userMe) {
+            public void onSuccess(RUserMe userMe) {
                 if (message.getFrom().contains("/")) {
                     String params[] = message.getFrom().split("/");
                     if (params[0].endsWith(userMe.getChatMucDomain())){
@@ -464,10 +467,10 @@ public class ChatMessage implements Parcelable {
     }
 
     public ChatMessage(final String _receiverKey, final String _body, final Boolean isMuc) {
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe userMe) {
-                UserMe.Org currentOrg = userMe.getCurrentOrg();
+            public void onSuccess(RUserMe userMe) {
+                ROrg currentOrg = userMe.getFullCurrentOrg();
                 if (currentOrg == null) {
                     LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
                     return;

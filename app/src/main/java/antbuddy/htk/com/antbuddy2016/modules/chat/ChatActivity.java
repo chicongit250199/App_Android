@@ -333,6 +333,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     public void loadMoreMessages1(){
+        // Check internet
+        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
+            mSwipyRefreshLayout.setRefreshing(false);
+            return;
+        }
+
         APIManager.GETMessages1(mChatAdapter1.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
             @Override
             public void onSuccess(List<GChatMassage> listMessages) {

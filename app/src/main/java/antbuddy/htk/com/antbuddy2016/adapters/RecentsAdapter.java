@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
@@ -29,12 +30,12 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
     private final int MEMBERS_POSITION = 1;
     private Context context;
     private List<String> parents;
-    private List<List<OpeningChatRoom>> childers;
+    private List<List<ROpeningChatRoom>> childers;
     private LayoutInflater inflater;
 
     public RecentsAdapter(Context context,
                           ArrayList<String> parents,
-                          List<List<OpeningChatRoom>> childers) {
+                          List<List<ROpeningChatRoom>> childers) {
         this.context = context;
         this.parents = parents;
         this.childers = childers;
@@ -52,7 +53,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        List<OpeningChatRoom> parent = childers.get(groupPosition);
+        List<ROpeningChatRoom> parent = childers.get(groupPosition);
         if (parent != null) {
             return parent.size();
         } else {
@@ -111,7 +112,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             holder = (Holder) rowView.getTag();
         }
 
-        final OpeningChatRoom openingChatroom = (OpeningChatRoom) getChild(groupPosition, childPosition);
+        final ROpeningChatRoom openingChatroom = (ROpeningChatRoom) getChild(groupPosition, childPosition);
         ViewGroup.LayoutParams layoutParams = holder.imgAvatar.getLayoutParams();
         if (groupPosition == 0) {
             holder.ic_status.setVisibility(View.GONE);

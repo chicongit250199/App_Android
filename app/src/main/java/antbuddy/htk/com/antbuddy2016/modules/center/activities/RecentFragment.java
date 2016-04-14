@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RecentsAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
@@ -34,7 +37,7 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
  */
 public class RecentFragment extends Fragment {
 
-    List<List<OpeningChatRoom>> recentsData;
+    List<List<ROpeningChatRoom>> recentsData;
     private ExpandableListView list_recent;
     private RecentsAdapter recentsAdapter;
 
@@ -65,8 +68,8 @@ public class RecentFragment extends Fragment {
         groupNames.add("MEMBERS");
 
         recentsData = new ArrayList<>();
-        recentsData.add(new ArrayList<OpeningChatRoom>());
-        recentsData.add(new ArrayList<OpeningChatRoom>());
+        recentsData.add(new ArrayList<ROpeningChatRoom>());
+        recentsData.add(new ArrayList<ROpeningChatRoom>());
 
         recentsAdapter = new RecentsAdapter(getContext(),groupNames, recentsData);
         list_recent.setAdapter(recentsAdapter);
@@ -155,9 +158,9 @@ public class RecentFragment extends Fragment {
         prb_LoadingFisrt.setVisibility(View.VISIBLE);
         // LOGIN XMPP
         //UserMe
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(final UserMe me) {
+            public void onSuccess(final RUserMe me) {
                 loadUsers();
             }
 
@@ -190,7 +193,7 @@ public class RecentFragment extends Fragment {
             public void onSuccess(List<Room> rooms) {
 //                CenterActivity.mIRemoteService.resetXMPP();
 
-                UserMe me = ObjectManager.getInstance().getUserMe();
+                RUserMe me = ObjectManager.getInstance().getUserMe();
                 if (me == null) {
                     LogHtk.e(LogHtk.RecentFragment, "UserMe is null!");
                     backgroundTry.setVisibility(View.VISIBLE);
@@ -199,11 +202,12 @@ public class RecentFragment extends Fragment {
                     backgroundViews.setVisibility(View.GONE);
                     prb_LoadingFisrt.setVisibility(View.GONE);
                 } else {
+                    LogHtk.e(LogHtk.Test3, "111");
                     if (me.getOpeningChatrooms() != null) {
                         recentsData.get(ChatType.Group.getValue()).clear();
                         recentsData.get(ChatType.OneToOne.getValue()).clear();
-                        recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
-                        recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
+                        recentsData.get(ChatType.Group.getValue()).addAll(RUserMe.getChatsOpening(me, true));
+                        recentsData.get(ChatType.OneToOne.getValue()).addAll(RUserMe.getChatsOpening(me, false));
                         recentsAdapter.notifyDataSetChanged();
                         backgroundTry.setVisibility(View.GONE);
                         prb_Loading.setVisibility(View.GONE);

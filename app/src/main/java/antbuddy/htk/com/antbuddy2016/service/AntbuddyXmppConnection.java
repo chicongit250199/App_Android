@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
@@ -344,13 +346,13 @@ public class AntbuddyXmppConnection {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! XMPPConnection is null or do not connect!");
 			return;
 		}
-		UserMe userMe = ObjectManager.getInstance().getUserMe();
+		RUserMe userMe = ObjectManager.getInstance().getUserMe();
 		if (userMe == null) {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! Userme is Null!");
 			return;
 		}
 
-		UserMe.Org currentOrg = userMe.getCurrentOrg();
+		ROrg currentOrg = userMe.getFullCurrentOrg();
 		if (currentOrg == null) {
 			LogHtk.e(LogHtk.API_TAG, "Warning! Oragnization is null in UserMe: ");
 			return;
@@ -403,7 +405,7 @@ public class AntbuddyXmppConnection {
 			@Override
 			public void onSuccess(List<Room> rooms) {
 				for (Room room : rooms) {
-					String key_org = ObjectManager.getInstance().getUserMe().getCurrentOrg().getOrgKey();
+					String key_org = ObjectManager.getInstance().getUserMe().getFullCurrentOrg().getOrgKey();
 					String key_me = ObjectManager.getInstance().getUserMe().getKey();
 					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
 					presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);

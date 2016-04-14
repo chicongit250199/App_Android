@@ -14,11 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
 
 /**
  * Created by thanhnguyen on 01/04/2016.
@@ -27,7 +30,7 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 public class ObjectManager {
     private List<Room> listRooms = new ArrayList<>();
     private List<User> listUsers = new ArrayList<>();
-    private UserMe userMe;
+    private RUserMe rUserMe;
 
     private HashMap<String, OnObjectManagerListener> mListenerUser = new HashMap<>();
     private HashMap<String, OnObjectManagerListener> mListenerRoom = new HashMap<>();
@@ -46,7 +49,7 @@ public class ObjectManager {
     }
 
     public void clear() {
-        userMe = null;
+        rUserMe = null;
         if (listRooms != null) {
             listRooms.clear();
         }
@@ -55,19 +58,33 @@ public class ObjectManager {
         }
     }
 
-    public UserMe getUserMe() {
-        return userMe;
+    public RUserMe getUserMe() {
+        LogHtk.i(LogHtk.Test2, "--->Goi vao day ");
+        if (rUserMe == null) {
+            LogHtk.i(LogHtk.Test2, "--->Null roi troi oi ");
+        } else {
+            LogHtk.i(LogHtk.Test2, "--->Khong null ha ");
+        }
+        return rUserMe;
     }
 
-    public void getUserMe(final OnObjectManagerListener<UserMe> listener) {
-        if (userMe == null) {
+    synchronized  public void getUserMe(final OnObjectManagerListener<RUserMe> listener) {
+        new Exception().printStackTrace();
+        // GetUserMe from DB
+        rUserMe = RObjectManager.getUserMe();
+
+        if (rUserMe == null) {
+            LogHtk.i(LogHtk.Test2, "--->getUserMe/ User is null");
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    userMe = me;
+                    RObjectManager.saveUserMeOrUpdate(me);
+                    rUserMe = RObjectManager.getUserMe();
 
+                    LogHtk.i(LogHtk.Test2, "--->User: " + rUserMe.getKey());
+                    LogHtk.i(LogHtk.Test2, "--->User: " + rUserMe.getName());
                     if (listener != null) {
-                        listener.onSuccess(me);
+                        listener.onSuccess(rUserMe);
                     }
                 }
 
@@ -77,7 +94,8 @@ public class ObjectManager {
                 }
             });
         } else {
-            listener.onSuccess(userMe);
+            LogHtk.i(LogHtk.Test2, "-->getUserMe/ Khac null");
+            listener.onSuccess(rUserMe);
         }
     }
 

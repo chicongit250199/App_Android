@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
@@ -138,9 +139,9 @@ public class SettingActivity extends Activity {
     }
 
     private void updateUI() {
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe me) {
+            public void onSuccess(RUserMe me) {
                 Glide.with(SettingActivity.this)
                         .load(me.getAvatar())
                         .override(100, 100)

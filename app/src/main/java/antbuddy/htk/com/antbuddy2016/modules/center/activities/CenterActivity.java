@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
@@ -236,9 +237,9 @@ public class CenterActivity extends AppCompatActivity {
 
     private void getUserMe() {
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe me) {
+            public void onSuccess(RUserMe me) {
                 //connectXMPP(me);
                 AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
             }
@@ -262,7 +263,7 @@ public class CenterActivity extends AppCompatActivity {
         return mIRemoteService != null;
     }
 
-    protected static void connectXMPP(UserMe me) {
+    protected static void connectXMPP(RUserMe me) {
         LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());
 
         String[] accountXMPP = me.getChatToken().split(":");

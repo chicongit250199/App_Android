@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RecentsAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
@@ -29,7 +31,7 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
  */
 public class OpeningRoomActivity extends Activity{
 
-    List<List<OpeningChatRoom>> recentsData;
+    List<List<ROpeningChatRoom>> recentsData;
     private ExpandableListView list_recent;
     private RecentsAdapter recentsAdapter;
 
@@ -61,8 +63,8 @@ public class OpeningRoomActivity extends Activity{
         groupNames.add("MEMBERS");
 
         recentsData = new ArrayList<>();
-        recentsData.add(new ArrayList<OpeningChatRoom>());
-        recentsData.add(new ArrayList<OpeningChatRoom>());
+        recentsData.add(new ArrayList<ROpeningChatRoom>());
+        recentsData.add(new ArrayList<ROpeningChatRoom>());
 
         recentsAdapter = new RecentsAdapter(getApplicationContext(),groupNames, recentsData);
         list_recent.setAdapter(recentsAdapter);
@@ -136,9 +138,9 @@ public class OpeningRoomActivity extends Activity{
         prb_LoadingFisrt.setVisibility(View.VISIBLE);
         // LOGIN XMPP
         //UserMe
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(final UserMe me) {
+            public void onSuccess(final RUserMe me) {
                 loadUsers();
             }
 
@@ -169,12 +171,12 @@ public class OpeningRoomActivity extends Activity{
         ObjectManager.getInstance().setOnListenerRooms(RecentFragment.class, new ObjectManager.OnObjectManagerListener<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-                UserMe me = ObjectManager.getInstance().getUserMe();
+                RUserMe me = ObjectManager.getInstance().getUserMe();
                 if (me.getOpeningChatrooms() != null) {
                     recentsData.get(ChatType.Group.getValue()).clear();
                     recentsData.get(ChatType.OneToOne.getValue()).clear();
-                    recentsData.get(ChatType.Group.getValue()).addAll(UserMe.getChatsOpening(me, true));
-                    recentsData.get(ChatType.OneToOne.getValue()).addAll(UserMe.getChatsOpening(me, false));
+                    recentsData.get(ChatType.Group.getValue()).addAll(RUserMe.getChatsOpening(me, true));
+                    recentsData.get(ChatType.OneToOne.getValue()).addAll(RUserMe.getChatsOpening(me, false));
                     recentsAdapter.notifyDataSetChanged();
                     backgroundTry.setVisibility(View.GONE);
                     prb_Loading.setVisibility(View.GONE);

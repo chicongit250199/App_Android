@@ -39,7 +39,10 @@ public class AntbuddyApplication extends Application {
 		createAPIService();
 
 		//AndroidHelper.showLogSizeDevice(getApplicationContext());
-		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).schemaVersion(1).build();
+		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this)
+																.schemaVersion(3)
+																.name("demo1.realm")
+																.build();
 		Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
 	}

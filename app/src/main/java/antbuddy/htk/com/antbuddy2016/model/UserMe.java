@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconHandler;
@@ -86,7 +87,7 @@ public class UserMe {
         return key;
     }
 
-    public Org getCurrentOrg() {
+    public Org getFullCurrentOrg() {
         String key_org = currentOrg.getKey();
         for (Org org : orgs) {
             if (org.getOrgKey().equals(key_org)) {
@@ -95,6 +96,70 @@ public class UserMe {
         }
 
         return null;
+    }
+
+    public UserMe.CurrentOrg getCurrentOrg() {
+        return currentOrg;
+    }
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
+    }
+
+    public String getModified() {
+        return modified;
+    }
+
+    public void setModified(String modified) {
+        this.modified = modified;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public int getTourStep() {
+        return tourStep;
+    }
+
+    public void setTourStep(int tourStep) {
+        this.tourStep = tourStep;
+    }
+
+    public ArrayList<Org> getOrgs() {
+        return orgs;
+    }
+
+    public void setOrgs(ArrayList<Org> orgs) {
+        this.orgs = orgs;
+    }
+
+    public Boolean getForceChangePassw() {
+        return forceChangePassw;
+    }
+
+    public void setForceChangePassw(Boolean forceChangePassw) {
+        this.forceChangePassw = forceChangePassw;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public void setCurrentOrg(CurrentOrg currentOrg) {
+        this.currentOrg = currentOrg;
     }
 
     public void setKey(String key) {
@@ -315,64 +380,56 @@ public class UserMe {
 //    }
 
     public static class Org {
-
-        private final static String key_orgKey = "orgKey";
-        private final static String key_role = "role";
-        private final static String key__id = "_id";
-        private final static String key_openingChatrooms = "openingChatrooms";
         private String orgKey;
         private String role;
         private String _id;
         private ArrayList<OpeningChatRoom> openingChatrooms = null;
 
-        public Org(JSONObject json) {
-            orgKey = AndroidHelper.getString(json, key_orgKey, null);
-            role = AndroidHelper.getString(json, key_role, null);
-            _id = AndroidHelper.getString(json, key__id, null);
-            if (json.has(key_openingChatrooms)) {
-                try {
-                    openingChatrooms = OpeningChatRoom.parse(json.getJSONArray(key_openingChatrooms));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public static ArrayList<Org> parse(JSONArray jsonArray) {
-            ArrayList<Org> orgs = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    Org org = new Org(json);
-                    orgs.add(org);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return orgs;
-        }
-
         public String getOrgKey() {
             return orgKey;
+        }
+
+        public void setOrgKey(String orgKey) {
+            this.orgKey = orgKey;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String get_id() {
+            return _id;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
         }
 
         public ArrayList<OpeningChatRoom> getOpeningChatrooms() {
             return openingChatrooms;
         }
+
+        public void setOpeningChatrooms(ArrayList<OpeningChatRoom> openingChatrooms) {
+            this.openingChatrooms = openingChatrooms;
+        }
     }
 
     public static class CurrentOrg {
-        private final static String key__id = "_id";
-        private final static String key_name = "name";
-        private final static String key_domain = "domain";
-        private final static String key_key = "key";
-        private final static String key_createdBy = "createdBy";
-        private final static String key_isDefaultLogo = "isDefaultLogo";
-        private final static String key_allowSelfRegister = "allowSelfRegister";
-        private final static String key_logo = "logo";
-        private final static String key_status = "status";
-        private final static String key_modified = "modified";
-        private final static String key_created = "created";
+//        private final static String key__id = "_id";
+//        private final static String key_name = "name";
+//        private final static String key_domain = "domain";
+//        private final static String key_key = "key";
+//        private final static String key_createdBy = "createdBy";
+//        private final static String key_isDefaultLogo = "isDefaultLogo";
+//        private final static String key_allowSelfRegister = "allowSelfRegister";
+//        private final static String key_logo = "logo";
+//        private final static String key_status = "status";
+//        private final static String key_modified = "modified";
+//        private final static String key_created = "created";
         private String _id;
         private String name;
         private String domain;
@@ -385,7 +442,91 @@ public class UserMe {
         private String modified;
         private String created;
 
-//        public CurrentOrg(JSONObject json) {
+        public String get_id() {
+            return _id;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public Boolean getIsDefaultLogo() {
+            return isDefaultLogo;
+        }
+
+        public void setIsDefaultLogo(Boolean isDefaultLogo) {
+            this.isDefaultLogo = isDefaultLogo;
+        }
+
+        public Boolean getAllowSelfRegister() {
+            return allowSelfRegister;
+        }
+
+        public void setAllowSelfRegister(Boolean allowSelfRegister) {
+            this.allowSelfRegister = allowSelfRegister;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public void setLogo(String logo) {
+            this.logo = logo;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getModified() {
+            return modified;
+        }
+
+        public void setModified(String modified) {
+            this.modified = modified;
+        }
+
+        public String getCreated() {
+            return created;
+        }
+
+        public void setCreated(String created) {
+            this.created = created;
+        }
+
+        //        public CurrentOrg(JSONObject json) {
 //            _id = AndroidHelper.getString(json, key__id, null);
 //            name = AndroidHelper.getString(json, key_name, null);
 //            domain = AndroidHelper.getString(json, key_domain, null);

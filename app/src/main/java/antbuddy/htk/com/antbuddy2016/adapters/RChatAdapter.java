@@ -23,6 +23,7 @@ import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.User;
@@ -70,9 +71,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         this.realm = realm;
         this.ctx = context;
 //        mListView = listView;
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<UserMe>() {
+        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
             @Override
-            public void onSuccess(UserMe me) {
+            public void onSuccess(RUserMe me) {
                 keyMe = me.getKey();
             }
 
@@ -199,7 +200,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         }
     }
 
-    public void saveMessagesIntoDB(List<GChatMassage> messages) {
+    synchronized public void saveMessagesIntoDB(List<GChatMassage> messages) {
         LogHtk.i(LogHtk.Test1, "--------saveMessagesIntoDB---------");
         LogHtk.i(LogHtk.Test1, "realmResults = " + realmResults.size());
         for (int i = 0; i < messages.size(); i++) {
