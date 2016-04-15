@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
+import org.jivesoftware.smack.packet.AntBuddyFile;
+
 import io.realm.RealmObject;
 
 /**
@@ -13,6 +15,18 @@ public class RFileAntBuddy extends RealmObject {
     private String thumbnailUrl;
     private int thumbnailWidth;
     private int thumbnailHeight;
+
+    public RFileAntBuddy() {
+        super();
+    }
+
+    public RFileAntBuddy(AntBuddyFile antBuddyFile) {
+        name = antBuddyFile.getName();
+        size = antBuddyFile.getSize();
+        fileUrl = antBuddyFile.getFileUrl();
+        mimeType = antBuddyFile.getMimeType();
+        thumbnailUrl = antBuddyFile.getThumbnailUrl();
+    }
 
     public String getName() {
         return name;

@@ -19,10 +19,12 @@ import java.util.List;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RecentsAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
@@ -90,13 +92,13 @@ public class RecentFragment extends Fragment {
                 Bundle args = new Bundle();
                 if (groupPosition == 0) {
                     OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
-                    Room room = ObjectManager.getInstance().findRoom(openingChatRoom.getChatRoomKey());
+                    RRoom room = RObjectManager.findRoom(openingChatRoom.getChatRoomKey());
                     args.putString(ChatActivity.kKeyRoom, room.getKey());
                     args.putBoolean(ChatActivity.key_type, true);
                     args.putString(ChatActivity.key_title, room.getName());
                 } else {
                     OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
-                    User user = ObjectManager.getInstance().findUser(openingChatRoom.getChatRoomKey());
+                    RUser user = RObjectManager.findUser(openingChatRoom.getChatRoomKey());
                     args.putString(ChatActivity.kKeyRoom, user.getKey());
                     args.putBoolean(ChatActivity.key_type, false);
                     args.putString(ChatActivity.key_title, user.getName());
@@ -116,7 +118,7 @@ public class RecentFragment extends Fragment {
             LogHtk.e(LogHtk.RecentFragment, "Warning! Android Local Service is null at recentFragment!");
         }
 
-        updateUI();
+        loading_UserMe_Users_Rooms();
         return rootView;
     }
 
@@ -153,85 +155,104 @@ public class RecentFragment extends Fragment {
         super.onResume();
     }
 
-    protected void updateUI() {
-        LogHtk.i(LogHtk.RecentFragment, "updateUI");
-        prb_LoadingFisrt.setVisibility(View.VISIBLE);
-        // LOGIN XMPP
-        //UserMe
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
-            @Override
-            public void onSuccess(final RUserMe me) {
-                loadUsers();
-            }
+    protected void loading_UserMe_Users_Rooms() {
+        if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
+            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+                @Override
+                public void onSuccess(UserMe me) {
+                    RObjectManager.saveUserMeOrUpdate(me);
+                    loadUsers();
+                }
 
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
-                processUIWhenError(error);
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    LogHtk.e(LogHtk.RecentFragment, "Error! Can not load UserMe from server!");
+                    APIManager.showToastWithCode(error, getActivity());
+                    processUIWhenError();
+                }
+            });
+        } else if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
+            updateUI();
+        } else {    // No connection and No data in DB
+            processUIWhenError();
+        }
     }
 
     private void loadUsers() {
-        ObjectManager.getInstance().setOnListenerUsers(null, new ObjectManager.OnObjectManagerListener<List<User>>() {
+        APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
+                RObjectManager.saveUsersOrUpdate(users);
                 loadRooms();
             }
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "ERROR to loading users : " + error);
-                processUIWhenError(error);
+                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Users from server!");
+                APIManager.showToastWithCode(error, getActivity());
+                processUIWhenError();
             }
         });
     }
 
     private void loadRooms() {
-        ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
+        APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-//                CenterActivity.mIRemoteService.resetXMPP();
-
-                RUserMe me = ObjectManager.getInstance().getUserMe();
-                if (me == null) {
-                    LogHtk.e(LogHtk.RecentFragment, "UserMe is null!");
-                    backgroundTry.setVisibility(View.VISIBLE);
-                    prb_Loading.setVisibility(View.GONE);
-                    btnTry.setVisibility(View.VISIBLE);
-                    backgroundViews.setVisibility(View.GONE);
-                    prb_LoadingFisrt.setVisibility(View.GONE);
-                } else {
-                    LogHtk.e(LogHtk.Test3, "111");
-                    if (me.getOpeningChatrooms() != null) {
-                        recentsData.get(ChatType.Group.getValue()).clear();
-                        recentsData.get(ChatType.OneToOne.getValue()).clear();
-                        recentsData.get(ChatType.Group.getValue()).addAll(RUserMe.getChatsOpening(me, true));
-                        recentsData.get(ChatType.OneToOne.getValue()).addAll(RUserMe.getChatsOpening(me, false));
-                        recentsAdapter.notifyDataSetChanged();
-                        backgroundTry.setVisibility(View.GONE);
-                        prb_Loading.setVisibility(View.GONE);
-                        btnTry.setVisibility(View.VISIBLE);
-                        backgroundViews.setVisibility(View.VISIBLE);
-                        prb_LoadingFisrt.setVisibility(View.GONE);
-                    }
-
-                    CenterActivity.connectXMPP(me);
-                }
+                RObjectManager.saveRoomsOrUpdate(rooms);
+                updateUI();
             }
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "error = " + error);
+                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Rooms from server!");
                 APIManager.showToastWithCode(error, getActivity());
-                processUIWhenError(error);
+                processUIWhenError();
+
             }
         });
     }
 
-    private void processUIWhenError(final String error) {
-        LogHtk.e(LogHtk.RecentFragment, "error = " + error);
-        APIManager.showToastWithCode(error, getActivity());
+    private void updateUI() {
+        RUserMe me = RObjectManager.getUserMe();
+        if (me == null) {
+            LogHtk.e(LogHtk.RecentFragment, "UserMe is null!");
+            backgroundTry.setVisibility(View.VISIBLE);
+            prb_Loading.setVisibility(View.GONE);
+            btnTry.setVisibility(View.VISIBLE);
+            backgroundViews.setVisibility(View.GONE);
+            prb_LoadingFisrt.setVisibility(View.GONE);
+        } else {
+            if (me.getOpeningChatrooms() != null) {
+                recentsData.get(ChatType.Group.getValue()).clear();
+                recentsData.get(ChatType.OneToOne.getValue()).clear();
+                recentsData.get(ChatType.Group.getValue()).addAll(RUserMe.getChatsOpening(me, true));
+                recentsData.get(ChatType.OneToOne.getValue()).addAll(RUserMe.getChatsOpening(me, false));
+                LogHtk.i(LogHtk.Test3, "Size Users opening: " + recentsData.get(ChatType.OneToOne.getValue()).size());
+
+                for (ROpeningChatRoom o : recentsData.get(ChatType.OneToOne.getValue())) {
+                    LogHtk.i(LogHtk.Test3, "--->open: " + o.get_id());
+                    LogHtk.i(LogHtk.Test3, "open: " + o.getChatRoomKey());
+                    LogHtk.i(LogHtk.Test3, "open: " + o.getIsMuc());
+                    LogHtk.i(LogHtk.Test3, "open: " + o.getIsMuc());
+//                    LogHtk.i(LogHtk.Test3, "open: " + o.get());
+                }
+
+
+
+                recentsAdapter.notifyDataSetChanged();
+                backgroundTry.setVisibility(View.GONE);
+                prb_Loading.setVisibility(View.GONE);
+                btnTry.setVisibility(View.VISIBLE);
+                backgroundViews.setVisibility(View.VISIBLE);
+                prb_LoadingFisrt.setVisibility(View.GONE);
+            }
+
+            CenterActivity.connectXMPP(me);
+        }
+    }
+
+    private void processUIWhenError() {
         if (!AndroidHelper.isInternetAvailable(getContext())) {
             backgroundTry.setVisibility(View.VISIBLE);
             prb_Loading.setVisibility(View.GONE);

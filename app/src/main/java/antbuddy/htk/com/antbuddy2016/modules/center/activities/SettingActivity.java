@@ -15,9 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity;
@@ -54,7 +55,7 @@ public class SettingActivity extends Activity {
 
         initViews();
 
-        updateUI();
+        loading_UserMe();
         viewsListener();
     }
 
@@ -81,7 +82,7 @@ public class SettingActivity extends Activity {
                     prb_Loading.setVisibility(View.GONE);
                     btnTry.setVisibility(View.VISIBLE);
                 } else {
-                    updateUI();
+                    loading_UserMe();
                 }
             }
         });
@@ -101,7 +102,10 @@ public class SettingActivity extends Activity {
                         ABSharedPreference.resetXMPP();
 
                         // Reset Object Manager
-                        ObjectManager.getInstance().clear();
+                        AntbuddyApplication.getInstance().deleteRealm();
+                        AntbuddyApplication.getInstance().closeRealm();
+
+//                        ObjectManager.getInstance().clear();
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -120,7 +124,9 @@ public class SettingActivity extends Activity {
                 AndroidHelper.alertDialogShow(SettingActivity.this, "Do you want to sign out?", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ObjectManager.getInstance().clear();
+//                        ObjectManager.getInstance().clear();
+                        AntbuddyApplication.getInstance().deleteRealm();
+                        AntbuddyApplication.getInstance().closeRealm();
                         ABSharedPreference.resetAccountInSharedPreferences();
                         ABSharedPreference.resetXMPP();
                         CenterActivity.mIRemoteService.resetXMPP();
@@ -138,36 +144,51 @@ public class SettingActivity extends Activity {
         });
     }
 
-    private void updateUI() {
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
-            @Override
-            public void onSuccess(RUserMe me) {
-                Glide.with(SettingActivity.this)
-                        .load(me.getAvatar())
-                        .override(100, 100)
-                        .bitmapTransform(new CropCircleTransformation(SettingActivity.this))
-                        .placeholder(R.drawable.ic_avatar_defaul)
-                        .error(R.drawable.ic_avatar_defaul)
-                        .into(imgAvatar);
-
-                tv_user_name.setText(me.getUsername());
-
-                backgroundTry.setVisibility(View.GONE);
-                prb_Loading.setVisibility(View.GONE);
-                btnTry.setVisibility(View.VISIBLE);
-                backgroundViews.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError(String error) {
-                APIManager.showToastWithCode(error, SettingActivity.this);
-                if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
-                    backgroundTry.setVisibility(View.VISIBLE);
-                    prb_Loading.setVisibility(View.GONE);
-                    btnTry.setVisibility(View.VISIBLE);
-                    backgroundViews.setVisibility(View.GONE);
+    private void loading_UserMe() {
+        if (AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+                @Override
+                public void onSuccess(UserMe me) {
+                    RObjectManager.saveUserMeOrUpdate(me);
+                    updateUI(RObjectManager.getUserMe());
                 }
-            }
-        });
+
+                @Override
+                public void onError(String error) {
+                    APIManager.showToastWithCode(error, SettingActivity.this);
+                    updateUIWhenNoInternet();
+                }
+            });
+        } else if (RObjectManager.isUserMeExist()) {
+            updateUI(RObjectManager.getUserMe());
+        } else {    // No connection and No data in DB
+            updateUIWhenNoInternet();
+        }
+    }
+
+    private void updateUI(RUserMe me) {
+        Glide.with(SettingActivity.this)
+                .load(me.getAvatar())
+                .override(100, 100)
+                .bitmapTransform(new CropCircleTransformation(SettingActivity.this))
+                .placeholder(R.drawable.ic_avatar_defaul)
+                .error(R.drawable.ic_avatar_defaul)
+                .into(imgAvatar);
+
+        tv_user_name.setText(me.getUsername());
+
+        backgroundTry.setVisibility(View.GONE);
+        prb_Loading.setVisibility(View.GONE);
+        btnTry.setVisibility(View.VISIBLE);
+        backgroundViews.setVisibility(View.VISIBLE);
+    }
+
+    private void updateUIWhenNoInternet() {
+        if (!AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            backgroundTry.setVisibility(View.VISIBLE);
+            prb_Loading.setVisibility(View.GONE);
+            btnTry.setVisibility(View.VISIBLE);
+            backgroundViews.setVisibility(View.GONE);
+        }
     }
 }

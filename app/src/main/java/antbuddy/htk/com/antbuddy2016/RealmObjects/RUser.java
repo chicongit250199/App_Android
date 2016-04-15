@@ -1,14 +1,17 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by thanhnguyen on 15/04/2016.
  */
 public class RUser extends RealmObject {
+    @PrimaryKey
+    private String key;
+
     private String avatar;
     private String username;
-    private String key;
     private String name;
     private String email;
     private String nonce;

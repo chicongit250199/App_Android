@@ -44,13 +44,12 @@ import java.util.Map;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
-import antbuddy.htk.com.antbuddy2016.adapters.ChatAdapter;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.adapters.RChatAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
@@ -82,11 +81,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private Boolean isFister = true;
 
     private ListView            lv_messages;
-    private ChatAdapter         mChatAdapter;
 
 
     private RChatAdapter        mChatAdapter1;
-    private RealmResults<RChatMassage> chatMessages;
+    private RealmResults<RChatMessage> chatMessages;
 
 
     private SwipyRefreshLayout  mSwipyRefreshLayout;
@@ -122,7 +120,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             keyRoom = bundle.getString(kKeyRoom);
             isGroup = bundle.getBoolean(key_type);
             title = bundle.getString(key_title);
-            keyMe = ObjectManager.getInstance().getUserMe().getKey();
+            keyMe = RObjectManager.getUserMe().getKey();
         }
         setContentView(R.layout.activity_chat);
 
@@ -169,18 +167,18 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         if (isGroup) {  // Groups
             LogHtk.i(LogHtk.Test1, "Load group!");
-            chatMessages = realm.where(RChatMassage.class).equalTo("fromKey", keyRoom).findAll();
+            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll();
         } else {    // 1-1, myseft
             if (keyMe == keyRoom) {
                 LogHtk.i(LogHtk.Test1, "Load Myself!");
-                chatMessages = realm.where(RChatMassage.class)
+                chatMessages = realm.where(RChatMessage.class)
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyRoom)
                         .findAll();
             } else {   // 1-1
                 LogHtk.i(LogHtk.Test1, "Load one-one!");
-                chatMessages = realm.where(RChatMassage.class)
+                chatMessages = realm.where(RChatMessage.class)
                         .equalTo("senderKey", keyMe)
                         .equalTo("receiverKey", keyRoom)
                         .or()
@@ -205,11 +203,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         if (mChatAdapter1 == null) {
             mChatAdapter1 = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
         }
-
-        if (mChatAdapter == null) {
-            mChatAdapter = new ChatAdapter(this, lv_messages);
-        }
-//        lv_messages.setAdapter(mChatAdapter);
 
         lv_messages.setAdapter(mChatAdapter1);
         lv_messages.setSelection(chatMessages.size());
@@ -372,9 +365,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                ChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
+                // TODO: Check cho nay
+                RChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
                 if (keyRoom.equals(chatMessage.getFromKey())) {
-                    mChatAdapter.addMessage(chatMessage, true);
+                    mChatAdapter1.saveMessageIntoDB(chatMessage);
                     isFister = false;
                 }
             } catch (Exception e) {

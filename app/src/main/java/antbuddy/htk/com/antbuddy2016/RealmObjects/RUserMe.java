@@ -53,9 +53,7 @@ public class RUserMe extends RealmObject {
     }
 
     public List<ROpeningChatRoom> getOpeningChatrooms() {
-        LogHtk.e(LogHtk.Test3, "22");
         if (currentOrg == null) {
-            LogHtk.e(LogHtk.Test3, "currentOrg = null");
             LogHtk.i(LogHtk.UserMe, "Error! currentOrg is null in UserMe!");
             return null;
         }

@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
-import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -119,7 +119,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.width = 60;
             layoutParams.height = 60;
             holder.imgAvatar.setLayoutParams(layoutParams);
-            for (Room room : ObjectManager.getInstance().getListRooms()) {
+            for (RRoom room : RObjectManager.getRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
                         Glide.with(context)
@@ -143,7 +143,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.height = 160;
             holder.imgAvatar.setLayoutParams(layoutParams);
             //holder.ic_status.setVisibility(View.VISIBLE);
-            for (User user : ObjectManager.getInstance().getListUsers()) {
+            for (RUser user : RObjectManager.getUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     Glide.with(context)
                             .load(user.getAvatar())

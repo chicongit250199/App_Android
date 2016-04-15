@@ -21,11 +21,12 @@ import java.util.List;
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
-import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -39,11 +40,11 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 /**
  * Created by thanhnguyen on 12/04/2016.
  */
-public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
+public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
     private final Context ctx;
     private final ListView mListView;
 //    private ArrayList<RChatMassage> mMessages;
-    RealmResults<RChatMassage> realmResults;
+    RealmResults<RChatMessage> realmResults;
     private String keyMe;
     Realm realm;
 
@@ -63,23 +64,23 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         public RelativeLayout rl_message_image_left;
     }
 
-    public RChatAdapter(Context context,  ListView mListView, Realm realm, RealmResults<RChatMassage> realmResults, boolean automaticUpdate) {
+    public RChatAdapter(Context context,  ListView mListView, Realm realm, RealmResults<RChatMessage> realmResults, boolean automaticUpdate) {
         super(context, realmResults, automaticUpdate);
         this.realmResults = realmResults;
 
         this.mListView = mListView;
         this.realm = realm;
         this.ctx = context;
-//        mListView = listView;
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
+        APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
-            public void onSuccess(RUserMe me) {
-                keyMe = me.getKey();
+            public void onSuccess(UserMe me) {
+                RObjectManager.saveUserMeOrUpdate(me);
+                keyMe = RObjectManager.getUserMe().getKey();
             }
 
             @Override
             public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Error at ChatAdapter : " + error);
+                LogHtk.e(LogHtk.API_TAG, "Error! can not load userme!");
             }
         });
     }
@@ -110,7 +111,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
             holder = (Holder) rowView.getTag();
         }
 
-        RChatMassage message = realmResults.get(position);
+        RChatMessage message = realmResults.get(position);
         String body = message.getBody();
 
         // DECODE
@@ -157,9 +158,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
                     .into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
         } else {
             String url_avatar = "";
-            User user;
+            RUser user;
             if (!senderKey.isEmpty()) {
-                user = ObjectManager.getInstance().findUser(senderKey);
+                user = RObjectManager.findUser(senderKey);
                 if (user != null) {
                     url_avatar = user.getAvatar();
                 }
@@ -181,9 +182,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         return realmResults.size();
     }
 
-    public void addMessages(List<RChatMassage> messages, boolean isGotoBottom) {
+    public void addMessages(List<RChatMessage> messages, boolean isGotoBottom) {
         Rect corners = new Rect();
-        if (isGotoBottom == false) {
+        if (!isGotoBottom) {
             View view = mListView.getChildAt(0);
             mListView.getLocalVisibleRect(corners);
         }
@@ -191,7 +192,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         realmResults.addAll(0, messages);
         notifyDataSetChanged();
 
-        if (isGotoBottom == false) {
+        if (!isGotoBottom) {
             mListView.setSelected(true);
             mListView.setSelectionFromTop(messages.size(), corners.top);
         } else {
@@ -206,7 +207,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         for (int i = 0; i < messages.size(); i++) {
             GChatMassage mess = messages.get(i);
 
-            RChatMassage messageSaved = new RChatMassage();
+            RChatMessage messageSaved = new RChatMessage();
             messageSaved.setId(mess.getId());
             messageSaved.setSenderJid(mess.getSenderJid());
             messageSaved.setSenderId(mess.getSenderId());
@@ -245,9 +246,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         LogHtk.i(LogHtk.Test1, "realmResults = " + realmResults.size());
     }
 
-    public void saveMessageIntoDB(RChatMassage messages) {
+    public void saveMessageIntoDB(RChatMessage messages) {
         realm.beginTransaction();
-        RChatMassage messageSaved = realm.createObject(RChatMassage.class);
+        RChatMessage messageSaved = realm.createObject(RChatMessage.class);
         messageSaved.setSenderJid(messages.getSenderJid());
         messageSaved.setSenderId(messages.getSenderId());
         messageSaved.setSenderName(messages.getSenderName());
@@ -271,7 +272,7 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMassage> {
         realm.commitTransaction();
     }
 
-    public void addMessage(RChatMassage message, boolean isGotoBottom) {
+    public void addMessage(RChatMessage message, boolean isGotoBottom) {
 //        Rect corners = new Rect();
 //        int topItem = 0;
 //        if (isGotoBottom == false) {

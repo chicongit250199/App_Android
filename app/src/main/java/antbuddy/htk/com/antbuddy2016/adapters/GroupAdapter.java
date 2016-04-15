@@ -14,8 +14,11 @@ import android.widget.TextView;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by Micky on 4/1/2016.
@@ -24,13 +27,13 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
     
     private final Context ctx;
     private final GridView roomGridView;
-    private List<Room> listRooms;
+    private RealmResults<RRoom> rooms;
 
-    public GroupAdapter(Context context, GridView roomGridView, List<Room> listRooms) {
+    public GroupAdapter(Context context, GridView roomGridView, RealmResults<RRoom> listRooms) {
         super(context, R.layout.grid_item);
         this.ctx = context;
         this.roomGridView = roomGridView;
-        this.listRooms = listRooms;
+        this.rooms = listRooms;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
             holder = (Holder) rowView.getTag();
         }
 
-        holder.tv_NameRoom.setText(listRooms.get(position).getName());
+        holder.tv_NameRoom.setText(rooms.get(position).getName());
 
         return rowView;
     }
@@ -63,15 +66,15 @@ public class GroupAdapter  extends ArrayAdapter<Room> {
 
     @Override
     public int getCount() {
-        return listRooms.size();
+        return rooms.size();
     }
 
-    public List<Room> getListRooms() {
-        return listRooms;
+    public RealmResults<RRoom> getListRooms() {
+        return rooms;
     }
 
-    public void setListRooms(List<Room> listRooms) {
-        this.listRooms = listRooms;
+    public void setListRooms(RealmResults<RRoom> listRooms) {
+        this.rooms = listRooms;
     }
 
 }

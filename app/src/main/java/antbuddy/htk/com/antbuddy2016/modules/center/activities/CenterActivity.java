@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
@@ -185,9 +185,9 @@ public class CenterActivity extends AppCompatActivity {
         btnAlwaysChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (btnAlwaysChange.getTag() == 0) {
-                    AndroidHelper.gotoActivity(CenterActivity.this, OpeningRoomActivity.class, false);
-                }
+//                if (btnAlwaysChange.getTag() == 0) {
+//                    AndroidHelper.gotoActivity(CenterActivity.this, OpeningRoomActivity.class, false);
+//                }
 
                 if (btnAlwaysChange.getTag() == 1) {
                     AndroidHelper.showToast("This feature will be available soon!", CenterActivity.this);
@@ -237,10 +237,10 @@ public class CenterActivity extends AppCompatActivity {
 
     private void getUserMe() {
         AndroidHelper.showProgressBar(CenterActivity.this, progressBar_Center);
-        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
+
+        APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
-            public void onSuccess(RUserMe me) {
-                //connectXMPP(me);
+            public void onSuccess(UserMe object) {
                 AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
             }
 
@@ -251,6 +251,21 @@ public class CenterActivity extends AppCompatActivity {
                 APIManager.showToastWithCode(error, CenterActivity.this);
             }
         });
+
+//        ObjectManager.getInstance().getUserMe(new ObjectManager.OnObjectManagerListener<RUserMe>() {
+//            @Override
+//            public void onSuccess(RUserMe me) {
+//                //connectXMPP(me);
+//                AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                LogHtk.e(LogHtk.API_TAG, "Load UserMe Error!!" + error);
+//                AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
+//                APIManager.showToastWithCode(error, CenterActivity.this);
+//            }
+//        });
     }
 
     private boolean connectServiceInAndroid() {

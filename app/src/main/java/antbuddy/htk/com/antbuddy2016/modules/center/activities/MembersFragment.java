@@ -17,9 +17,11 @@ import android.widget.SearchView;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.adapters.UserAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
@@ -38,13 +40,14 @@ public class MembersFragment extends Fragment {
     private ProgressBar prb_Loading;
     private Button btnTry;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_members, container, false);
         lv_member = (ListView)rootView.findViewById(R.id.lv_member);
 
         if (mUserAdapter == null) {
-            mUserAdapter = new UserAdapter(getContext(), lv_member, ObjectManager.getInstance().getListUsers());
+            mUserAdapter = new UserAdapter(getContext(), lv_member, RObjectManager.getUsers());
         }
         lv_member.setAdapter(mUserAdapter);
         lv_member.setDividerHeight(0);
@@ -52,7 +55,7 @@ public class MembersFragment extends Fragment {
         lv_member.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User user = mUserAdapter.getItem(position);
+                RUser user = mUserAdapter.getItem(position);
                 Bundle args = new Bundle();
                 args.putString(ChatActivity.kKeyRoom, user.getKey());
                 args.putBoolean(ChatActivity.key_type, false);
@@ -64,7 +67,7 @@ public class MembersFragment extends Fragment {
         initViews(rootView);
         viewsListener();
 
-        updateUI();
+        loading_Users();
 
         return rootView;
     }
@@ -95,32 +98,45 @@ public class MembersFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        ObjectManager.getInstance().removeOnListenerUsers(this.getClass());
         super.onDestroy();
     }
 
-    protected void updateUI() {
-        ObjectManager.getInstance().setOnListenerUsers(this.getClass(), new ObjectManager.OnObjectManagerListener<List<User>>() {
-            @Override
-            public void onSuccess(List<User> users) {
-                mUserAdapter.filter("", users);
-
-                backgroundTry.setVisibility(View.GONE);
-                prb_Loading.setVisibility(View.GONE);
-                btnTry.setVisibility(View.VISIBLE);
-                backgroundViews.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError(String error) {
-                APIManager.showToastWithCode(error, getActivity());
-                if (!AndroidHelper.isInternetAvailable(getContext())) {
-                    backgroundTry.setVisibility(View.VISIBLE);
-                    prb_Loading.setVisibility(View.GONE);
-                    btnTry.setVisibility(View.VISIBLE);
-                    backgroundViews.setVisibility(View.GONE);
+    protected void loading_Users() {
+        if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
+            APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
+                @Override
+                public void onSuccess(List<User> users) {
+//                    mUserAdapter.filter("", users);
+                    RObjectManager.saveUsersOrUpdate(users);
+                    updateUI();
                 }
-            }
-        });
+
+                @Override
+                public void onError(String error) {
+                    APIManager.showToastWithCode(error, getActivity());
+                    processUIWhenNoConnection();
+                }
+            });
+        } else if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
+            updateUI();
+        } else {    // No connection and No data in DB
+            processUIWhenNoConnection();
+        }
+    }
+
+    private void updateUI(){
+        backgroundTry.setVisibility(View.GONE);
+        prb_Loading.setVisibility(View.GONE);
+        btnTry.setVisibility(View.VISIBLE);
+        backgroundViews.setVisibility(View.VISIBLE);
+    }
+
+    private void processUIWhenNoConnection() {
+        if (!AndroidHelper.isInternetAvailable(getContext())) {
+            backgroundTry.setVisibility(View.VISIBLE);
+            prb_Loading.setVisibility(View.GONE);
+            btnTry.setVisibility(View.VISIBLE);
+            backgroundViews.setVisibility(View.GONE);
+        }
     }
 }

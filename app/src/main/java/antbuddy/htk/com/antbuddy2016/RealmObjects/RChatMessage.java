@@ -1,6 +1,15 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
 
+import android.text.TextUtils;
+
+import org.jivesoftware.smack.packet.Message;
+
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -81,7 +90,7 @@ import io.realm.annotations.PrimaryKey;
 //        "time": "2016-04-12T08:47:04.475Z"
 //        },
 
-public class RChatMassage extends RealmObject {
+public class RChatMessage extends RealmObject {
 
     @PrimaryKey
     private String id;
@@ -104,6 +113,56 @@ public class RChatMassage extends RealmObject {
     private String fromKey;
     private String receiverKey;
     private RFileAntBuddy fileAntBuddy;
+
+    public RChatMessage() {
+        super();
+    }
+
+    public RChatMessage(final Message message) {
+        id = message.getPacketID();
+        Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getTo());
+        while (m.find()) {
+            org = m.group(2);
+            receiverKey = m.group(1);
+        }
+
+        RUserMe userMe = RObjectManager.getUserMe();
+        if (message.getFrom().contains("/")) {
+            String params[] = message.getFrom().split("/");
+            if (params[0].endsWith(userMe.getChatMucDomain())){
+                fromKey =  params[0].split("_")[0];
+                senderKey = params[1].split("_")[0];
+            } else {
+                senderKey = fromKey =  params[0].split("_")[0];
+            }
+
+            if (senderKey.endsWith(receiverKey) && !TextUtils.isEmpty(message.getWith())) {
+                fromKey = message.getWith();
+            }
+
+            if(message.getFile() != null) {
+                fileAntBuddy = new RFileAntBuddy(message.getFile());
+                body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
+            } else {
+                try {
+                    body = new String( message.getBody().getBytes(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    body = message.getBody();
+                    e.printStackTrace();
+                }
+            }
+
+            type = message.getType().toString();
+
+            if(message.getSubtype() != null) {
+                subtype = message.getSubtype();
+            } else {
+                subtype = null;
+            }
+            time = NationalTime.getLocalTimeToUTCTime();
+            isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
+        }
+    }
 
     public String getOrg() {
         return org;

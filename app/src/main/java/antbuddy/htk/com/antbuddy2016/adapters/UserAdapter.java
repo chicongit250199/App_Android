@@ -16,22 +16,26 @@ import java.util.List;
 import java.util.Locale;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.model.User;
+import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by Micky on 4/1/2016.
  */
-public class UserAdapter extends ArrayAdapter<User> {
+public class UserAdapter extends ArrayAdapter<RUser> {
     private final Context ctx;
     private final ListView mGridView;
-    private ArrayList<User> listFilterUsers = new ArrayList<>();
+    private RealmResults<RUser> users;
+//    private RealmResults<RUser> listFilterUsers;
 
-    public UserAdapter(Context context, ListView listView, List<User> listUsers) {
+    public UserAdapter(Context context, ListView listView, RealmResults<RUser> listUsers) {
         super(context, R.layout.row_member);
         this.ctx = context;
         mGridView = listView;
-        filter("", new ArrayList<User>());
+        this.users = listUsers;
+//        filter("", new RealmResults<RUser>());
     }
 
     @Override
@@ -52,7 +56,7 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder = (Holder) rowView.getTag();
         }
 
-        User user = listFilterUsers.get(position);
+        RUser user = users.get(position);
         Glide.with(ctx)
                 .load(user.getAvatar())
                 .override(60, 60)
@@ -71,31 +75,31 @@ public class UserAdapter extends ArrayAdapter<User> {
 
     @Override
     public int getCount() {
-        return listFilterUsers.size();
+        return users.size();
     }
 
     // Filter Class
-    public void filter(String charText, List<User> listUsers) {
-        charText = charText.toLowerCase(Locale.getDefault());
-        listFilterUsers.clear();
-        if (charText.length() == 0) {
-            listFilterUsers.addAll(listUsers);
-        }
-        else
-        {
-            for (User user : listUsers)
-            {
-                if (user.getName().toLowerCase(Locale.getDefault()).contains(charText))
-                {
-                    listFilterUsers.add(user);
-                }
-            }
-        }
-        notifyDataSetChanged();
+    public void filter(String charText, RealmResults<RUser> listUsers) {
+//        charText = charText.toLowerCase(Locale.getDefault());
+//        listFilterUsers.clear();
+//        if (charText.length() == 0) {
+//            listFilterUsers.addAll(listUsers);
+//        }
+//        else
+//        {
+//            for (User user : listUsers)
+//            {
+//                if (user.getName().toLowerCase(Locale.getDefault()).contains(charText))
+//                {
+//                    listFilterUsers.add(user);
+//                }
+//            }
+//        }
+//        notifyDataSetChanged();
     }
 
     @Override
-    public User getItem(int position) {
-        return listFilterUsers.get(position);
+    public RUser getItem(int position) {
+        return users.get(position);
     }
 }

@@ -26,6 +26,7 @@ public class AntbuddyApplication extends Application {
 
 	private Retrofit retrofit;
 	private API apiService;
+	private RealmConfiguration realmConfig;
 
 	@Override
 	public void onCreate() {
@@ -39,11 +40,11 @@ public class AntbuddyApplication extends Application {
 		createAPIService();
 
 		//AndroidHelper.showLogSizeDevice(getApplicationContext());
-		RealmConfiguration realmConfig = new RealmConfiguration.Builder(this)
-																.schemaVersion(3)
-																.name("demo1.realm")
-																.build();
-		Realm.deleteRealm(realmConfig);
+		realmConfig = new RealmConfiguration.Builder(this)
+											.schemaVersion(5)
+											.name("demo5.realm")
+											.build();
+//		Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
 	}
 
@@ -54,6 +55,14 @@ public class AntbuddyApplication extends Application {
 				.build();
 		apiService = retrofit.create(API.class);
 		return apiService;
+	}
+
+	public void deleteRealm() {
+		Realm.deleteRealm(realmConfig);
+	}
+
+	public void closeRealm() {
+		Realm.getDefaultInstance().close();
 	}
 
 	@Override

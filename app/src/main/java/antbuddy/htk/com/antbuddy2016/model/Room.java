@@ -13,24 +13,24 @@ import java.util.List;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 public class Room {
-	private final static String key__id = "_id";
-	private final static String key_createdBy = "createdBy";
-	private final static String key_org = "org";
-	private final static String key_key = "key";
-	private final static String key_anttel = "anttel";
-	private final static String key_dialplanId = "dialplanId";
-	private final static String key_confId = "confId";
-	private final static String key_anttelStep = "anttelStep";
-	private final static String key_users = "users";
-	private final static String key_countFiles = "countFiles";
-	private final static String key_countMessages = "countMessages";
-	private final static String key_isPublic = "isPublic";
-	private final static String key_status = "status";
-	private final static String key_pinMessage = "pinMessage";
-	private final static String key_topic = "topic";
-	private final static String key_name = "name";
-	private final static String key_created = "created";
-	private final static String key_isFavorite = "isFavorite";
+//	private final static String key__id = "_id";
+//	private final static String key_createdBy = "createdBy";
+//	private final static String key_org = "org";
+//	private final static String key_key = "key";
+//	private final static String key_anttel = "anttel";
+//	private final static String key_dialplanId = "dialplanId";
+//	private final static String key_confId = "confId";
+//	private final static String key_anttelStep = "anttelStep";
+//	private final static String key_users = "users";
+//	private final static String key_countFiles = "countFiles";
+//	private final static String key_countMessages = "countMessages";
+//	private final static String key_isPublic = "isPublic";
+//	private final static String key_status = "status";
+//	private final static String key_pinMessage = "pinMessage";
+//	private final static String key_topic = "topic";
+//	private final static String key_name = "name";
+//	private final static String key_created = "created";
+//	private final static String key_isFavorite = "isFavorite";
 
 	private String _id;
 	private String createdBy;
@@ -104,46 +104,46 @@ public class Room {
 		return isFavorite;
 	}
 
-	public static ArrayList<Room> parseArray(JSONArray jsonArray) {
-		String lastTime = "";
-		ArrayList<Room> rooms = new ArrayList<>();
-		for(int i=0; i<jsonArray.length(); i++){
-			try {
-				JSONObject json = jsonArray.getJSONObject(i);
-				String idMessage = AndroidHelper.getString(json, key_key, null);
-				if(!idMessage.isEmpty()) {
-					Room room = new Room(json);
-					rooms.add(room);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		return rooms;
-	}
+//	public static ArrayList<Room> parseArray(JSONArray jsonArray) {
+//		String lastTime = "";
+//		ArrayList<Room> rooms = new ArrayList<>();
+//		for(int i=0; i<jsonArray.length(); i++){
+//			try {
+//				JSONObject json = jsonArray.getJSONObject(i);
+//				String idMessage = AndroidHelper.getString(json, key_key, null);
+//				if(!idMessage.isEmpty()) {
+//					Room room = new Room(json);
+//					rooms.add(room);
+//				}
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return rooms;
+//	}
 
-	public Room(JSONObject json) {
-		_id = AndroidHelper.getString(json, key__id, null);
-		createdBy = AndroidHelper.getString(json, key_createdBy, null);
-		org = AndroidHelper.getString(json, key_org, null);
-		key = AndroidHelper.getString(json, key_key, null);
-		if (json.has(key_users)){
-			try {
-				users = UserInRoom.parseArray(json.getJSONArray(key_users));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		countFiles = AndroidHelper.getInt(json, key_countFiles, 0);
-		countMessages = AndroidHelper.getInt(json, key_countMessages, 0);
-		isPublic = AndroidHelper.getBoolean(json, key_isPublic, false);
-		status = AndroidHelper.getString(json, key_status, null);
-		pinMessage = AndroidHelper.getString(json, key_pinMessage, null);
-		topic = AndroidHelper.getString(json, key_topic, null);
-		name = AndroidHelper.getString(json, key_name, null);
-		created = AndroidHelper.getString(json, key_created, null);
-		isFavorite = AndroidHelper.getBoolean(json, key_isFavorite, false);
-	}
+//	public Room(JSONObject json) {
+//		_id = AndroidHelper.getString(json, key__id, null);
+//		createdBy = AndroidHelper.getString(json, key_createdBy, null);
+//		org = AndroidHelper.getString(json, key_org, null);
+//		key = AndroidHelper.getString(json, key_key, null);
+//		if (json.has(key_users)){
+//			try {
+//				users = UserInRoom.parseArray(json.getJSONArray(key_users));
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		countFiles = AndroidHelper.getInt(json, key_countFiles, 0);
+//		countMessages = AndroidHelper.getInt(json, key_countMessages, 0);
+//		isPublic = AndroidHelper.getBoolean(json, key_isPublic, false);
+//		status = AndroidHelper.getString(json, key_status, null);
+//		pinMessage = AndroidHelper.getString(json, key_pinMessage, null);
+//		topic = AndroidHelper.getString(json, key_topic, null);
+//		name = AndroidHelper.getString(json, key_name, null);
+//		created = AndroidHelper.getString(json, key_created, null);
+//		isFavorite = AndroidHelper.getBoolean(json, key_isFavorite, false);
+//	}
 
 	public static class UserInRoom {
 //		private final static String key_user = "user";

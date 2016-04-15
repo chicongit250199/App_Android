@@ -18,13 +18,17 @@ import android.widget.TextView;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.adapters.GroupAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -47,7 +51,7 @@ public class GroupsFragment extends Fragment {
         initViews(rootView);
         viewsListener();
 
-        updateUI();
+        loading_Groups();
         return rootView;
     }
 
@@ -57,7 +61,7 @@ public class GroupsFragment extends Fragment {
         btnTry = (Button) rootView.findViewById(R.id.btnTry);
         prb_Loading = (ProgressBar) rootView.findViewById(R.id.prb_Loading);
         groupsView=(GridView)rootView.findViewById(R.id.gridView);
-        adapter = new GroupAdapter(getContext(), groupsView, ObjectManager.getInstance().getListRooms());
+        adapter = new GroupAdapter(getContext(), groupsView, RObjectManager.getRooms());
         groupsView.setAdapter(adapter);
     }
 
@@ -80,7 +84,7 @@ public class GroupsFragment extends Fragment {
         groupsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Room room = ObjectManager.getInstance().getListRooms().get(position);
+                RRoom room = RObjectManager.getRooms().get(position);
                 Bundle args = new Bundle();
                 args.putString(ChatActivity.kKeyRoom, room.getKey());
                 args.putBoolean(ChatActivity.key_type, true);
@@ -90,38 +94,68 @@ public class GroupsFragment extends Fragment {
         });
     }
 
-    protected void updateUI() {
-        ObjectManager.getInstance().setOnListenerRooms(this.getClass(), new ObjectManager.OnObjectManagerListener<List<Room>>() {
-            @Override
-            public void onSuccess(List<Room> rooms) {
-                LogHtk.i(LogHtk.GroupsFragment, "Size of rooms = " + rooms.size());
-                adapter.notifyDataSetChanged();
-
-                if (rooms.size() == 0) {
-                    // TODO show ra giao dien Empty
-
-                } if (rooms.size() > 0) {
-                    adapter.setListRooms(rooms);
-                    adapter.notifyDataSetChanged();
+    protected void loading_Groups() {
+        if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
+            APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
+                @Override
+                public void onSuccess(List<Room> rooms) {
+                    RObjectManager.saveRoomsOrUpdate(rooms);
+                    updateUI();
                 }
 
-                backgroundTry.setVisibility(View.GONE);
-                prb_Loading.setVisibility(View.GONE);
-                btnTry.setVisibility(View.VISIBLE);
-                backgroundViews.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.GroupsFragment, "ERROR! = " + error);
-                APIManager.showToastWithCode(error, getActivity());
-                if (!AndroidHelper.isInternetAvailable(getContext())) {
-                    backgroundTry.setVisibility(View.VISIBLE);
-                    prb_Loading.setVisibility(View.GONE);
-                    btnTry.setVisibility(View.VISIBLE);
-                    backgroundViews.setVisibility(View.GONE);
+                @Override
+                public void onError(String error) {
+                    processUIWhenNoConnection();
                 }
-            }
-        });
+            });
+
+
+//            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+//                @Override
+//                public void onSuccess(UserMe object) {
+//                    RObjectManager
+//
+//                }
+//
+//                @Override
+//                public void onError(String error) {
+//                    LogHtk.e(LogHtk.GroupsFragment, "ERROR! = " + error);
+//                    APIManager.showToastWithCode(error, getActivity());
+//                    processUIWhenNoConnection();
+//                }
+//            });
+        } else if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
+            updateUI();
+        } else {    // No connection and No data in DB
+            processUIWhenNoConnection();
+        }
+    }
+
+    private void updateUI() {
+        RealmResults<RRoom> rooms = RObjectManager.getRooms();
+
+        adapter.notifyDataSetChanged();
+
+        if (rooms.size() == 0) {
+            // TODO show ra giao dien Empty
+
+        } if (rooms.size() > 0) {
+            adapter.setListRooms(rooms);
+            adapter.notifyDataSetChanged();
+        }
+
+        backgroundTry.setVisibility(View.GONE);
+        prb_Loading.setVisibility(View.GONE);
+        btnTry.setVisibility(View.VISIBLE);
+        backgroundViews.setVisibility(View.VISIBLE);
+    }
+
+    private void processUIWhenNoConnection() {
+        if (!AndroidHelper.isInternetAvailable(getContext())) {
+            backgroundTry.setVisibility(View.VISIBLE);
+            prb_Loading.setVisibility(View.GONE);
+            btnTry.setVisibility(View.VISIBLE);
+            backgroundViews.setVisibility(View.GONE);
+        }
     }
 }

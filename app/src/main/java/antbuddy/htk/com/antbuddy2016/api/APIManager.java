@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMassage;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;

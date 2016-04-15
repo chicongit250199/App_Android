@@ -29,13 +29,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
-import antbuddy.htk.com.antbuddy2016.model.ObjectManager;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
@@ -222,9 +224,9 @@ public class AntbuddyXmppConnection {
 		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
 
 		if (message.getBody() != null) {
-			ChatMessage chatMessage = new ChatMessage(message);
+			RChatMessage chatMessage = new RChatMessage(message);
 			Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT);
-			intent.putExtra(BroadcastConstant.MESSAGE_RECEIVE, chatMessage);
+			intent.putExtra(BroadcastConstant.MESSAGE_RECEIVE, chatMessage.getId());
 			mContext.sendBroadcast(intent);
 		}
 
@@ -347,7 +349,7 @@ public class AntbuddyXmppConnection {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! XMPPConnection is null or do not connect!");
 			return;
 		}
-		RUserMe userMe = ObjectManager.getInstance().getUserMe();
+		RUserMe userMe = RObjectManager.getUserMe();
 		if (userMe == null) {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! Userme is Null!");
 			return;
@@ -402,36 +404,59 @@ public class AntbuddyXmppConnection {
 	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
-		ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
-			@Override
-			public void onSuccess(List<Room> rooms) {
-				for (Room room : rooms) {
 
-					RUserMe me = RObjectManager.getUserMe();
+		for (RRoom room : RObjectManager.getRooms()) {
 
-					String key_org = me.getFullCurrentOrg().getOrgKey();
-					String key_me = me.getKey();
-					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
-					presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
-					if (xmppConnection != null && xmppConnection.isConnected()) {
-						xmppConnection.sendPacket(presence);
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-					} else {
-						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-					}
+			RUserMe me = RObjectManager.getUserMe();
+
+			String key_org = me.getFullCurrentOrg().getOrgKey();
+			String key_me = me.getKey();
+			Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
+			presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
+			if (xmppConnection != null && xmppConnection.isConnected()) {
+				xmppConnection.sendPacket(presence);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+			} else {
+				LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
 			}
+		}
 
-			@Override
-			public void onError(String error) {
-				LogHtk.e(LogHtk.XMPP_TAG, "ERROR: " + error);
-			}
-		});
+
+//		ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
+//			@Override
+//			public void onSuccess(List<Room> rooms) {
+//				for (Room room : rooms) {
+//
+//					RUserMe me = RObjectManager.getUserMe();
+//
+//					String key_org = me.getFullCurrentOrg().getOrgKey();
+//					String key_me = me.getKey();
+//					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
+//					presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
+//					if (xmppConnection != null && xmppConnection.isConnected()) {
+//						xmppConnection.sendPacket(presence);
+//						try {
+//							Thread.sleep(100);
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
+//						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+//					} else {
+//						LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+//					}
+//				}
+//			}
+//
+//			@Override
+//			public void onError(String error) {
+//				LogHtk.e(LogHtk.XMPP_TAG, "ERROR: " + error);
+//			}
+//		});
 	}
 
 	/**

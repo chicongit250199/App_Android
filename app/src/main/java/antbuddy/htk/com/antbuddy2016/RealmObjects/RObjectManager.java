@@ -24,16 +24,58 @@ public class RObjectManager {
         return rUserMe;
     }
 
+    synchronized public static boolean isUserMeExist() {
+        Realm realm = Realm.getDefaultInstance();
+        RUserMe rUserMe = realm.where(RUserMe.class).findFirst();
+        if (rUserMe != null && rUserMe.getKey().length() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     synchronized public static  RealmResults<RUser> getUsers() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RUser> rUsers = realm.where(RUser.class).findAll();
         return rUsers;
     }
 
+    synchronized public static RUser findUser(String userKey) {
+        Realm realm = Realm.getDefaultInstance();
+        RUser user = realm.where(RUser.class).equalTo("key", userKey).findFirst();
+        return user;
+    }
+
+    synchronized public static boolean isUsersExist() {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RUser> realmUsers = realm.where(RUser.class).findAll();
+        if (realmUsers != null &&  realmUsers.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     synchronized public static RealmResults<RRoom> getRooms() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RRoom> rRooms = realm.where(RRoom.class).findAll();
         return rRooms;
+    }
+
+    synchronized public static RRoom findRoom(String roomKey) {
+        Realm realm = Realm.getDefaultInstance();
+        RRoom room = realm.where(RRoom.class).equalTo("key", roomKey).findFirst();
+        return room;
+    }
+
+    synchronized public static boolean isRoomsExist() {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RRoom> realmRooms = realm.where(RRoom.class).findAll();
+        if (realmRooms != null && realmRooms.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -155,10 +197,10 @@ public class RObjectManager {
                 realmRoom.setKey(room.getKey());
 
                 List<Room.UserInRoom> usersInRoom = room.getUsers();
-                RealmList<RRoom.RUserInRoom> realmUsersInRoom = new RealmList<>();
+                RealmList<RUsersInRoom> realmUsersInRoom = new RealmList<>();
                 if (usersInRoom != null && usersInRoom.size() > 0) {
                     for (Room.UserInRoom userRoom: usersInRoom) {
-                        RRoom.RUserInRoom realUserInRoom = new RRoom.RUserInRoom();
+                        RUsersInRoom realUserInRoom = new RUsersInRoom();
                         realUserInRoom.set_id(userRoom.get_id());
                         realUserInRoom.setRole(userRoom.getRole());
                         realUserInRoom.setUser(userRoom.getUser());
