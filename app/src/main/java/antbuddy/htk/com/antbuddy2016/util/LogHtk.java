@@ -23,6 +23,7 @@ public class LogHtk {
     public static String Test3 = "Test3";
     public static String AntbuddyApplication = "AntbuddyApplication";
     public static String RecentFragment = "RecentFragment";
+    public static String Realm = "Realm";
 
 
     private static String[] tags = {
@@ -41,6 +42,7 @@ public class LogHtk {
             ChatMessage,
             GroupsFragment,
             UserMe,
+            Realm,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

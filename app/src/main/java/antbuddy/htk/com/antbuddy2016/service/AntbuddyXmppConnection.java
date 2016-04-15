@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
@@ -405,8 +406,11 @@ public class AntbuddyXmppConnection {
 			@Override
 			public void onSuccess(List<Room> rooms) {
 				for (Room room : rooms) {
-					String key_org = ObjectManager.getInstance().getUserMe().getFullCurrentOrg().getOrgKey();
-					String key_me = ObjectManager.getInstance().getUserMe().getKey();
+
+					RUserMe me = RObjectManager.getUserMe();
+
+					String key_org = me.getFullCurrentOrg().getOrgKey();
+					String key_me = me.getKey();
 					Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
 					presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
 					if (xmppConnection != null && xmppConnection.isConnected()) {

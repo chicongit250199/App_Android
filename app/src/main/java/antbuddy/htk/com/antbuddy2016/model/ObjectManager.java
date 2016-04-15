@@ -80,9 +80,6 @@ public class ObjectManager {
                 public void onSuccess(UserMe me) {
                     RObjectManager.saveUserMeOrUpdate(me);
                     rUserMe = RObjectManager.getUserMe();
-
-                    LogHtk.i(LogHtk.Test2, "--->User: " + rUserMe.getKey());
-                    LogHtk.i(LogHtk.Test2, "--->User: " + rUserMe.getName());
                     if (listener != null) {
                         listener.onSuccess(rUserMe);
                     }

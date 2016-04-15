@@ -146,35 +146,59 @@ public class Room {
 	}
 
 	public static class UserInRoom {
-		private final static String key_user = "user";
-		private final static String key__id = "_id";
-		private final static String key_role = "role";
+//		private final static String key_user = "user";
+//		private final static String key__id = "_id";
+//		private final static String key_role = "role";
 		private String user;
 		private String _id;
 		private int role;
 
-		public static ArrayList<UserInRoom> parseArray(JSONArray jsonArray) {
-			ArrayList<UserInRoom> usersInRoom = new ArrayList<>();
-			for(int i=0; i<jsonArray.length(); i++){
-				try {
-					JSONObject json = jsonArray.getJSONObject(i);
-					String key = AndroidHelper.getString(json, key_user, null);
-					if(!key.isEmpty()) {
-						UserInRoom userInRoom = new UserInRoom(json);
-						usersInRoom.add(userInRoom);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-			return usersInRoom;
+		public String getUser() {
+			return user;
 		}
 
-		public UserInRoom(JSONObject json) {
-			user = AndroidHelper.getString(json, key_user, null);
-			_id = AndroidHelper.getString(json, key__id, null);
-			role = AndroidHelper.getInt(json, key__id, 0);
+		public void setUser(String user) {
+			this.user = user;
 		}
+
+		public String get_id() {
+			return _id;
+		}
+
+		public void set_id(String _id) {
+			this._id = _id;
+		}
+
+		public int getRole() {
+			return role;
+		}
+
+		public void setRole(int role) {
+			this.role = role;
+		}
+
+		//		public static ArrayList<UserInRoom> parseArray(JSONArray jsonArray) {
+//			ArrayList<UserInRoom> usersInRoom = new ArrayList<>();
+//			for(int i=0; i<jsonArray.length(); i++){
+//				try {
+//					JSONObject json = jsonArray.getJSONObject(i);
+//					String key = AndroidHelper.getString(json, key_user, null);
+//					if(!key.isEmpty()) {
+//						UserInRoom userInRoom = new UserInRoom(json);
+//						usersInRoom.add(userInRoom);
+//					}
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			return usersInRoom;
+//		}
+//
+//		public UserInRoom(JSONObject json) {
+//			user = AndroidHelper.getString(json, key_user, null);
+//			_id = AndroidHelper.getString(json, key__id, null);
+//			role = AndroidHelper.getInt(json, key__id, 0);
+//		}
 	}
 
 	public String toString() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
+import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
@@ -17,16 +18,29 @@ import io.realm.RealmResults;
  */
 public class RObjectManager {
 
-    public static RUserMe getUserMe() {
+    synchronized public static RUserMe getUserMe() {
         Realm realm = Realm.getDefaultInstance();
         RUserMe rUserMe = realm.where(RUserMe.class).findFirst();
         return rUserMe;
     }
 
+    synchronized public static  RealmResults<RUser> getUsers() {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RUser> rUsers = realm.where(RUser.class).findAll();
+        return rUsers;
+    }
+
+    synchronized public static RealmResults<RRoom> getRooms() {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RRoom> rRooms = realm.where(RRoom.class).findAll();
+        return rRooms;
+    }
+
     /*
     This function will parse Gson object to Realm Object, and Realm Object will be save or update into DB
      */
-    public static void saveUserMeOrUpdate(UserMe me) {
+    synchronized public static void saveUserMeOrUpdate(UserMe me) {
+        LogHtk.i(LogHtk.Test2, "saveUserMeOrUpdate");
         Realm realm = Realm.getDefaultInstance();
         RUserMe rMe = new RUserMe();
         rMe.setKey(me.getKey());
@@ -101,15 +115,77 @@ public class RObjectManager {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(rMe);
         realm.commitTransaction();
+        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
     }
 
-    public static void saveUserOrUpdate(User user) {
+    public static void saveUsersOrUpdate(List<User> users) {
+        if (users != null && users.size() > 0) {
+            Realm realm = Realm.getDefaultInstance();
+            for (User user : users) {
+                RUser realmUser = new RUser();
+                realmUser.setAvatar(user.getAvatar());
+                realmUser.setUsername(user.getUsername());
+                realmUser.setKey(user.getKey());
+                realmUser.setName(user.getName());
+                realmUser.setEmail(user.getEmail());
+                realmUser.setNonce(user.getNonce());
+                realmUser.setBio(user.getBio());
+                realmUser.setPhone(user.getPhone());
+                realmUser.setRole(user.getRole());
+                realmUser.setActive(user.isActive());
+                realmUser.setIsFavorite(user.isFavorite());
 
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(realmUser);
+                realm.commitTransaction();
+            }
+        } else {
+            LogHtk.e(LogHtk.Realm, "Warning! Users is null or size == 0!");
+        }
     }
 
-    public static void saveRoomOrUpdate(User user) {
+    public static void saveRoomsOrUpdate(List<Room> rooms) {
+        if (rooms != null && rooms.size() > 0) {
+            Realm realm = Realm.getDefaultInstance();
+            for (Room room : rooms) {
+                RRoom realmRoom = new RRoom();
+                realmRoom.set_id(room.get_id());
+                realmRoom.setCreatedBy(room.getKey_createdBy());
+                realmRoom.setOrg(room.getOrg());
+                realmRoom.setKey(room.getKey());
 
+                List<Room.UserInRoom> usersInRoom = room.getUsers();
+                RealmList<RRoom.RUserInRoom> realmUsersInRoom = new RealmList<>();
+                if (usersInRoom != null && usersInRoom.size() > 0) {
+                    for (Room.UserInRoom userRoom: usersInRoom) {
+                        RRoom.RUserInRoom realUserInRoom = new RRoom.RUserInRoom();
+                        realUserInRoom.set_id(userRoom.get_id());
+                        realUserInRoom.setRole(userRoom.getRole());
+                        realUserInRoom.setUser(userRoom.getUser());
+
+                        realmUsersInRoom.add(realUserInRoom);
+                    }
+                    realmRoom.setUsers(realmUsersInRoom);
+                } else {
+                    LogHtk.e(LogHtk.Realm, "Warning! Users in Room is null or size = 0!");
+                }
+
+                realmRoom.setCountFiles(room.getCountFiles());
+                realmRoom.setCountMessages(room.getCountMessages());
+                realmRoom.setIsPublic(room.getIsPublic());
+                realmRoom.setStatus(room.getStatus());
+                realmRoom.setPinMessage(room.getPinMessage());
+                realmRoom.setTopic(room.getTopic());
+                realmRoom.setName(room.getName());
+                realmRoom.setCreated(room.getCreated());
+                realmRoom.setIsFavorite(room.getIsFavorite());
+
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(realmRoom);
+                realm.commitTransaction();
+            }
+        } else {
+            LogHtk.e(LogHtk.Realm, "Warning! Rooms is null or size = 0!");
+        }
     }
-
-
 }
