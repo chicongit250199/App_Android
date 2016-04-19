@@ -93,12 +93,15 @@ public class AntbuddyApplication extends Application {
 
 	public API getApiService() {
 		if (apiService == null) {
-			boolean isDomainExist = ABSharedPreference.getBoolean(ABSharedPreference.KEY_IS_DOMAIN_EXIST);
-			if (isDomainExist) {
-				apiService = restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
-			} else {
-				apiService = createAPIService();
-			}
+			apiService = createAPIService();
+		}
+
+
+		String domain = ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN);
+		if (domain.length() > 0) {
+			apiService = restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
+		} else {
+			LogHtk.e(TAG, "Domain is not Exist");
 		}
 
 		return apiService;
@@ -108,7 +111,7 @@ public class AntbuddyApplication extends Application {
 		apiService = null;
 	}
 
-	public API restartAPIServiceWithDomain(String domain) {
+	private API restartAPIServiceWithDomain(String domain) {
 		String URLWithDomain = String.format(API.BASE_URL_WITH_DOMAIN, domain);
 		retrofit = new Retrofit.Builder()
 				.baseUrl(URLWithDomain)

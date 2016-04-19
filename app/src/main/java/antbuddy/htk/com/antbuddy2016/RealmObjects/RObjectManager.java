@@ -322,6 +322,10 @@ public class RObjectManager {
 //        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
     }
 
+    public void closeRealm() {
+        realm.close();
+    }
+
     public void saveUsersOrUpdate(List<User> users) {
         if (users != null && users.size() > 0) {
             for (User user : users) {

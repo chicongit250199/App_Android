@@ -65,7 +65,6 @@ public class CenterActivity extends AppCompatActivity {
     private RealmChangeListener usersListener;
     private RealmChangeListener roomsListener;
 
-
 	// Work with service
     public static AntbuddyService mIRemoteService;
     private boolean mBound;
@@ -91,9 +90,8 @@ public class CenterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_center);
 
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY);
-        ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, true);
 
-        AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
+        //AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
 
         setupRealmData();

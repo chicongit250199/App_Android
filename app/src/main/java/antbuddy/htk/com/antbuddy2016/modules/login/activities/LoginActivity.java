@@ -49,7 +49,6 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
-        ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, false);
 
         if(AntbuddyService.mAntbuddyService == null) {
             startService(new Intent(this, AntbuddyService.class));

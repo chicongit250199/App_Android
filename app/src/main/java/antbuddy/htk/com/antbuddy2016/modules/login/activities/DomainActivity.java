@@ -49,7 +49,6 @@ public class DomainActivity extends Activity {
         setContentView(R.layout.activity_domain);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.DOMAIN_ACTIVITY);
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);
-        ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, false);
 
         initViews();
         viewsListener();

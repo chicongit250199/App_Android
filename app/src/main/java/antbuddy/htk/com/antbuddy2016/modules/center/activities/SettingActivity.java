@@ -101,6 +101,7 @@ public class SettingActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         ABSharedPreference.resetXMPP();
 
+                        RObjectManager.getInstance().closeRealm();
                         // Reset Object Manager
                         AntbuddyApplication.getInstance().deleteRealm();
                         AntbuddyApplication.getInstance().closeRealm();
@@ -126,6 +127,7 @@ public class SettingActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 //                        ObjectManager.getInstance().clear();
+                        RObjectManager.getInstance().closeRealm();
                         AntbuddyApplication.getInstance().deleteRealm();
                         AntbuddyApplication.getInstance().closeRealm();
                         ABSharedPreference.resetAccountInSharedPreferences();
