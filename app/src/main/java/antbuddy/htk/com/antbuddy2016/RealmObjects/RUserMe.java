@@ -57,10 +57,8 @@ public class RUserMe extends RealmObject {
             LogHtk.i(LogHtk.UserMe, "Error! currentOrg is null in UserMe!");
             return null;
         }
-        LogHtk.i(LogHtk.Test3, "currentOrg = " + currentOrg);
+
         String key = currentOrg.getKey();
-        LogHtk.i(LogHtk.Test3, "key = " + key);
-        LogHtk.i(LogHtk.Test3, "orgs = " + orgs.size());
         for (ROrg org : orgs) {
             if (org.getOrgKey().equals(key)) {
                 return org.getOpeningChatrooms();

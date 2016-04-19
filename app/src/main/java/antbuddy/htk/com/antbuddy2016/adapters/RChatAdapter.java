@@ -74,8 +74,8 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
             public void onSuccess(UserMe me) {
-                RObjectManager.saveUserMeOrUpdate(me);
-                keyMe = RObjectManager.getUserMe().getKey();
+                //RObjectManager.saveUserMeOrUpdate(me);
+                //keyMe = RObjectManager.getUserMe().getKey();
             }
 
             @Override
@@ -347,6 +347,12 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
             mListView.getLocalVisibleRect(corners);
             mListView.setSelectionFromTop(50, corners.top);
         }
-        this.before = realmResults.first().getTime();
+
+        if (realmResults != null && realmResults.size() > 0) {
+            before = realmResults.first().getTime();
+        } else {
+            before = NationalTime.getLocalTimeToUTCTime();
+        }
+
     }
 }

@@ -46,6 +46,7 @@ import antbuddy.htk.com.antbuddy2016.setting.ABXMPPConfig;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
 
 public class AntbuddyXmppConnection {
 //	public static final String TAG = "AntbuddyXmppConnection";
@@ -123,13 +124,14 @@ public class AntbuddyXmppConnection {
 	}
 
 	public void connectXMPP(final Context context, final XMPPReceiver receiver) {
-		if (xmppConnection != null) {
+		if (xmppConnection != null && xmppConnection.isConnected()) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
 			return;
 		}
 
 		mContext = context;
 		ABXMPPConfig config = getABXMPPConfig();
+
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 		xmppConnection = new XMPPConnection(connConfig);
 		try {
@@ -223,11 +225,27 @@ public class AntbuddyXmppConnection {
 		Message message = (Message) packet;
 		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
 
-		if (message.getBody() != null) {
-			RChatMessage chatMessage = new RChatMessage(message);
-			Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT);
-			intent.putExtra(BroadcastConstant.MESSAGE_RECEIVE, chatMessage.getId());
-			mContext.sendBroadcast(intent);
+		if (message.getBody() != null && message.getBody().length() > 0) {
+			final RChatMessage chatMessage = new RChatMessage(message);
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Realm realm = Realm.getDefaultInstance();
+					realm.beginTransaction();
+					realm.copyToRealmOrUpdate(chatMessage);
+					realm.commitTransaction();
+				}
+			}).start();
+
+
+
+
+
+//			LogHtk.d(LogHtk.Test1, "chatMessage.getId(): " + chatMessage.getId());
+//			Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT);
+//			intent.putExtr("idMessage", chatMessage.getId());
+//			mContext.sendBroadcast(intent);
 		}
 
 //        boolean isDeleteMessage = false;
@@ -349,7 +367,7 @@ public class AntbuddyXmppConnection {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! XMPPConnection is null or do not connect!");
 			return;
 		}
-		RUserMe userMe = RObjectManager.getUserMe();
+		RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
 		if (userMe == null) {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! Userme is Null!");
 			return;
@@ -405,9 +423,9 @@ public class AntbuddyXmppConnection {
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
 
-		for (RRoom room : RObjectManager.getRooms()) {
+		for (RRoom room : RObjectManager.getInstance().getRoomsFromCache()) {
 
-			RUserMe me = RObjectManager.getUserMe();
+			RUserMe me = RObjectManager.getInstance().getUserMeFromCache();
 
 			String key_org = me.getFullCurrentOrg().getOrgKey();
 			String key_me = me.getKey();

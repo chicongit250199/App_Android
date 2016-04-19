@@ -24,6 +24,7 @@ import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
@@ -34,12 +35,10 @@ public class MembersFragment extends Fragment {
 
     private ListView lv_member;
     private UserAdapter mUserAdapter;
-
     private RelativeLayout backgroundTry;
     private LinearLayout backgroundViews;
     private ProgressBar prb_Loading;
     private Button btnTry;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,7 +46,7 @@ public class MembersFragment extends Fragment {
         lv_member = (ListView)rootView.findViewById(R.id.lv_member);
 
         if (mUserAdapter == null) {
-            mUserAdapter = new UserAdapter(getContext(), lv_member, RObjectManager.getUsers());
+            mUserAdapter = new UserAdapter(getContext(), lv_member, RObjectManager.getInstance().getUsersFromCache());
         }
         lv_member.setAdapter(mUserAdapter);
         lv_member.setDividerHeight(0);
@@ -102,12 +101,24 @@ public class MembersFragment extends Fragment {
     }
 
     protected void loading_Users() {
+        Boolean isdataLoadedFromDB = false;
+        AntbuddyApplication application = AntbuddyApplication.getInstance();
+//        if (application.isUserMeExist() && application.isUsersExist() && application.isRoomsExist()) {
+//            LogHtk.i(LogHtk.Test1, "");
+//            updateUI();
+//            isdataLoadedFromDB = true;
+//        }
+//        if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
+//            updateUI();
+//        }
+
         if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
             APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
                 @Override
                 public void onSuccess(List<User> users) {
 //                    mUserAdapter.filter("", users);
-                    RObjectManager.saveUsersOrUpdate(users);
+//                    RObjectManager.saveUsersOrUpdate(users);
+//                    AntbuddyApplication.getInstance().setUsers(RObjectManager.getUsers());
                     updateUI();
                 }
 
@@ -117,9 +128,7 @@ public class MembersFragment extends Fragment {
                     processUIWhenNoConnection();
                 }
             });
-        } else if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
-            updateUI();
-        } else {    // No connection and No data in DB
+        } else if (!isdataLoadedFromDB) {    // No connection and No data in DB
             processUIWhenNoConnection();
         }
     }

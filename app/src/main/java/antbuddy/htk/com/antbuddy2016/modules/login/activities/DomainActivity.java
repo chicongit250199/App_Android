@@ -2,8 +2,11 @@ package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,8 +25,10 @@ import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.modules.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.DomainAdapter;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
@@ -69,7 +74,7 @@ public class DomainActivity extends Activity {
                 String domain = domainList.get(position).getDomain();
                 if (domain.length() > 0) {
                     ABSharedPreference.save(ABSharedPreference.KEY_DOMAIN, domain);
-                    AndroidHelper.gotoActivity(DomainActivity.this, CenterActivity.class, true);
+                    AndroidHelper.gotoActivity(DomainActivity.this, LoadingActivity.class, true);
                 }
             }
         });
@@ -86,6 +91,11 @@ public class DomainActivity extends Activity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void requestAPIToGetOrganizations() {

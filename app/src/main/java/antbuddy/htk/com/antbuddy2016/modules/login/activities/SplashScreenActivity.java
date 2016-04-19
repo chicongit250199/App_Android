@@ -57,7 +57,7 @@ public class SplashScreenActivity extends Activity {
                 }
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY.toString())) {
-                    Intent i = new Intent(SplashScreenActivity.this, CenterActivity.class);
+                    Intent i = new Intent(SplashScreenActivity.this, LoadingActivity.class);
                     startActivity(i);
                     finish();
                 }

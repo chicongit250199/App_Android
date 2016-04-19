@@ -1,5 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
+import android.os.SystemClock;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,9 +9,10 @@ import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
-import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
@@ -18,13 +21,162 @@ import io.realm.RealmResults;
  */
 public class RObjectManager {
 
-    synchronized public static RUserMe getUserMe() {
-        Realm realm = Realm.getDefaultInstance();
-        RUserMe rUserMe = realm.where(RUserMe.class).findFirst();
-        return rUserMe;
+    private Realm realm;
+
+    private static RObjectManager realmObject;
+
+    private RUserMe userme;
+    private RealmResults<RUser> users;
+    private RealmResults<RRoom> rooms;
+
+    private RealmChangeListener userMeListener;
+    private RealmChangeListener usersListener;
+    private RealmChangeListener roomsListener;
+
+    private RObjectManager() {
+
     }
 
-    synchronized public static boolean isUserMeExist() {
+    public static RObjectManager getInstance() {
+        if (realmObject == null) {
+            realmObject = new RObjectManager();
+        }
+        return realmObject;
+    }
+
+    // ASSIGN
+    public void assignRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    public void assignUserMe(RUserMe userme, RealmChangeListener userMeListener) {
+        this.userme = userme;
+        this.userMeListener = userMeListener;
+
+        if (this.userme == null) {
+//            realm.beginTransaction();
+//            RUserMe usermeDefault = realm.createObject(RUserMe.class);
+//            usermeDefault.set_id("9999");
+//            realm.copyToRealmOrUpdate(usermeDefault);
+//            realm.commitTransaction();
+//
+//            this.userme = getUserMeFromDB();
+//            if (this.userme != null) {
+//                this.userme.addChangeListener(this.userMeListener);
+//            }
+        } else {
+            this.userme.addChangeListener(this.userMeListener);
+        }
+    }
+
+    public void assignUsers(RealmResults<RUser> users, RealmChangeListener usersListener) {
+        this.users = users;
+        this.usersListener = usersListener;
+
+        if (this.users == null) {
+//            realm.beginTransaction();
+//            RUser userDefault = realm.createObject(RUser.class);
+//            userDefault.setKey("8888");
+//            realm.copyToRealmOrUpdate(userDefault);
+//            realm.commitTransaction();
+//
+//            this.users = getUsersFromDB();
+//            if (this.users != null) {
+//                this.users.addChangeListener(this.usersListener);
+//            }
+        } else {
+            this.users.addChangeListener(this.usersListener);
+        }
+    }
+
+    public void assignRooms(RealmResults<RRoom> rooms, RealmChangeListener roomsListener) {
+        this.rooms = rooms;
+        this.roomsListener = roomsListener;
+
+        if (this.rooms == null) {
+//            realm.beginTransaction();
+//            RRoom roomDefault = realm.createObject(RRoom.class);
+//            roomDefault.setKey("7777");
+//            realm.copyToRealmOrUpdate(roomDefault);
+//            realm.commitTransaction();
+//
+//            this.rooms = getRoomsFromDB();
+//            if (this.rooms != null) {
+//                this.rooms.addChangeListener(this.roomsListener);
+//            }
+        } else {
+            this.rooms.addChangeListener(this.roomsListener);
+        }
+    }
+    // --------------End Assign------------------
+
+
+    // Working with CACHE
+    public RUserMe getUserMeFromCache() {
+        if (userme == null) {
+            //LogHtk.i(LogHtk.Test3, "--> getUserme when null!");
+            //AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+            AntbuddyService.getInstance().loadUserMe();
+        }
+        return userme;
+    }
+
+    public void setUsermeIntoCache(RUserMe userme) {
+        this.userme = userme;
+    }
+
+    public boolean isUserMeExistInCache() {
+        if (userme != null && userme.getKey().length() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public RealmResults<RUser> getUsersFromCache() {
+        if (users == null) {
+            //AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+        }
+        return users;
+    }
+
+    public void setUsersInCache(RealmResults<RUser> users) {
+        this.users = users;
+    }
+
+    public boolean isUsersExistInCache() {
+        if (users != null && users.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public RealmResults<RRoom> getRoomsFromCache() {
+        if (rooms == null) {
+            //AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+        }
+        return rooms;
+    }
+
+    public void setRoomsInCache(RealmResults<RRoom> rooms) {
+        this.rooms = rooms;
+    }
+
+    public boolean isRoomsExistInCache() {
+        if (rooms != null && rooms.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public RUserMe getUserMeFromDB() {
+        userme = realm.where(RUserMe.class).findFirst();
+        return userme;
+    }
+
+    public static boolean isUserMeExist() {
         Realm realm = Realm.getDefaultInstance();
         RUserMe rUserMe = realm.where(RUserMe.class).findFirst();
         if (rUserMe != null && rUserMe.getKey().length() > 0) {
@@ -34,19 +186,23 @@ public class RObjectManager {
         }
     }
 
-    synchronized public static  RealmResults<RUser> getUsers() {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<RUser> rUsers = realm.where(RUser.class).findAll();
-        return rUsers;
+    public void loading_UserMe_Users_Rooms() {
+        AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+//        AntbuddyService.getInstance().loadUsers();
     }
 
-    synchronized public static RUser findUser(String userKey) {
+
+    public RealmResults<RUser> getUsersFromDB() {
+        return realm.where(RUser.class).findAll();
+    }
+
+    public static RUser findUser(String userKey) {
         Realm realm = Realm.getDefaultInstance();
         RUser user = realm.where(RUser.class).equalTo("key", userKey).findFirst();
         return user;
     }
 
-    synchronized public static boolean isUsersExist() {
+    public static boolean isUsersExist() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RUser> realmUsers = realm.where(RUser.class).findAll();
         if (realmUsers != null &&  realmUsers.size() > 0) {
@@ -56,19 +212,17 @@ public class RObjectManager {
         }
     }
 
-    synchronized public static RealmResults<RRoom> getRooms() {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<RRoom> rRooms = realm.where(RRoom.class).findAll();
-        return rRooms;
+    public RealmResults<RRoom> getRoomsFromDB() {
+        return realm.where(RRoom.class).findAll();
     }
 
-    synchronized public static RRoom findRoom(String roomKey) {
+    public static RRoom findRoom(String roomKey) {
         Realm realm = Realm.getDefaultInstance();
         RRoom room = realm.where(RRoom.class).equalTo("key", roomKey).findFirst();
         return room;
     }
 
-    synchronized public static boolean isRoomsExist() {
+    public static boolean isRoomsExist() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RRoom> realmRooms = realm.where(RRoom.class).findAll();
         if (realmRooms != null && realmRooms.size() > 0) {
@@ -81,9 +235,7 @@ public class RObjectManager {
     /*
     This function will parse Gson object to Realm Object, and Realm Object will be save or update into DB
      */
-    synchronized public static void saveUserMeOrUpdate(UserMe me) {
-        LogHtk.i(LogHtk.Test2, "saveUserMeOrUpdate");
-        Realm realm = Realm.getDefaultInstance();
+    public void saveUserMeOrUpdate(UserMe me) {
         RUserMe rMe = new RUserMe();
         rMe.setKey(me.getKey());
         rMe.setChatToken(me.getChatToken());
@@ -157,12 +309,21 @@ public class RObjectManager {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(rMe);
         realm.commitTransaction();
-        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
+
+        // Update data in Cache
+        userme = getUserMeFromDB();
+        if (userme != null) {
+            LogHtk.i(LogHtk.Test3, "Register Userme success!: " + userme.toString());
+            userme.addChangeListener(userMeListener);
+        } else {
+            LogHtk.e(LogHtk.Test3, "Get UserMe from db is null!");
+        }
+//
+//        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
     }
 
-    public static void saveUsersOrUpdate(List<User> users) {
+    public void saveUsersOrUpdate(List<User> users) {
         if (users != null && users.size() > 0) {
-            Realm realm = Realm.getDefaultInstance();
             for (User user : users) {
                 RUser realmUser = new RUser();
                 realmUser.setAvatar(user.getAvatar());
@@ -180,15 +341,23 @@ public class RObjectManager {
                 realm.beginTransaction();
                 realm.copyToRealmOrUpdate(realmUser);
                 realm.commitTransaction();
+
+                // Check and Update Notification
+                // Update data in Cache
+                this.users = getUsersFromDB();
+                if (this.users != null && users.size() > 0) {
+                    this.users.addChangeListener(usersListener);
+                } else {
+                    LogHtk.e(LogHtk.Test3, "Users null!");
+                }
             }
         } else {
             LogHtk.e(LogHtk.Realm, "Warning! Users is null or size == 0!");
         }
     }
 
-    public static void saveRoomsOrUpdate(List<Room> rooms) {
+    public void saveRoomsOrUpdate(List<Room> rooms) {
         if (rooms != null && rooms.size() > 0) {
-            Realm realm = Realm.getDefaultInstance();
             for (Room room : rooms) {
                 RRoom realmRoom = new RRoom();
                 realmRoom.set_id(room.get_id());
@@ -225,6 +394,14 @@ public class RObjectManager {
                 realm.beginTransaction();
                 realm.copyToRealmOrUpdate(realmRoom);
                 realm.commitTransaction();
+
+                // Check and Update Notification
+                this.rooms = getRoomsFromDB();
+                if (this.rooms != null && rooms.size() > 0) {
+                    this.rooms.addChangeListener(roomsListener);
+                } else {
+                    LogHtk.e(LogHtk.Test3, "Rooms null!");
+                }
             }
         } else {
             LogHtk.e(LogHtk.Realm, "Warning! Rooms is null or size = 0!");

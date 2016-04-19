@@ -104,6 +104,7 @@ public class SettingActivity extends Activity {
                         // Reset Object Manager
                         AntbuddyApplication.getInstance().deleteRealm();
                         AntbuddyApplication.getInstance().closeRealm();
+                        AntbuddyApplication.getInstance().resetApiService();
 
 //                        ObjectManager.getInstance().clear();
                         new Thread(new Runnable() {
@@ -145,12 +146,20 @@ public class SettingActivity extends Activity {
     }
 
     private void loading_UserMe() {
+        Boolean isdataLoadedFromDB = false;
+        final AntbuddyApplication application = AntbuddyApplication.getInstance();
+//        if (application.isUserMeExist()) {
+//            updateUI(application.getUserme());
+//            isdataLoadedFromDB = true;
+//        }
+
         if (AndroidHelper.isInternetAvailable(getApplicationContext())) {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    RObjectManager.saveUserMeOrUpdate(me);
-                    updateUI(RObjectManager.getUserMe());
+                    RObjectManager.getInstance().saveUserMeOrUpdate(me);
+//                    application.setUserme(RObjectManager.getInstance().getUserMe());
+//                    updateUI(application.getUserme());
                 }
 
                 @Override
@@ -159,9 +168,7 @@ public class SettingActivity extends Activity {
                     updateUIWhenNoInternet();
                 }
             });
-        } else if (RObjectManager.isUserMeExist()) {
-            updateUI(RObjectManager.getUserMe());
-        } else {    // No connection and No data in DB
+        } else if (!isdataLoadedFromDB) {    // No connection and No data in DB
             updateUIWhenNoInternet();
         }
     }

@@ -420,7 +420,7 @@ public class ChatMessage implements Parcelable {
             receiverKey = m.group(1);
         }
 
-        RUserMe userMe = RObjectManager.getUserMe();
+        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
         if (message.getFrom().contains("/")) {
             String params[] = message.getFrom().split("/");
             if (params[0].endsWith(userMe.getChatMucDomain())){
@@ -459,7 +459,7 @@ public class ChatMessage implements Parcelable {
     }
 
     public ChatMessage(final String _receiverKey, final String _body, final Boolean isMuc) {
-        RUserMe userMe = RObjectManager.getUserMe();
+        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
         ROrg currentOrg = userMe.getFullCurrentOrg();
         if (currentOrg == null) {
             LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");

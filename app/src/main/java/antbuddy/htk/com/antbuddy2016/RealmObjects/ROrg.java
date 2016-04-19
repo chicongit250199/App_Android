@@ -9,6 +9,7 @@ import io.realm.RealmResults;
 /**
  * Created by thanhnguyen on 14/04/2016.
  */
+
 public class ROrg extends RealmObject {
     private String orgKey;
     private String role;

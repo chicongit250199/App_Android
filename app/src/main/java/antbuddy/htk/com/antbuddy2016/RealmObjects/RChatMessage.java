@@ -126,7 +126,7 @@ public class RChatMessage extends RealmObject {
             receiverKey = m.group(1);
         }
 
-        RUserMe userMe = RObjectManager.getUserMe();
+        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
         if (message.getFrom().contains("/")) {
             String params[] = message.getFrom().split("/");
             if (params[0].endsWith(userMe.getChatMucDomain())){

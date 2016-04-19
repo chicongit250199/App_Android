@@ -43,10 +43,10 @@ public class UserMe {
     private String modified;
     private Boolean active;
     private int tourStep;
-    private ArrayList<Org> orgs = null;
+    private ArrayList<Org> orgs;
     private Boolean forceChangePassw;
     private String created;
-    private CurrentOrg currentOrg = null;
+    private CurrentOrg currentOrg;
 
 
     private String key;
@@ -418,18 +418,7 @@ public class UserMe {
         }
     }
 
-    public static class CurrentOrg {
-//        private final static String key__id = "_id";
-//        private final static String key_name = "name";
-//        private final static String key_domain = "domain";
-//        private final static String key_key = "key";
-//        private final static String key_createdBy = "createdBy";
-//        private final static String key_isDefaultLogo = "isDefaultLogo";
-//        private final static String key_allowSelfRegister = "allowSelfRegister";
-//        private final static String key_logo = "logo";
-//        private final static String key_status = "status";
-//        private final static String key_modified = "modified";
-//        private final static String key_created = "created";
+    public class CurrentOrg {
         private String _id;
         private String name;
         private String domain;
@@ -525,20 +514,6 @@ public class UserMe {
         public void setCreated(String created) {
             this.created = created;
         }
-
-        //        public CurrentOrg(JSONObject json) {
-//            _id = AndroidHelper.getString(json, key__id, null);
-//            name = AndroidHelper.getString(json, key_name, null);
-//            domain = AndroidHelper.getString(json, key_domain, null);
-//            key = AndroidHelper.getString(json, key_key, null);
-//            createdBy = AndroidHelper.getString(json, key_createdBy, null);
-//            isDefaultLogo = AndroidHelper.getBoolean(json, key_isDefaultLogo, false);
-//            allowSelfRegister = AndroidHelper.getBoolean(json, key_allowSelfRegister, false);
-//            logo = AndroidHelper.getString(json, key_logo, null);
-//            status = AndroidHelper.getString(json, key_status, null);
-//            modified = AndroidHelper.getString(json, key_modified, null);
-//            created = AndroidHelper.getString(json, key_created, null);
-//        }
 
         public String getKey() {
             return key;

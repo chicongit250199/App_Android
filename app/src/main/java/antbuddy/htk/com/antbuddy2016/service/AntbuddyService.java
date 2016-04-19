@@ -7,14 +7,24 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 
+import java.util.EmptyStackException;
+import java.util.List;
+
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.User;
+import antbuddy.htk.com.antbuddy2016.model.UserMe;
+import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 public class AntbuddyService extends Service {
 
-    private static AntbuddyXmppConnection mXmppConnection = null;
-    public static AntbuddyService mAntbuddyService = null;
+    private static AntbuddyXmppConnection mXmppConnection;
+    public static AntbuddyService mAntbuddyService;
 
     private final IBinder serviceBinder = new LocalBinder();
     public class LocalBinder extends Binder {
@@ -38,7 +48,6 @@ public class AntbuddyService extends Service {
 	@Override
 	public void onCreate() {
 		LogHtk.i(LogHtk.Test2, "Service onCreate!");
-		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onCreate SERVICE<----------------");
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
@@ -48,7 +57,6 @@ public class AntbuddyService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		LogHtk.i(LogHtk.Test2, "Service onBind!");
-		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onBind SERVICE<----------------");
 		return serviceBinder;
 	}
 
@@ -87,6 +95,95 @@ public class AntbuddyService extends Service {
 	public void onDestroy() {
 		LogHtk.e(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
 		startService(new Intent(this, AntbuddyService.class));
+	}
+
+	public boolean isXMPPConnected() throws Exception {
+		if (AntbuddyXmppConnection.getInstance() == null) {
+			throw new Exception();
+		} else {
+			return mXmppConnection.getConnection().isConnected();
+		}
+	}
+
+	public void loadUserMe() {
+		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+			@Override
+			public void onSuccess(UserMe me) {
+				LogHtk.i(LogHtk.Test3, "Userme loaded at Service!");
+				RObjectManager.getInstance().saveUserMeOrUpdate(me);
+			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load UserMe from server!");
+			}
+		});
+	}
+
+	// API request
+	public void loading_UserMe_Users_Rooms() {
+		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+			@Override
+			public void onSuccess(UserMe me) {
+				LogHtk.i(LogHtk.Test3, "Userme loaded at Service!");
+				RObjectManager.getInstance().saveUserMeOrUpdate(me);
+				loadUsers();
+			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load UserMe from server!");
+				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
+				intent.putExtra("loadingResult", "noUserMe");
+				getApplicationContext().sendBroadcast(intent);
+			}
+		});
+	}
+
+	public void loadUsers() {
+		LogHtk.i(LogHtk.Test3, "Service loadUsers!");
+		APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
+			@Override
+			public void onSuccess(List<User> users) {
+				RObjectManager.getInstance().saveUsersOrUpdate(users);
+				LogHtk.i(LogHtk.Test3, "Service loadUsers!");
+				loadRooms();
+			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load Users from server!");
+				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
+				intent.putExtra("loadingResult", "noUsers");
+				getApplicationContext().sendBroadcast(intent);
+			}
+		});
+	}
+
+	private void loadRooms() {
+		LogHtk.i(LogHtk.Test3, "Service loadRooms!");
+		APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
+			@Override
+			public void onSuccess(List<Room> rooms) {
+				RObjectManager.getInstance().saveRoomsOrUpdate(rooms);
+
+				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
+				intent.putExtra("loadingResult", "yes");
+				getApplicationContext().sendBroadcast(intent);
+			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load Rooms from server!");
+				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
+				intent.putExtra("loadingResult", "noRooms");
+				getApplicationContext().sendBroadcast(intent);
+			}
+		});
+	}
+
+	public AntbuddyXmppConnection getXMPPConnection() {
+		return mXmppConnection;
 	}
 
 	public void loginXMPP() {

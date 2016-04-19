@@ -30,9 +30,11 @@ import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -63,6 +65,8 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        LogHtk.i(LogHtk.Test3, "RecentFragment onCreate!");
+
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
         ArrayList<String> groupNames = new ArrayList<>();
@@ -91,13 +95,13 @@ public class RecentFragment extends Fragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Bundle args = new Bundle();
                 if (groupPosition == 0) {
-                    OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
+                    ROpeningChatRoom openingChatRoom = (ROpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
                     RRoom room = RObjectManager.findRoom(openingChatRoom.getChatRoomKey());
                     args.putString(ChatActivity.kKeyRoom, room.getKey());
                     args.putBoolean(ChatActivity.key_type, true);
                     args.putString(ChatActivity.key_title, room.getName());
                 } else {
-                    OpeningChatRoom openingChatRoom = (OpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
+                    ROpeningChatRoom openingChatRoom = (ROpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
                     RUser user = RObjectManager.findUser(openingChatRoom.getChatRoomKey());
                     args.putString(ChatActivity.kKeyRoom, user.getKey());
                     args.putBoolean(ChatActivity.key_type, false);
@@ -112,13 +116,15 @@ public class RecentFragment extends Fragment {
         viewsListener();
 
         // Service created at Application, but we need to check it again
-        if (AntbuddyService.getInstance() != null) {
-            AntbuddyService.getInstance().resetXMPP();
-        } else {
-            LogHtk.e(LogHtk.RecentFragment, "Warning! Android Local Service is null at recentFragment!");
-        }
+//        if (AntbuddyService.getInstance() != null) {
+//            AntbuddyService.getInstance().resetXMPP();
+//        } else {
+//            LogHtk.e(LogHtk.RecentFragment, "Warning! Android Local Service is null at recentFragment!");
+//        }
 
-        loading_UserMe_Users_Rooms();
+        //loading_UserMe_Users_Rooms();
+
+        updateUI();
         return rootView;
     }
 
@@ -156,11 +162,19 @@ public class RecentFragment extends Fragment {
     }
 
     protected void loading_UserMe_Users_Rooms() {
+        Boolean isdataLoadedFromDB = false;
+        AntbuddyApplication application = AntbuddyApplication.getInstance();
+//        if (application.isUserMeExist() && application.isUsersExist() && application.isRoomsExist()) {
+//            updateUI();
+//            isdataLoadedFromDB = true;
+//        }
+
         if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    RObjectManager.saveUserMeOrUpdate(me);
+                    RObjectManager.getInstance().saveUserMeOrUpdate(me);
+//                    AntbuddyApplication.getInstance().setUserme(RObjectManager.getInstance().getUserMe());
                     loadUsers();
                 }
 
@@ -171,9 +185,7 @@ public class RecentFragment extends Fragment {
                     processUIWhenError();
                 }
             });
-        } else if (RObjectManager.isUserMeExist() && RObjectManager.isUsersExist() && RObjectManager.isRoomsExist()) {
-            updateUI();
-        } else {    // No connection and No data in DB
+        } else if (!isdataLoadedFromDB) {    // No connection and No data in DB
             processUIWhenError();
         }
     }
@@ -182,7 +194,8 @@ public class RecentFragment extends Fragment {
         APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                RObjectManager.saveUsersOrUpdate(users);
+//                RObjectManager.saveUsersOrUpdate(users);
+//                AntbuddyApplication.getInstance().setUsers(RObjectManager.getUsers());
                 loadRooms();
             }
 
@@ -199,7 +212,8 @@ public class RecentFragment extends Fragment {
         APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
-                RObjectManager.saveRoomsOrUpdate(rooms);
+//                RObjectManager.saveRoomsOrUpdate(rooms);
+//                AntbuddyApplication.getInstance().setRooms(RObjectManager.getRooms());
                 updateUI();
             }
 
@@ -213,32 +227,22 @@ public class RecentFragment extends Fragment {
         });
     }
 
-    private void updateUI() {
-        RUserMe me = RObjectManager.getUserMe();
+    protected void updateUI() {
+        RUserMe me = RObjectManager.getInstance().getUserMeFromCache();
+
         if (me == null) {
-            LogHtk.e(LogHtk.RecentFragment, "UserMe is null!");
             backgroundTry.setVisibility(View.VISIBLE);
             prb_Loading.setVisibility(View.GONE);
             btnTry.setVisibility(View.VISIBLE);
             backgroundViews.setVisibility(View.GONE);
             prb_LoadingFisrt.setVisibility(View.GONE);
         } else {
+            LogHtk.i(LogHtk.Test3, "Recent: " + me.toString());
             if (me.getOpeningChatrooms() != null) {
                 recentsData.get(ChatType.Group.getValue()).clear();
                 recentsData.get(ChatType.OneToOne.getValue()).clear();
                 recentsData.get(ChatType.Group.getValue()).addAll(RUserMe.getChatsOpening(me, true));
                 recentsData.get(ChatType.OneToOne.getValue()).addAll(RUserMe.getChatsOpening(me, false));
-                LogHtk.i(LogHtk.Test3, "Size Users opening: " + recentsData.get(ChatType.OneToOne.getValue()).size());
-
-                for (ROpeningChatRoom o : recentsData.get(ChatType.OneToOne.getValue())) {
-                    LogHtk.i(LogHtk.Test3, "--->open: " + o.get_id());
-                    LogHtk.i(LogHtk.Test3, "open: " + o.getChatRoomKey());
-                    LogHtk.i(LogHtk.Test3, "open: " + o.getIsMuc());
-                    LogHtk.i(LogHtk.Test3, "open: " + o.getIsMuc());
-//                    LogHtk.i(LogHtk.Test3, "open: " + o.get());
-                }
-
-
 
                 recentsAdapter.notifyDataSetChanged();
                 backgroundTry.setVisibility(View.GONE);
@@ -246,9 +250,21 @@ public class RecentFragment extends Fragment {
                 btnTry.setVisibility(View.VISIBLE);
                 backgroundViews.setVisibility(View.VISIBLE);
                 prb_LoadingFisrt.setVisibility(View.GONE);
+            } else {
+                LogHtk.i(LogHtk.Test3, "getOpeningChatrooms");
             }
 
-            CenterActivity.connectXMPP(me);
+//            CenterActivity.connectXMPP(me);
+//            try {
+//                if (!AntbuddyService.getInstance().isXMPPConnected()) {
+//
+//                } else {
+//
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                LogHtk.e(LogHtk.RecentFragment, "Warning! XMPPConnection is null at RecentFragment!");
+//            }
         }
     }
 

@@ -119,7 +119,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.width = 60;
             layoutParams.height = 60;
             holder.imgAvatar.setLayoutParams(layoutParams);
-            for (RRoom room : RObjectManager.getRooms()) {
+            for (RRoom room : RObjectManager.getInstance().getRoomsFromCache()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
                         Glide.with(context)
@@ -143,7 +143,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.height = 160;
             holder.imgAvatar.setLayoutParams(layoutParams);
             //holder.ic_status.setVisibility(View.VISIBLE);
-            for (RUser user : RObjectManager.getUsers()) {
+            for (RUser user : RObjectManager.getInstance().getUsersFromCache()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     Glide.with(context)
                             .load(user.getAvatar())

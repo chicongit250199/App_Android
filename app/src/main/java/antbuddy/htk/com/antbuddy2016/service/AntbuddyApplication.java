@@ -8,6 +8,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.API;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
@@ -15,6 +19,7 @@ import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -27,6 +32,13 @@ public class AntbuddyApplication extends Application {
 	private Retrofit retrofit;
 	private API apiService;
 	private RealmConfiguration realmConfig;
+
+
+
+//	private RUserMe userme;
+//	private RealmResults<RUser> users;
+//	private RealmResults<RRoom> rooms;
+
 
 	@Override
 	public void onCreate() {
@@ -46,6 +58,10 @@ public class AntbuddyApplication extends Application {
 											.build();
 //		Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
+
+//		userme = RObjectManager.getInstance().getUserMe();
+//		users = RObjectManager.getUsers();
+//		rooms = RObjectManager.getRooms();
 	}
 
 	private API createAPIService() {
@@ -101,4 +117,52 @@ public class AntbuddyApplication extends Application {
 		apiService = retrofit.create(API.class);
 		return apiService;
 	}
+//
+//	public RUserMe getUserme() {
+//		return userme;
+//	}
+//
+//	public void setUserme(RUserMe userme) {
+//		this.userme = userme;
+//	}
+//
+//	public boolean isUserMeExist() {
+//		if (userme != null && userme.getKey().length() > 0) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+//
+//	public RealmResults<RUser> getUsers() {
+//		return users;
+//	}
+//
+//	public void setUsers(RealmResults<RUser> users) {
+//		this.users = users;
+//	}
+//
+//	public boolean isUsersExist() {
+//		if (users != null && users.size() > 0) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+//
+//	public RealmResults<RRoom> getRooms() {
+//		return rooms;
+//	}
+//
+//	public void setRooms(RealmResults<RRoom> rooms) {
+//		this.rooms = rooms;
+//	}
+//
+//	public boolean isRoomsExist() {
+//		if (rooms != null && rooms.size() > 0) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 }

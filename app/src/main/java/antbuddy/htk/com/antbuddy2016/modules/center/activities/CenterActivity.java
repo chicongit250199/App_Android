@@ -23,15 +23,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.model.Room;
+import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 29/03/2016.
@@ -47,6 +55,16 @@ public class CenterActivity extends AppCompatActivity {
     private Button btnSearch;
     private Button btnAlwaysChange;
     private Button btnSetting;
+
+    private Realm realm;
+    private RUserMe userMe;
+    private RealmResults<RUser> users;
+    private RealmResults<RRoom> rooms;
+
+    private RealmChangeListener userMeListener;
+    private RealmChangeListener usersListener;
+    private RealmChangeListener roomsListener;
+
 
 	// Work with service
     public static AntbuddyService mIRemoteService;
@@ -69,12 +87,16 @@ public class CenterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        LogHtk.i(LogHtk.Test3, "CenterActivity onCreate!");
         setContentView(R.layout.activity_center);
+
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY);
         ABSharedPreference.save(ABSharedPreference.KEY_IS_DOMAIN_EXIST, true);
 
         AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
+
+        setupRealmData();
 
         boolean isConnectService = connectServiceInAndroid();
         if (!isConnectService) {
@@ -83,7 +105,62 @@ public class CenterActivity extends AppCompatActivity {
 
         initView();
         viewsListener();
-        loadData();
+
+    }
+
+    private void setupRealmData() {
+        realm  = Realm.getDefaultInstance();
+//        userMe = realm.where(RUserMe.class).notEqualTo("_id", "9999").findFirst();
+//        users  = realm.where(RUser.class).notEqualTo("key", "8888").findAllAsync();
+//        rooms  = realm.where(RRoom.class).notEqualTo("key", "7777").findAllAsync();
+
+        userMe = realm.where(RUserMe.class).findFirst();
+        users  = realm.where(RUser.class).findAllAsync();
+        rooms  = realm.where(RRoom.class).findAllAsync();
+
+        userMeListener = new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
+                RecentFragment recentFragment = isRecentFragmentExist();
+                if (recentFragment == null) {
+
+                } else {
+
+                }
+            }
+        };
+
+        usersListener = new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                LogHtk.d(LogHtk.Test3, "---> Users Changed");
+                RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
+                if (recentFragment != null && recentFragment.isVisible()) {
+                    LogHtk.i(LogHtk.Test3, "Recent is exist!");
+                    recentFragment.updateUI();
+
+                } else {
+                    LogHtk.e(LogHtk.Test3, "Recent is not exist!");
+                }
+            }
+        };
+
+        roomsListener = new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                // ... do something with the updated Dog instance
+                LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
+
+            }
+        };
+
+        RObjectManager.getInstance().assignRealm(this.realm);
+        RObjectManager.getInstance().assignUserMe(this.userMe, this.userMeListener);
+        RObjectManager.getInstance().assignUsers(this.users, this.usersListener);
+        RObjectManager.getInstance().assignRooms(this.rooms, this.roomsListener);
+
+        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
     }
 
     private void initView() {
@@ -219,6 +296,12 @@ public class CenterActivity extends AppCompatActivity {
         if(mBound) {
             unbindService(mConnection);
         }
+
+        if (userMe != null) {
+            userMe.removeChangeListener(userMeListener);
+        }
+
+        realm.close();
         super.onDestroy();
     }
 
@@ -240,7 +323,9 @@ public class CenterActivity extends AppCompatActivity {
 
         APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
             @Override
-            public void onSuccess(UserMe object) {
+            public void onSuccess(UserMe me) {
+                //RObjectManager.saveUserMeOrUpdate(me);
+                //AntbuddyApplication.getInstance().setUserme(RObjectManager.getUserMe());
                 AndroidHelper.hideProgressBar(CenterActivity.this, progressBar_Center);
             }
 
@@ -266,6 +351,78 @@ public class CenterActivity extends AppCompatActivity {
 //                APIManager.showToastWithCode(error, CenterActivity.this);
 //            }
 //        });
+    }
+
+
+    protected void loading_UserMe_Users_Rooms() {
+        LogHtk.i(LogHtk.Test3, "Center loading_UserMe_Users_Rooms!");
+        Boolean isdataLoadedFromDB = false;
+        AntbuddyApplication application = AntbuddyApplication.getInstance();
+//        if (application.isUserMeExist() && application.isUsersExist() && application.isRoomsExist()) {
+////            updateUI();
+//            isdataLoadedFromDB = true;
+//        }
+
+        if (AndroidHelper.isInternetAvailable(getApplicationContext())) {
+            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
+                @Override
+                public void onSuccess(UserMe me) {
+                    //RObjectManager.saveUserMeOrUpdate(me);
+                    //AntbuddyApplication.getInstance().setUserme(RObjectManager.getUserMe());
+                    loadUsers();
+                }
+
+                @Override
+                public void onError(String error) {
+                    LogHtk.e(LogHtk.RecentFragment, "Error! Can not load UserMe from server!");
+                    APIManager.showToastWithCode(error, CenterActivity.this);
+//                    processUIWhenError();
+                }
+            });
+        } else if (!isdataLoadedFromDB) {    // No connection and No data in DB
+//            processUIWhenError();
+        }
+    }
+
+    private void loadUsers() {
+        LogHtk.i(LogHtk.Test3, "Center loadUsers!");
+        APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
+            @Override
+            public void onSuccess(List<User> users) {
+//                RObjectManager.saveUsersOrUpdate(users);
+//                AntbuddyApplication.getInstance().setUsers(RObjectManager.getUsers());
+                loadRooms();
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Users from server!");
+                APIManager.showToastWithCode(error, CenterActivity.this);
+//                processUIWhenError();
+            }
+        });
+    }
+
+    private void loadRooms() {
+        LogHtk.i(LogHtk.Test3, "Center loadRooms!");
+        APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
+            @Override
+            public void onSuccess(List<Room> rooms) {
+//                RObjectManager.saveRoomsOrUpdate(rooms);
+//                AntbuddyApplication.getInstance().setRooms(RObjectManager.getRooms());
+
+//                connectXMPP(AntbuddyApplication.getInstance().getUserme());
+//                updateUI();
+            }
+
+            @Override
+            public void onError(String error) {
+                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Rooms from server!");
+                APIManager.showToastWithCode(error, CenterActivity.this);
+//                processUIWhenError();
+
+            }
+        });
     }
 
     private boolean connectServiceInAndroid() {
@@ -294,6 +451,15 @@ public class CenterActivity extends AppCompatActivity {
 
         int portXMPP = 5222;    // Default
         String domainXMPP = me.getChatDomain();
+
+        LogHtk.i(LogHtk.Test1, "----");
+        LogHtk.i(LogHtk.Test1, "getDOMAIN_XMPP = " + domainXMPP);
+        LogHtk.i(LogHtk.Test1, "getHOST_XMPP = " + hostXMPP);
+        LogHtk.i(LogHtk.Test1, "getPASSWORD_XMPP = " + password);
+        LogHtk.i(LogHtk.Test1, "getUSERNAME_XMPP = " + username);
+        LogHtk.i(LogHtk.Test1, "getPORT_XMPP = " + portXMPP);
+        LogHtk.i(LogHtk.Test1, "----");
+
         if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
             ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
             ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
@@ -308,6 +474,15 @@ public class CenterActivity extends AppCompatActivity {
                     mIRemoteService.loginXMPP();
                 }
             }).start();
+        }
+    }
+
+    private RecentFragment isRecentFragmentExist() {
+        RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
+        if (recentFragment != null && recentFragment.isVisible()) {
+            return recentFragment;
+        } else {
+            return null;
         }
     }
 }

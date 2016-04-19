@@ -120,7 +120,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             keyRoom = bundle.getString(kKeyRoom);
             isGroup = bundle.getBoolean(key_type);
             title = bundle.getString(key_title);
-            keyMe = RObjectManager.getUserMe().getKey();
+            keyMe = RObjectManager.getInstance().getUserMeFromCache().getKey();
         }
         setContentView(R.layout.activity_chat);
 
@@ -366,11 +366,14 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             try {
                 // TODO: Check cho nay
-                RChatMessage chatMessage = intent.getParcelableExtra(BroadcastConstant.MESSAGE_RECEIVE);
-                if (keyRoom.equals(chatMessage.getFromKey())) {
-                    mChatAdapter1.saveMessageIntoDB(chatMessage);
-                    isFister = false;
-                }
+//                String idMessage = intent.getStringExtra("person_id");
+                String idMessage = intent.getStringExtra("idMessage");
+                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
+
+//                if (keyRoom.equals(chatMessage.getFromKey())) {
+//                    mChatAdapter1.saveMessageIntoDB(chatMessage);
+//                    isFister = false;
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
