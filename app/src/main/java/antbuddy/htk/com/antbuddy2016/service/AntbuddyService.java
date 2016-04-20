@@ -122,19 +122,18 @@ public class AntbuddyService extends Service {
 
 	// API request
 	public void loading_UserMe_Users_Rooms() {
+		new Exception().printStackTrace();
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
 			@Override
 			public void onSuccess(UserMe me) {
-				LogHtk.i(LogHtk.Test3, "Userme loaded at Service!");
 				RObjectManager.getInstance().saveUserMeOrUpdate(me);
 				loadUsers();
 			}
 
 			@Override
 			public void onError(String error) {
-				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load UserMe from server!");
 				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
-				intent.putExtra("loadingResult", "noUserMe");
+				intent.putExtra("loadingResult", error);
 				getApplicationContext().sendBroadcast(intent);
 			}
 		});

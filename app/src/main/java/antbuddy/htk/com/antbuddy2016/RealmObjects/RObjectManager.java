@@ -187,7 +187,13 @@ public class RObjectManager {
     }
 
     public void loading_UserMe_Users_Rooms() {
-        AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+        AntbuddyService service = AntbuddyService.getInstance();
+        if (service != null) {
+            AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+        } else {
+            LogHtk.i(LogHtk.Test3, "Service is still null!");
+        }
+
 //        AntbuddyService.getInstance().loadUsers();
     }
 

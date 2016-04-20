@@ -91,7 +91,7 @@ public class LoadingActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             try {
                 String result = intent.getStringExtra("loadingResult");
-                LogHtk.e(LogHtk.Test1, "result = " + result);
+                LogHtk.e(LogHtk.Test1, "result abc = " + result);
 
                 if (result.contains("yes")) {
                     AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
