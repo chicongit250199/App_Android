@@ -34,6 +34,15 @@ public class RObjectManagerBackGround {
         realm = Realm.getDefaultInstance();
     }
 
+    public void saveMessage(RChatMessage message) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(message);
+//        RChatMessage realmMessage = realm.createObject(RChatMessage.class);
+//        realmMessage.setBody(message.getBody());
+//        realmMessage.setTime(message.getTime());
+        realm.commitTransaction();
+    }
+
     // ASSIGN
     public void assignRealm(Realm realm) {
         this.realm = realm;

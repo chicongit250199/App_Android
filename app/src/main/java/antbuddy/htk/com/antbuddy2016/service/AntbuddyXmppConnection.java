@@ -225,23 +225,19 @@ public class AntbuddyXmppConnection {
 	 */
 	private void processMessageReceived(Packet packet) {
 
-		Message message = (Message) packet;
+		final Message message = (Message) packet;
 		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
 
 		if (message.getBody() != null && message.getBody().length() > 0) {
-			final RChatMessage chatMessage = new RChatMessage(message);
-
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					Realm realm = Realm.getDefaultInstance();
-					realm.beginTransaction();
-					realm.copyToRealmOrUpdate(chatMessage);
-					realm.commitTransaction();
+					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+					RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+					realmBG.saveMessage(chatMessage);
+					realmBG.closeRealm();
 				}
 			}).start();
-
-
 
 
 
@@ -440,9 +436,7 @@ public class AntbuddyXmppConnection {
 					}
 
 					for (RRoom room : rooms) {
-
 						RUserMe me = userMe;
-
 						String key_org = me.getFullCurrentOrg().getOrgKey();
 						String key_me = me.getKey();
 						Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);

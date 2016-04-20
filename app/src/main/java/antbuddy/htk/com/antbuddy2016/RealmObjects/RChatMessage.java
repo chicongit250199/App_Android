@@ -118,7 +118,7 @@ public class RChatMessage extends RealmObject {
         super();
     }
 
-    public RChatMessage(final Message message) {
+    public RChatMessage(final Message message, RUserMe userMe) {
         id = message.getPacketID();
         Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getTo());
         while (m.find()) {
@@ -126,7 +126,7 @@ public class RChatMessage extends RealmObject {
             receiverKey = m.group(1);
         }
 
-        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
+//        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
         if (message.getFrom().contains("/")) {
             String params[] = message.getFrom().split("/");
             if (params[0].endsWith(userMe.getChatMucDomain())){

@@ -177,11 +177,6 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         return rowView;
     }
 
-    @Override
-    public int getCount() {
-        return realmResults.size();
-    }
-
     public void addMessages(List<RChatMessage> messages, boolean isGotoBottom) {
         Rect corners = new Rect();
         if (!isGotoBottom) {

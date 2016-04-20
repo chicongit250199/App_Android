@@ -143,8 +143,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         unregisterReceiver(messageReceiver);
-        super.onDestroy();
         realm.close();
+        super.onDestroy();
     }
 
     private boolean connectServiceInAndroid() {
@@ -202,6 +202,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         if (mChatAdapter1 == null) {
             mChatAdapter1 = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
+            mChatAdapter1.updateRealmResults(chatMessages);
         }
 
         lv_messages.setAdapter(mChatAdapter1);
