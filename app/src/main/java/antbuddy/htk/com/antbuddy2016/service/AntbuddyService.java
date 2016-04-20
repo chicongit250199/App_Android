@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Looper;
 
 import java.util.EmptyStackException;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
@@ -51,7 +53,6 @@ public class AntbuddyService extends Service {
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
-
 	}
 
 	@Override
@@ -64,12 +65,7 @@ public class AntbuddyService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onStartCommand SERVICE<----------------");
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				loginXMPP();
-			}
-		}).start();
+		loginXMPP();
 		return START_STICKY;
 	}
 
@@ -94,16 +90,17 @@ public class AntbuddyService extends Service {
 	@Override
 	public void onDestroy() {
 		LogHtk.e(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
+
 		startService(new Intent(this, AntbuddyService.class));
 	}
 
-	public boolean isXMPPConnected() throws Exception {
-		if (AntbuddyXmppConnection.getInstance() == null) {
-			throw new Exception();
-		} else {
-			return mXmppConnection.getConnection().isConnected();
-		}
-	}
+//	public boolean isXMPPConnected() throws Exception {
+//		if (AntbuddyXmppConnection.getInstance() == null) {
+//			throw new Exception();
+//		} else {
+//			return mXmppConnection.getConnection().isConnected();
+//		}
+//	}
 
 	public void loadUserMe() {
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
@@ -122,15 +119,14 @@ public class AntbuddyService extends Service {
 
 	// API request
 	public void loading_UserMe_Users_Rooms() {
-		new Exception().printStackTrace();
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
-			@Override
+			@Override        // Main Thread
 			public void onSuccess(UserMe me) {
 				RObjectManager.getInstance().saveUserMeOrUpdate(me);
 				loadUsers();
 			}
 
-			@Override
+			@Override        // Main Thread
 			public void onError(String error) {
 				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
 				intent.putExtra("loadingResult", error);
@@ -186,19 +182,30 @@ public class AntbuddyService extends Service {
 	}
 
 	public void loginXMPP() {
-		LogHtk.i(LogHtk.SERVICE_TAG, "------------------>loginXMPP<----------------");
-		mXmppConnection = AntbuddyXmppConnection.getInstance();
-		mXmppConnection.connectXMPP(AntbuddyService.this, new XMPPReceiver() {
+		new Thread(new Runnable() {
 			@Override
-			public void onSuccess(String result) {
-				LogHtk.d(LogHtk.XMPP_TAG, "Login and Connect XMPP:  " + result);
+			public void run() {
+				LogHtk.i(LogHtk.SERVICE_TAG, "------------------>loginXMPP<----------------");
+				RObjectManagerBackGround rObjectManagerBG = new RObjectManagerBackGround();
+				mXmppConnection = AntbuddyXmppConnection.getInstance();
+				mXmppConnection.connectXMPP(rObjectManagerBG.getUserMeFromDB());
+				rObjectManagerBG.closeRealm();
 			}
+		}).start();
 
-			@Override
-			public void onError(String error) {
-				LogHtk.e(LogHtk.XMPP_TAG, "Login and Connect XMPP " + error);
-			}
-		});
+
+//		mXmppConnection = AntbuddyXmppConnection.getInstance();
+//		mXmppConnection.connectXMPP(AntbuddyService.this, new XMPPReceiver() {
+//			@Override
+//			public void onSuccess(String result) {
+//				LogHtk.d(LogHtk.XMPP_TAG, "Login and Connect XMPP:  " + result);
+//			}
+//
+//			@Override
+//			public void onError(String error) {
+//				LogHtk.e(LogHtk.XMPP_TAG, "Login and Connect XMPP " + error);
+//			}
+//		});
 	}
 
 	public void sendMessageOut(ChatMessage chatMessage) {

@@ -27,11 +27,13 @@ import org.jivesoftware.smackx.provider.AdHocCommandDataProvider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
@@ -47,6 +49,7 @@ import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class AntbuddyXmppConnection {
 //	public static final String TAG = "AntbuddyXmppConnection";
@@ -417,32 +420,51 @@ public class AntbuddyXmppConnection {
 //        mConnection.sendPacket(msg);
     }
 
+	Thread openingRoom;
 	/*
 	 * In CHATGROUP case:
 	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
+		if (openingRoom == null || !openingRoom.isAlive()) {
+			new Exception("GoiNhieu").printStackTrace();
+			openingRoom = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+					RealmResults<RRoom> rooms = realmBG.getRoomsFromDB();
+					RUserMe userMe = realmBG.getUserMeFromDB();
+					if (userMe == null) {
+						realmBG.closeRealm();
+						return;
+					}
 
-		for (RRoom room : RObjectManager.getInstance().getRoomsFromCache()) {
+					for (RRoom room : rooms) {
 
-			RUserMe me = RObjectManager.getInstance().getUserMeFromCache();
+						RUserMe me = userMe;
 
-			String key_org = me.getFullCurrentOrg().getOrgKey();
-			String key_me = me.getKey();
-			Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
-			presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
-			if (xmppConnection != null && xmppConnection.isConnected()) {
-				xmppConnection.sendPacket(presence);
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+						String key_org = me.getFullCurrentOrg().getOrgKey();
+						String key_me = me.getKey();
+						Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
+						presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
+						if (xmppConnection != null && xmppConnection.isConnected()) {
+							xmppConnection.sendPacket(presence);
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+						} else {
+							LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+						}
+					}
+					realmBG.closeRealm();
 				}
-				LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-			} else {
-				LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-			}
+			});
+			openingRoom.start();
 		}
+
 
 
 //		ObjectManager.getInstance().setOnListenerRooms(null, new ObjectManager.OnObjectManagerListener<List<Room>>() {
@@ -881,4 +903,44 @@ public class AntbuddyXmppConnection {
 		return ABSharedPreference.getXMPPConfig();
 	}
 
+	public void connectXMPP(RUserMe me) {
+		if (me != null) {
+			String[] accountXMPP = me.getChatToken().split(":");
+			String username = accountXMPP[0];
+			String password = accountXMPP[1];
+
+			Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
+			Matcher m = p.matcher(me.getChatUrl());
+			String hostXMPP = "";
+			if (m.matches()) {
+				hostXMPP = m.group(1);
+			}
+
+			int portXMPP = 5222;    // Default
+			String domainXMPP = me.getChatDomain();
+
+			if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
+				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
+				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
+				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
+				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
+				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
+
+				// LOGIN XMPP
+				connectXMPP(AntbuddyService.getInstance().getApplicationContext(), new XMPPReceiver() {
+					@Override
+					public void onSuccess(String result) {
+						LogHtk.d(LogHtk.XMPP_TAG, "-->Connect XMPP:  " + result);
+					}
+
+					@Override
+					public void onError(String error) {
+						LogHtk.e(LogHtk.XMPP_TAG, "-->Connect XMPP " + error);
+					}
+				});
+			}
+		} else {
+			new Exception("Cannot connect XMPP! Cause Userme is NULL!").printStackTrace();
+		}
+	}
 }

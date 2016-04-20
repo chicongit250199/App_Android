@@ -101,6 +101,8 @@ public class CenterActivity extends AppCompatActivity {
             LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
         }
 
+        AntbuddyService.getInstance().loginXMPP();
+
         initView();
         viewsListener();
 
@@ -119,7 +121,8 @@ public class CenterActivity extends AppCompatActivity {
         userMeListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
+                //AntbuddyService.getInstance().loginXMPP();
+
                 RecentFragment recentFragment = isRecentFragmentExist();
                 if (recentFragment == null) {
 
@@ -132,12 +135,9 @@ public class CenterActivity extends AppCompatActivity {
         usersListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> Users Changed");
                 RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
                 if (recentFragment != null && recentFragment.isVisible()) {
-                    LogHtk.i(LogHtk.Test3, "Recent is exist!");
                     recentFragment.updateUI();
-
                 } else {
                     LogHtk.e(LogHtk.Test3, "Recent is not exist!");
                 }
@@ -147,9 +147,6 @@ public class CenterActivity extends AppCompatActivity {
         roomsListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                // ... do something with the updated Dog instance
-                LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
-
             }
         };
 
@@ -433,47 +430,47 @@ public class CenterActivity extends AppCompatActivity {
         return mIRemoteService != null;
     }
 
-    protected static void connectXMPP(RUserMe me) {
-        LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());
-
-        String[] accountXMPP = me.getChatToken().split(":");
-        String username = accountXMPP[0];
-        String password = accountXMPP[1];
-
-        Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
-        Matcher m = p.matcher(me.getChatUrl());
-        String hostXMPP = "";
-        if (m.matches()) {
-            hostXMPP = m.group(1);
-        }
-
-        int portXMPP = 5222;    // Default
-        String domainXMPP = me.getChatDomain();
-
-        LogHtk.i(LogHtk.Test1, "----");
-        LogHtk.i(LogHtk.Test1, "getDOMAIN_XMPP = " + domainXMPP);
-        LogHtk.i(LogHtk.Test1, "getHOST_XMPP = " + hostXMPP);
-        LogHtk.i(LogHtk.Test1, "getPASSWORD_XMPP = " + password);
-        LogHtk.i(LogHtk.Test1, "getUSERNAME_XMPP = " + username);
-        LogHtk.i(LogHtk.Test1, "getPORT_XMPP = " + portXMPP);
-        LogHtk.i(LogHtk.Test1, "----");
-
-        if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
-            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
-            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
-            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
-            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
-            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
-
-            // LOGIN XMPP
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mIRemoteService.loginXMPP();
-                }
-            }).start();
-        }
-    }
+//    protected static void connectXMPP(RUserMe me) {
+//        LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());
+//
+//        String[] accountXMPP = me.getChatToken().split(":");
+//        String username = accountXMPP[0];
+//        String password = accountXMPP[1];
+//
+//        Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
+//        Matcher m = p.matcher(me.getChatUrl());
+//        String hostXMPP = "";
+//        if (m.matches()) {
+//            hostXMPP = m.group(1);
+//        }
+//
+//        int portXMPP = 5222;    // Default
+//        String domainXMPP = me.getChatDomain();
+//
+//        LogHtk.i(LogHtk.Test1, "----");
+//        LogHtk.i(LogHtk.Test1, "getDOMAIN_XMPP = " + domainXMPP);
+//        LogHtk.i(LogHtk.Test1, "getHOST_XMPP = " + hostXMPP);
+//        LogHtk.i(LogHtk.Test1, "getPASSWORD_XMPP = " + password);
+//        LogHtk.i(LogHtk.Test1, "getUSERNAME_XMPP = " + username);
+//        LogHtk.i(LogHtk.Test1, "getPORT_XMPP = " + portXMPP);
+//        LogHtk.i(LogHtk.Test1, "----");
+//
+//        if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
+//            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
+//            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
+//            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
+//            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
+//            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
+//
+//            // LOGIN XMPP
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mIRemoteService.loginXMPP();
+//                }
+//            }).start();
+//        }
+//    }
 
     private RecentFragment isRecentFragmentExist() {
         RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);

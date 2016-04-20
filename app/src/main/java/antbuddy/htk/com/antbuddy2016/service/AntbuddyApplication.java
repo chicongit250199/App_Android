@@ -8,12 +8,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.API;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -35,7 +39,6 @@ public class AntbuddyApplication extends Application {
 	@Override
 	public void onCreate() {
         super.onCreate();
-		LogHtk.e(TAG, "Created AntbuddyApplication!");
 		mInstance = this;
 
 		// Create Android Local Service
@@ -60,18 +63,10 @@ public class AntbuddyApplication extends Application {
 		return apiService;
 	}
 
-	public void deleteRealm() {
-		Realm.deleteRealm(realmConfig);
-	}
-
-	public void closeRealm() {
-		Realm.getDefaultInstance().close();
-	}
-
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-        LogHtk.e(TAG, "onLowMemory");
+        LogHtk.e(LogHtk.WarningHTK, "Application onLowMemory");
 	}
 
 	public static synchronized AntbuddyApplication getInstance() {
@@ -82,7 +77,6 @@ public class AntbuddyApplication extends Application {
 		if (apiService == null) {
 			apiService = createAPIService();
 		}
-
 
 		String domain = ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN);
 		if (domain.length() > 0) {

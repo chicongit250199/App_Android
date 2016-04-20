@@ -1,8 +1,5 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
-import android.os.SystemClock;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
@@ -19,11 +16,11 @@ import io.realm.RealmResults;
 /**
  * Created by thanhnguyen on 14/04/2016.
  */
-public class RObjectManager {
+public class RObjectManagerBackGround {
 
     private Realm realm;
 
-    private static RObjectManager realmObject;
+    private static RObjectManagerBackGround realmObject;
 
     private RUserMe userme;
     private RealmResults<RUser> users;
@@ -33,15 +30,8 @@ public class RObjectManager {
     private RealmChangeListener usersListener;
     private RealmChangeListener roomsListener;
 
-    private RObjectManager() {
-
-    }
-
-    public static RObjectManager getInstance() {
-        if (realmObject == null) {
-            realmObject = new RObjectManager();
-        }
-        return realmObject;
+    public RObjectManagerBackGround() {
+        realm = Realm.getDefaultInstance();
     }
 
     // ASSIGN
