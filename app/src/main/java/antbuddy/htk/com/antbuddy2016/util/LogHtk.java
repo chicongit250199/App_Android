@@ -24,6 +24,8 @@ public class LogHtk {
     public static String AntbuddyApplication = "AntbuddyApplication";
     public static String RecentFragment = "RecentFragment";
     public static String Realm = "Realm";
+    public static String ErrorHTK = "ErrorHTK";
+    public static String WarningHTK = "WarningHTK";
 
 
     private static String[] tags = {
@@ -43,6 +45,8 @@ public class LogHtk {
             GroupsFragment,
             UserMe,
             Realm,
+            ErrorHTK,
+            WarningHTK,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

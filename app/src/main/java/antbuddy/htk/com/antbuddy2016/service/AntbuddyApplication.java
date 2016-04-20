@@ -26,19 +26,11 @@ import retrofit.Retrofit;
 public class AntbuddyApplication extends Application {
 	public static final String TAG = AntbuddyApplication.class.getSimpleName();
 
-	private RequestQueue mRequestQueue;
 	private static AntbuddyApplication mInstance;
 
 	private Retrofit retrofit;
 	private API apiService;
 	private RealmConfiguration realmConfig;
-
-
-
-//	private RUserMe userme;
-//	private RealmResults<RUser> users;
-//	private RealmResults<RRoom> rooms;
-
 
 	@Override
 	public void onCreate() {
@@ -51,17 +43,12 @@ public class AntbuddyApplication extends Application {
 
 		createAPIService();
 
-		//AndroidHelper.showLogSizeDevice(getApplicationContext());
 		realmConfig = new RealmConfiguration.Builder(this)
 											.schemaVersion(5)
 											.name("demo5.realm")
 											.build();
-//		Realm.deleteRealm(realmConfig);
+		//Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
-
-//		userme = RObjectManager.getInstance().getUserMe();
-//		users = RObjectManager.getUsers();
-//		rooms = RObjectManager.getRooms();
 	}
 
 	private API createAPIService() {
@@ -120,52 +107,4 @@ public class AntbuddyApplication extends Application {
 		apiService = retrofit.create(API.class);
 		return apiService;
 	}
-//
-//	public RUserMe getUserme() {
-//		return userme;
-//	}
-//
-//	public void setUserme(RUserMe userme) {
-//		this.userme = userme;
-//	}
-//
-//	public boolean isUserMeExist() {
-//		if (userme != null && userme.getKey().length() > 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
-//
-//	public RealmResults<RUser> getUsers() {
-//		return users;
-//	}
-//
-//	public void setUsers(RealmResults<RUser> users) {
-//		this.users = users;
-//	}
-//
-//	public boolean isUsersExist() {
-//		if (users != null && users.size() > 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
-//
-//	public RealmResults<RRoom> getRooms() {
-//		return rooms;
-//	}
-//
-//	public void setRooms(RealmResults<RRoom> rooms) {
-//		this.rooms = rooms;
-//	}
-//
-//	public boolean isRoomsExist() {
-//		if (rooms != null && rooms.size() > 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
 }

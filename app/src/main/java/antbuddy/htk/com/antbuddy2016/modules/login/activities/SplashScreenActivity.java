@@ -43,10 +43,7 @@ public class SplashScreenActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                new Exception().printStackTrace();
-
                 String result = intent.getStringExtra("loadingResult");
-                LogHtk.i(LogHtk.Test1, "result = " + result);
 
                 if (result.contains("yes")) {
                     AndroidHelper.gotoActivity(SplashScreenActivity.this, CenterActivity.class, true);
@@ -54,7 +51,6 @@ public class SplashScreenActivity extends Activity {
                 }
 
                 if (result.contains("No address associated with hostname")) {
-                    LogHtk.i(LogHtk.Test1, "No address associated with hostname = " + result);
                     if (userMe.isValid() && users.isValid() && rooms.isValid()) {
                         AndroidHelper.gotoActivity(SplashScreenActivity.this, CenterActivity.class, true);
                         unregisterReceiver(loadingReceiver);
@@ -121,9 +117,6 @@ public class SplashScreenActivity extends Activity {
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY.toString())) {
                     loadingCenter();
-//                    Intent i = new Intent(SplashScreenActivity.this, CenterActivity.class);
-//                    startActivity(i);
-//                    finish();
                 }
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CREATE_ACCOUNT_ACTIVITY.toString())) {
@@ -155,14 +148,13 @@ public class SplashScreenActivity extends Activity {
                 this.unregisterReceiver(loadingReceiver);
             }
         } catch (IllegalArgumentException e) {
-            LogHtk.i(LogHtk.Test3,"epicReciver is already unregistered");
+            LogHtk.i(LogHtk.ErrorHTK, "epicReciver is already unregistered");
             loadingReceiver = null;
         }
         super.onDestroy();
     }
 
     private void loadingCenter() {
-        LogHtk.d(LogHtk.Test3, "---> Vao day!");
         realm  = Realm.getDefaultInstance();
         userMe = realm.where(RUserMe.class).findFirst();
         users  = realm.where(RUser.class).findAllAsync();
@@ -171,7 +163,6 @@ public class SplashScreenActivity extends Activity {
         userMeListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
 
             }
         };
@@ -179,15 +170,13 @@ public class SplashScreenActivity extends Activity {
         usersListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> Users Changed");
+
             }
         };
 
         roomsListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                // ... do something with the updated Dog instance
-                LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
 
             }
         };

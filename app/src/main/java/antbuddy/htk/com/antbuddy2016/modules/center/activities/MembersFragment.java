@@ -66,7 +66,8 @@ public class MembersFragment extends Fragment {
         initViews(rootView);
         viewsListener();
 
-        loading_Users();
+        updateUI();
+        //loading_Users();
 
         return rootView;
     }

@@ -222,15 +222,4 @@ public class AndroidHelper {
         }
         return "";
     }
-
-    public static void showLogSizeDevice(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE); // the results will be higher than using the activity context object or the getWindowManager() shortcut
-        wm.getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        LogHtk.i(LogHtk.AntbuddyApplication, "screenWidth" + screenWidth);
-        LogHtk.i(LogHtk.AntbuddyApplication, "screenHeight" + screenHeight);
-    }
 }
