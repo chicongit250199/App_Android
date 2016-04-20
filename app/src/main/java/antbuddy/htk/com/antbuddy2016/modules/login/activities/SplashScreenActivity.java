@@ -151,6 +151,11 @@ public class SplashScreenActivity extends Activity {
             LogHtk.i(LogHtk.ErrorHTK, "epicReciver is already unregistered");
             loadingReceiver = null;
         }
+
+        if (realm != null) {
+            realm.close();
+        }
+
         super.onDestroy();
     }
 

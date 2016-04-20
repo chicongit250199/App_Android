@@ -55,7 +55,8 @@ public class SettingActivity extends Activity {
 
         initViews();
 
-        loading_UserMe();
+//        loading_UserMe();
+        updateUI(RObjectManager.getInstance().getUserMeFromCache());
         viewsListener();
     }
 
@@ -101,10 +102,10 @@ public class SettingActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         ABSharedPreference.resetXMPP();
 
-                        RObjectManager.getInstance().closeRealm();
+                        //RObjectManager.getInstance().closeRealm();
                         // Reset Object Manager
-                        AntbuddyApplication.getInstance().deleteRealm();
-                        AntbuddyApplication.getInstance().closeRealm();
+
+                        //AntbuddyApplication.getInstance().closeRealm();
                         AntbuddyApplication.getInstance().resetApiService();
 
 //                        ObjectManager.getInstance().clear();
@@ -127,14 +128,16 @@ public class SettingActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 //                        ObjectManager.getInstance().clear();
-                        RObjectManager.getInstance().closeRealm();
-                        AntbuddyApplication.getInstance().deleteRealm();
-                        AntbuddyApplication.getInstance().closeRealm();
+//                        RObjectManager.getInstance().closeRealm();
+
+                        //AntbuddyApplication.getInstance().closeRealm();
+                        //AntbuddyApplication.getInstance().deleteRealm();
                         ABSharedPreference.resetAccountInSharedPreferences();
                         ABSharedPreference.resetXMPP();
                         CenterActivity.mIRemoteService.resetXMPP();
                         AntbuddyApplication.getInstance().resetApiService();
                         AndroidHelper.gotoActivity(SettingActivity.this, LoginActivity.class, true, true);
+
                     }
                 }, null);
             }

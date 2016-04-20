@@ -82,31 +82,46 @@ public class LoadingActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(loadingReceiver);
+        try {
+            if (loadingReceiver != null) {
+                this.unregisterReceiver(loadingReceiver);
+            }
+        } catch (IllegalArgumentException e) {
+            LogHtk.i(LogHtk.ErrorHTK, "epicReciver is already unregistered");
+            loadingReceiver = null;
+        }
+
+        realm.close();
         super.onDestroy();
     }
 
-    private final BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             try {
                 String result = intent.getStringExtra("loadingResult");
-                LogHtk.e(LogHtk.Test1, "result abc = " + result);
 
                 if (result.contains("yes")) {
                     AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
                 }
 
-                if (result.contains("noUserMe")) {
-                    AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
+                if (result.contains("No address associated with hostname")) {
+                    if (userMe.isValid() && users.isValid() && rooms.isValid()) {
+                        AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
+                        unregisterReceiver(loadingReceiver);
+                    }
                 }
 
                 if (result.contains("noRooms")) {
                     AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
                 }
 
                 if (result.contains("noUsers")) {
                     AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
