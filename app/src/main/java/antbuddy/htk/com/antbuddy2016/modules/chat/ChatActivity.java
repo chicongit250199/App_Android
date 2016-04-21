@@ -167,32 +167,41 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         realm = Realm.getDefaultInstance();
 
         if (isGroup) {  // Groups
-            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll();
+            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id");
         } else {    // 1-1, myseft
             if (keyMe == keyRoom) {
+
                 chatMessages = realm.where(RChatMessage.class)
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyRoom)
-                        .findAll();
+                        .findAll().distinct("id");
             } else {   // 1-1
                 chatMessages = realm.where(RChatMessage.class)
+                        .equalTo("fromKey", keyMe)
                         .equalTo("senderKey", keyMe)
                         .equalTo("receiverKey", keyRoom)
                         .or()
+                        .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyMe)
-                        .findAll();
+                        .findAll().distinct("id");
             }
         }
 
         chatMessages.sort("time", Sort.ASCENDING);
 
+
+        for (int i = 0; i < chatMessages.size() ; i++) {
+            LogHtk.i(LogHtk.Test1, "------------------");
+            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
+            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
+        }
+
         chatMessages.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
                 lv_messages.setSelection(lv_messages.getCount() - 1);
-                LogHtk.i(LogHtk.Test1, "Size = " + chatMessages.size());
             }
         });
     }

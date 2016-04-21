@@ -45,6 +45,7 @@ import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.setting.ABXMPPConfig;
+import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -224,11 +225,13 @@ public class AntbuddyXmppConnection {
 	 * @param packet
 	 */
 	private void processMessageReceived(Packet packet) {
+
 		final Message message = (Message) packet;
+		LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
 		String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
 
 		if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
-			LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
+
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -403,12 +406,14 @@ public class AntbuddyXmppConnection {
 			type = Message.Type.chat;
 		}
 
-
+		String id = chatMessage.getFromKey()+ AndroidHelper.renID();
 		Message msg = new Message(receiverJid, type);
+		msg.setPacketID(id);
 		msg.setBody(chatMessage.getBody());
 		msg.setWith(chatMessage.getReceiverKey());
+		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
 		xmppConnection.sendPacket(msg);
-		APIManager.newMessageToHistory(chatMessage);
+		APIManager.newMessageToHistory(chatMessage, id);
 		//fix not update in other device
 		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
 			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));

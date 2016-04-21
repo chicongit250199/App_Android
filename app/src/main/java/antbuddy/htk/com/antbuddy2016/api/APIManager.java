@@ -227,8 +227,8 @@ public class APIManager {
         });
     }
 
-    public static void newMessageToHistory(ChatMessage chatMessage) {
-        String id = chatMessage.getFromKey()+ AndroidHelper.renID();
+    public static void newMessageToHistory(ChatMessage chatMessage, String idMessage) {
+
         HashMap<String, Object> body = new HashMap<>();
         body.put("body", chatMessage.getBody());
         body.put("fromKey", chatMessage.getFromKey());
@@ -236,7 +236,8 @@ public class APIManager {
         body.put("senderKey", chatMessage.getSenderKey());
         body.put("subtype", chatMessage.getSubType());
         body.put("type", chatMessage.getType());
-        body.put("id", id);
+        LogHtk.i(LogHtk.Test1, "id message saved on Server: " + idMessage);
+        body.put("id", idMessage);
 
         Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), body);
         call.enqueue(new Callback<ChatMessage>() {
