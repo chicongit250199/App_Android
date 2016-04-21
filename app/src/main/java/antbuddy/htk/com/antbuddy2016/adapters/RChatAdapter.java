@@ -197,8 +197,6 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
     }
 
     synchronized public void saveMessagesIntoDB(List<GChatMassage> messages) {
-        LogHtk.i(LogHtk.Test1, "--------saveMessagesIntoDB---------");
-        LogHtk.i(LogHtk.Test1, "realmResults = " + realmResults.size());
         for (int i = 0; i < messages.size(); i++) {
             GChatMassage mess = messages.get(i);
 
@@ -238,7 +236,6 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
             realm.copyToRealmOrUpdate(messageSaved);
             realm.commitTransaction();
         }
-        LogHtk.i(LogHtk.Test1, "realmResults = " + realmResults.size());
     }
 
     public void saveMessageIntoDB(RChatMessage messages) {
@@ -312,14 +309,11 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
 
     public String getBefore() {
         if (before.length() == 0) {
-            LogHtk.i(LogHtk.Test1, "before 1");
             before = NationalTime.getLocalTimeToUTCTime();
             isTheFisrtTimeLoadMessage = true;
         } else {
-            LogHtk.i(LogHtk.Test1, "before 2");
             isTheFisrtTimeLoadMessage = false;
         }
-        LogHtk.i(LogHtk.Test1, "before: " + before);
         return before;
     }
 
@@ -333,11 +327,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
 
     public void updateAdapter() {
         if (isTheFisrtTimeLoadMessage) {    // the first time
-            LogHtk.i(LogHtk.Test1, "updateAdapter 1");
             mListView.setSelected(true);
             mListView.setSelection(realmResults.size());
         } else {        // Load more
-            LogHtk.i(LogHtk.Test1, "updateAdapter 2");
             Rect corners = new Rect();
             mListView.getLocalVisibleRect(corners);
             mListView.setSelectionFromTop(50, corners.top);

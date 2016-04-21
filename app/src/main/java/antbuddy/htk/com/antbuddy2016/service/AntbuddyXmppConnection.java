@@ -224,22 +224,21 @@ public class AntbuddyXmppConnection {
 	 * @param packet
 	 */
 	private void processMessageReceived(Packet packet) {
-
 		final Message message = (Message) packet;
-		LogHtk.d(LogHtk.XMPP_TAG, "XMPP Message Received: " + message.getBody());
+		String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
 
-		if (message.getBody() != null && message.getBody().length() > 0) {
+		if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
+			LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
 					RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+					LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
 					realmBG.saveMessage(chatMessage);
 					realmBG.closeRealm();
 				}
 			}).start();
-
-
 
 //			LogHtk.d(LogHtk.Test1, "chatMessage.getId(): " + chatMessage.getId());
 //			Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT);
@@ -362,6 +361,21 @@ public class AntbuddyXmppConnection {
 	}
 
 	public void sendMessageOut(final ChatMessage chatMessage) {
+
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+//				RUserMe userMe = realmBG.getUserMeFromDB();
+//
+//
+//				RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+//				realmBG.saveMessage(chatMessage);
+//				realmBG.closeRealm();
+//			}
+//		}).start();
+
+
 		if(xmppConnection == null || !xmppConnection.isConnected()) {
 			LogHtk.e(LogHtk.API_TAG, "ERROR! XMPPConnection is null or do not connect!");
 			return;

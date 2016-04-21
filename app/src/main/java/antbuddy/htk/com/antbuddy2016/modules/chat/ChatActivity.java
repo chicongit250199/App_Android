@@ -60,6 +60,7 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -83,7 +84,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private ListView            lv_messages;
 
 
-    private RChatAdapter        mChatAdapter1;
+    private RChatAdapter        chatAdapter;
     private RealmResults<RChatMessage> chatMessages;
 
 
@@ -166,18 +167,15 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         realm = Realm.getDefaultInstance();
 
         if (isGroup) {  // Groups
-            LogHtk.i(LogHtk.Test1, "Load group!");
             chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll();
         } else {    // 1-1, myseft
             if (keyMe == keyRoom) {
-                LogHtk.i(LogHtk.Test1, "Load Myself!");
                 chatMessages = realm.where(RChatMessage.class)
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyRoom)
                         .findAll();
             } else {   // 1-1
-                LogHtk.i(LogHtk.Test1, "Load one-one!");
                 chatMessages = realm.where(RChatMessage.class)
                         .equalTo("senderKey", keyMe)
                         .equalTo("receiverKey", keyRoom)
@@ -189,8 +187,14 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
 
         chatMessages.sort("time", Sort.ASCENDING);
-        LogHtk.i(LogHtk.Test1, "Size from db: " + chatMessages.size());
 
+        chatMessages.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                lv_messages.setSelection(lv_messages.getCount() - 1);
+                LogHtk.i(LogHtk.Test1, "Size = " + chatMessages.size());
+            }
+        });
     }
 
     private void initViews() {
@@ -200,12 +204,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         lv_messages = (ListView) findViewById(R.id.lv_messages);
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
 
-        if (mChatAdapter1 == null) {
-            mChatAdapter1 = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
-            mChatAdapter1.updateRealmResults(chatMessages);
+        if (chatAdapter == null) {
+            chatAdapter = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
+            chatAdapter.updateRealmResults(chatMessages);
         }
 
-        lv_messages.setAdapter(mChatAdapter1);
+        lv_messages.setAdapter(chatAdapter);
         lv_messages.setSelection(chatMessages.size());
 
         lv_messages.setDividerHeight(0);
@@ -236,17 +240,17 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         etTypingMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                LogHtk.i(LogHtk.Test1, "beforeTextChanged");
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LogHtk.i(LogHtk.Test1, "onTextChanged");
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                LogHtk.i(LogHtk.Test1, "afterTextChanged");
+
             }
         });
 
@@ -278,10 +282,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
                 // Send message
                 String text_body = etTypingMessage.getText().toString().trim();
-                LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
                 if (!TextUtils.isEmpty(text_body)) {
-                    LogHtk.i(LogHtk.ChatActivity, "key =" + keyRoom);
-                    LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isGroup);
                     ChatMessage chatMessage = new ChatMessage(keyRoom, text_body, isGroup);
                     chatMessage.showLog();
                     mIRemoteService.sendMessageOut(chatMessage);
@@ -333,7 +334,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             return;
         }
 
-        APIManager.GETMessages1(mChatAdapter1.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
+        APIManager.GETMessages1(chatAdapter.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
             @Override
             public void onSuccess(List<GChatMassage> listMessages) {
                 // Save into DB
@@ -344,8 +345,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 //Collections.reverse(listMessages);
                 mSwipyRefreshLayout.setRefreshing(false);
 
-                mChatAdapter1.saveMessagesIntoDB(listMessages);
-                mChatAdapter1.updateAdapter();
+                chatAdapter.saveMessagesIntoDB(listMessages);
+                chatAdapter.updateAdapter();
 //                if (listMessages.size() > 0) {
 //                    before = listMessages.get(0).getDatetime();
 //                }

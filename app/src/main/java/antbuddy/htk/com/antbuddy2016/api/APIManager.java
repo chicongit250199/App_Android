@@ -151,6 +151,8 @@ public class APIManager {
         call.enqueue(new Callback<List<GChatMassage>>() {
             @Override
             public void onResponse(Response<List<GChatMassage>> response) {
+                LogHtk.i(LogHtk.API_TAG, "History URL: " + response.raw().request().url().toString());
+
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {

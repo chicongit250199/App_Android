@@ -3,12 +3,17 @@ package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
 import android.text.TextUtils;
 
+import org.jivesoftware.smack.packet.AntBuddyFile;
 import org.jivesoftware.smack.packet.Message;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -118,50 +123,66 @@ public class RChatMessage extends RealmObject {
         super();
     }
 
+
     public RChatMessage(final Message message, RUserMe userMe) {
         id = message.getPacketID();
-        Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getTo());
+
+        // XMPP Message Info
+        String to         = message.getTo();
+        String from       = message.getFrom();
+        String with       = message.getWith();
+        String mBody      = message.getBody();
+        String subType    = message.getSubtype();
+        AntBuddyFile file = message.getFile();
+
+        // Prepare
+        Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(to);
+        String group1 = "", group2 = "";
         while (m.find()) {
-            org = m.group(2);
-            receiverKey = m.group(1);
+            group1 = m.group(1);
+            group2 = m.group(2);
+        }
+        String fromSplit[] = from.split("/");
+        if (from.contains("/")) {
+            fromSplit = from.split("/");
         }
 
-//        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
-        if (message.getFrom().contains("/")) {
-            String params[] = message.getFrom().split("/");
-            if (params[0].endsWith(userMe.getChatMucDomain())){
-                fromKey =  params[0].split("_")[0];
-                senderKey = params[1].split("_")[0];
-            } else {
-                senderKey = fromKey =  params[0].split("_")[0];
-            }
+        // Group
+        if (subType != null  && subType.equals("groupchat")) {
+            // to (XMPP message) ~ receiverKey_org (ChatMessage)
+            receiverKey = group1;
+            org = group2;
+            fromKey   = fromSplit[0].split("_")[0];
+            senderKey = fromSplit[1].split("_")[0];
 
-            if (senderKey.endsWith(receiverKey) && !TextUtils.isEmpty(message.getWith())) {
-                fromKey = message.getWith();
-            }
-
-            if(message.getFile() != null) {
-                fileAntBuddy = new RFileAntBuddy(message.getFile());
-                body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
-            } else {
-                try {
-                    body = new String( message.getBody().getBytes(), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    body = message.getBody();
-                    e.printStackTrace();
-                }
-            }
-
-            type = message.getType().toString();
-
-            if(message.getSubtype() != null) {
-                subtype = message.getSubtype();
-            } else {
-                subtype = null;
-            }
-            time = NationalTime.getLocalTimeToUTCTime();
-            isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
+        } else {    //  1-1
+            org = group2;
+            receiverKey = with; // with ~ receiverKey
+            senderKey = fromKey =  fromSplit[0].split("_")[0];
         }
+
+        // Common
+        if(file != null) {
+            fileAntBuddy = new RFileAntBuddy(file);
+            body = file.getName() + " " + file.getSize() + " KB";
+        } else {
+            try {
+                body = new String( mBody.getBytes(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                body = mBody;
+                e.printStackTrace();
+            }
+        }
+
+        type = message.getType().toString();
+
+        if(subType != null) {
+            subtype = subType;
+        } else {
+            subtype = null;
+        }
+        time = NationalTime.getLocalTimeToUTCTime();
+        isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
     }
 
     public String getOrg() {
@@ -314,5 +335,34 @@ public class RChatMessage extends RealmObject {
 
     public void setExpandBody(String expandBody) {
         this.expandBody = expandBody;
+    }
+
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        String newLine = System.getProperty("line.separator");
+
+        result.append( this.getClass().getName() );
+        result.append( " Object {" );
+        result.append(newLine);
+
+        //determine fields declared in this class only (no fields of superclass)
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        //print field names paired with their values
+        for ( Field field : fields  ) {
+            result.append("  ");
+            try {
+                result.append( field.getName() );
+                result.append(": ");
+                //requires access to private field:
+                result.append( field.get(this) );
+            } catch ( IllegalAccessException ex ) {
+                System.out.println(ex);
+            }
+            result.append(newLine);
+        }
+        result.append("}");
+
+        return result.toString();
     }
 }
