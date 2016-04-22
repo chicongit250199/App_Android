@@ -13,7 +13,7 @@
             android:layout_height="80dp"
             android:id="@+id/imageView14"
             android:layout_gravity="center"
-            android:background="@drawable/logo"
+            android:background="@drawable/logo_ab_while"
             android:layout_marginTop="10dp" />
 
         <LinearLayout
@@ -25,23 +25,23 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ant"
+                android:text="AntBuddy"
                 android:id="@+id/textView4"
                 android:gravity="center"
                 android:textSize="25dp"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/white_ab"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Buddy"
-                android:id="@+id/textView41"
-                android:gravity="center"
-                android:textSize="25dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white_ab"
-                android:textStyle="bold" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Buddy"-->
+                <!--android:id="@+id/textView41"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="25dp"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:textColor="@color/white_ab"-->
+                <!--android:textStyle="bold" />-->
         </LinearLayout>
 
         <RelativeLayout
@@ -60,25 +60,26 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="A refeshing approach to"
+                android:text="Simple and Unified"
                 android:id="@+id/textView12"
                 android:layout_alignTop="@+id/imageView15"
                 android:layout_alignLeft="@+id/textView13"
                 android:layout_alignStart="@+id/textView13"
                 android:gravity="center"
                 android:paddingTop="10dp"
+                android:textSize="25dp"
                 android:textColor="@color/white_ab"/>
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text=" TEAM COMMUNICATION"
+                android:text="Business Communications"
                 android:id="@+id/textView13"
                 android:layout_alignBottom="@+id/imageView15"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:textSize="25dp"
-                android:paddingBottom="10dp"
+                android:paddingTop="5dp"
                 android:textColor="@color/white_ab"/>
         </RelativeLayout>
 

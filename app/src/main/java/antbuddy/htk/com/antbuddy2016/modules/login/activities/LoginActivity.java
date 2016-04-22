@@ -50,9 +50,8 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        AntbuddyApplication.getInstance().deleteRealm();
-
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
+//        AntbuddyApplication.getInstance().deleteRealm();
 
         if(AntbuddyService.mAntbuddyService == null) {
             startService(new Intent(this, AntbuddyService.class));

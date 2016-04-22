@@ -28,7 +28,7 @@
         android:layout_width="130dp"
         android:layout_height="120dp"
         android:id="@+id/imageView9"
-        android:background="@drawable/small_circle_wt22"
+        android:background="@drawable/ab_call_1"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/imageView7"
         android:layout_alignStart="@+id/imageView7"
@@ -36,9 +36,9 @@
 
     <ImageView
         android:layout_width="120dp"
-        android:layout_height="110dp"
+        android:layout_height="100dp"
         android:id="@+id/imageView91"
-        android:background="@drawable/teamhcm_wt32"
+        android:background="@drawable/ab_call_2"
         android:layout_alignBottom="@+id/imageView4"
         android:layout_alignRight="@+id/imageView7"
         android:layout_alignEnd="@+id/imageView7" />
@@ -47,7 +47,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Free video call on all devices"
+        android:text="HD call quality on all devices"
         android:id="@+id/textView101"
         android:gravity="center"
         android:textColor="@color/white_ab"
@@ -55,7 +55,6 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:layout_centerInParent="true"
-        android:layout_alignParentEnd="false"
         android:layout_marginBottom="110dp"
         android:layout_alignParentBottom="true" />
 

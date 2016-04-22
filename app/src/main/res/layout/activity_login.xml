@@ -71,7 +71,7 @@
             android:layout_height="80dp"
             android:id="@+id/imageView14"
             android:layout_gravity="center"
-            android:background="@drawable/logo"
+            android:background="@drawable/logo_ab_while"
             android:layout_marginTop="10dp" />
 
         <EditText
@@ -127,7 +127,7 @@
     <TextView
         android:layout_width="380dp"
         android:layout_height="wrap_content"
-        android:text="By precessding to create your account and use Antbuddy, you agree to our Terms of Service and Privacy Policy."
+        android:text="By proceeding to use AntBuddy, you agree to our Terms of Service and Privacy Policy"
         android:id="@+id/textView15"
         android:layout_marginBottom="5dp"
         android:layout_alignParentBottom="true"

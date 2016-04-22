@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
@@ -56,6 +58,7 @@ public class CenterActivity extends AppCompatActivity {
     private Button btnAlwaysChange;
     private Button btnSetting;
 
+    private RObjectManagerOne realmManager;
     private Realm realm;
     private RUserMe userMe;
     private RealmResults<RUser> users;
@@ -94,6 +97,8 @@ public class CenterActivity extends AppCompatActivity {
         //AntbuddyApplication.getInstance().restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
 
+
+        realmManager = new RObjectManagerOne();
         setupRealmData();
 
 //        boolean isConnectService = connectServiceInAndroid();

@@ -91,6 +91,7 @@ public class SplashScreenActivity extends Activity {
             @Override
             public void run() {
                 String currentScreen = ABSharedPreference.get(ABSharedPreference.KEY_CURRENT_SCREEN);
+                LogHtk.i(LogHtk.Test1, "currentScreen = " + currentScreen);
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.WALK_THROUGH_ACTIVITY.toString())) {
                     Intent i = new Intent(SplashScreenActivity.this, WalkThroughActivity.class);
                     startActivity(i);

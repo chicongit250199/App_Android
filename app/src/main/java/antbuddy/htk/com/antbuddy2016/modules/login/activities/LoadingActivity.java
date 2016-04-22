@@ -121,7 +121,7 @@ public class LoadingActivity extends Activity {
                 this.unregisterReceiver(loadingReceiver);
             }
         } catch (IllegalArgumentException e) {
-            LogHtk.i(LogHtk.ErrorHTK, "epicReciver is already unregistered");
+            LogHtk.i(LogHtk.ErrorHTK, "Already unregisterReceiver!");
             loadingReceiver = null;
         }
 

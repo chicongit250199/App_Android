@@ -33,7 +33,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:id="@+id/imageView13"
-            android:background="@drawable/logo"
+            android:background="@drawable/logo_ab_while"
             android:layout_gravity="center"
             android:layout_marginTop="15dp" />
 
@@ -120,4 +120,16 @@
             android:layout_marginTop="20dp" />
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:text="By proceeding to create your account and use AntBuddy, you agree to our Terms of Service and Privacy Policy."
+        android:id="@+id/textView15"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_centerInParent="true" />
 </RelativeLayout>

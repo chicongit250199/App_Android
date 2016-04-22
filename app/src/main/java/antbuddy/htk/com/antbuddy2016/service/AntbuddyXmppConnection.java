@@ -288,7 +288,7 @@ public class AntbuddyXmppConnection {
 	private void messageIN(Packet packet) {
 
 		final Message message = (Message) packet;
-		//LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
+		LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
 		String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
 
 		if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
@@ -298,7 +298,7 @@ public class AntbuddyXmppConnection {
 				public void run() {
 					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
 					RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-					//LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
+					LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
 					realmBG.saveMessage(chatMessage);
 					realmBG.closeRealm();
 				}

@@ -55,6 +55,7 @@ public class AntbuddyApplication extends Application {
 	}
 
 	public void deleteRealm() {
+		//Realm.getDefaultInstance().c
 		Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);
 	}

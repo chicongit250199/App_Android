@@ -98,22 +98,22 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     private Realm realm;
 
-    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
-    private boolean mBound;
-    private final ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
-            mIRemoteService = binder.getService();
-            mBound = true;
-            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            mIRemoteService = null;
-            mBound = false;
-            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
-        }
-    };
+//    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
+//    private boolean mBound;
+//    private final ServiceConnection mConnection = new ServiceConnection() {
+//        public void onServiceConnected(ComponentName className, IBinder service) {
+//            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
+//            mIRemoteService = binder.getService();
+//            mBound = true;
+//            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
+//        }
+//
+//        public void onServiceDisconnected(ComponentName className) {
+//            mIRemoteService = null;
+//            mBound = false;
+//            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
+//        }
+//    };
 
     private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
         @Override
@@ -185,29 +185,30 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //        loadMoreMessages();
         registerReceiver(messageReceiver, new IntentFilter(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT));
 
-        boolean isConnectService = connectServiceInAndroid();
-        if (!isConnectService) {
-            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
-        }
+//        boolean isConnectService = connectServiceInAndroid();
+//        if (!isConnectService) {
+//            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
+//        }
     }
 
     @Override
     protected void onDestroy() {
+        LogHtk.i(LogHtk.Test1, "CenterActivity onDestroy!");
         unregisterReceiver(messageReceiver);
         unregisterReceiver(loadMoreReceiver);
         realm.close();
         super.onDestroy();
     }
 
-    private boolean connectServiceInAndroid() {
-        if(AntbuddyService.mAntbuddyService == null) {
-            Intent intent = new Intent(this, AntbuddyService.class);
-            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-        } else {
-            mIRemoteService = AntbuddyService.mAntbuddyService;
-        }
-        return mIRemoteService != null;
-    }
+//    private boolean connectServiceInAndroid() {
+//        if(AntbuddyService.mAntbuddyService == null) {
+//            Intent intent = new Intent(this, AntbuddyService.class);
+//            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+//        } else {
+//            mIRemoteService = AntbuddyService.mAntbuddyService;
+//        }
+//        return mIRemoteService != null;
+//    }
 
     @Override
     public void setTitle(CharSequence title) {
@@ -350,7 +351,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(text_body)) {
                     ChatMessage chatMessage = new ChatMessage(keyRoom, text_body, isGroup);
                     chatMessage.showLog();
-                    mIRemoteService.sendMessageOut(chatMessage);
+                    AntbuddyService.getInstance().sendMessageOut(chatMessage);
                     etTypingMessage.setText("");
                 }
             }

@@ -49,7 +49,7 @@
         <TextView
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:text="Free video call for all"
+            android:text="HD call quality"
             android:id="@+id/textView5"
             android:layout_margin="3dp"
             android:layout_gravity="center" />
@@ -170,7 +170,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:id="@+id/imageView6"
-        android:background="@drawable/logo"
+        android:background="@drawable/logo_ab_while"
         android:layout_above="@+id/linearLayout1211"
         android:layout_centerHorizontal="true" />
 
@@ -178,7 +178,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Antbuddy"
+        android:text="AntBuddy"
         android:id="@+id/textView6"
         android:textColor="@color/white_ab"
         android:textSize="15dp"
@@ -192,7 +192,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Team Communicates Happiness"
+        android:text="Simple &amp; Unified Business Communications"
         android:id="@+id/textView10"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"

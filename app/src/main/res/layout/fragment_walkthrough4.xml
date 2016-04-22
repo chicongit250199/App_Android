@@ -20,7 +20,7 @@
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:id="@+id/imageButton"
-        android:background="@drawable/chat1_wt42"
+        android:background="@drawable/ab_chat_01"
         android:layout_alignTop="@+id/imageView4"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="45dp" />
@@ -29,7 +29,7 @@
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:id="@+id/imageView10"
-        android:background="@drawable/chat2_wt42"
+        android:background="@drawable/ab_chat_02"
         android:layout_below="@+id/imageButton"
         android:layout_centerHorizontal="true" />
 
@@ -37,7 +37,7 @@
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:id="@+id/imageView11"
-        android:background="@drawable/chat3_wt42"
+        android:background="@drawable/ab_chat_03"
         android:layout_below="@+id/imageView10"
         android:layout_centerHorizontal="true" />
 
@@ -45,7 +45,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Communicate seamlessly with your team"
+        android:text="Instant group messaging"
         android:id="@+id/textView11"
         android:gravity="center"
         android:textColor="@color/white_ab"

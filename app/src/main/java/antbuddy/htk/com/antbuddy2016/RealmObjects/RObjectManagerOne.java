@@ -1,8 +1,5 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
-import android.os.SystemClock;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
@@ -19,11 +16,9 @@ import io.realm.RealmResults;
 /**
  * Created by thanhnguyen on 14/04/2016.
  */
-public class RObjectManager {
+public class RObjectManagerOne {
 
     private Realm realm;
-
-    private static RObjectManager realmObject;
 
     private RUserMe userme;
     private RealmResults<RUser> users;
@@ -33,82 +28,75 @@ public class RObjectManager {
     private RealmChangeListener usersListener;
     private RealmChangeListener roomsListener;
 
-    private RObjectManager() {
-
+    public RObjectManagerOne() {
+        realm = Realm.getDefaultInstance();
     }
 
-    public static RObjectManager getInstance() {
-        if (realmObject == null) {
-            realmObject = new RObjectManager();
-        }
-        return realmObject;
-    }
-
-    // ASSIGN
-    public void assignRealm(Realm realm) {
-        this.realm = realm;
-    }
-
-    public void assignUserMe(RUserMe userme, RealmChangeListener userMeListener) {
-        this.userme = userme;
-        this.userMeListener = userMeListener;
-
-        if (this.userme == null) {
-//            realm.beginTransaction();
-//            RUserMe usermeDefault = realm.createObject(RUserMe.class);
-//            usermeDefault.set_id("9999");
-//            realm.copyToRealmOrUpdate(usermeDefault);
-//            realm.commitTransaction();
+//    // ASSIGN
+//    public void assignRealm(Realm realm) {
+//        this.realm = realm;
+//    }
 //
-//            this.userme = getUserMeFromDB();
-//            if (this.userme != null) {
-//                this.userme.addChangeListener(this.userMeListener);
-//            }
-        } else {
-            this.userme.addChangeListener(this.userMeListener);
-        }
-    }
-
-    public void assignUsers(RealmResults<RUser> users, RealmChangeListener usersListener) {
-        this.users = users;
-        this.usersListener = usersListener;
-
-        if (this.users == null) {
-//            realm.beginTransaction();
-//            RUser userDefault = realm.createObject(RUser.class);
-//            userDefault.setKey("8888");
-//            realm.copyToRealmOrUpdate(userDefault);
-//            realm.commitTransaction();
+//    public void assignUserMe(RUserMe userme, RealmChangeListener userMeListener) {
+//        this.userme = userme;
+//        this.userMeListener = userMeListener;
 //
-//            this.users = getUsersFromDB();
-//            if (this.users != null) {
-//                this.users.addChangeListener(this.usersListener);
-//            }
-        } else {
-            this.users.addChangeListener(this.usersListener);
-        }
-    }
-
-    public void assignRooms(RealmResults<RRoom> rooms, RealmChangeListener roomsListener) {
-        this.rooms = rooms;
-        this.roomsListener = roomsListener;
-
-        if (this.rooms == null) {
-//            realm.beginTransaction();
-//            RRoom roomDefault = realm.createObject(RRoom.class);
-//            roomDefault.setKey("7777");
-//            realm.copyToRealmOrUpdate(roomDefault);
-//            realm.commitTransaction();
+//        if (this.userme == null) {
+////            realm.beginTransaction();
+////            RUserMe usermeDefault = realm.createObject(RUserMe.class);
+////            usermeDefault.set_id("9999");
+////            realm.copyToRealmOrUpdate(usermeDefault);
+////            realm.commitTransaction();
+////
+////            this.userme = getUserMeFromDB();
+////            if (this.userme != null) {
+////                this.userme.addChangeListener(this.userMeListener);
+////            }
+//        } else {
+//            this.userme.addChangeListener(this.userMeListener);
+//        }
+//    }
 //
-//            this.rooms = getRoomsFromDB();
-//            if (this.rooms != null) {
-//                this.rooms.addChangeListener(this.roomsListener);
-//            }
-        } else {
-            this.rooms.addChangeListener(this.roomsListener);
-        }
-    }
-    // --------------End Assign------------------
+//    public void assignUsers(RealmResults<RUser> users, RealmChangeListener usersListener) {
+//        this.users = users;
+//        this.usersListener = usersListener;
+//
+//        if (this.users == null) {
+////            realm.beginTransaction();
+////            RUser userDefault = realm.createObject(RUser.class);
+////            userDefault.setKey("8888");
+////            realm.copyToRealmOrUpdate(userDefault);
+////            realm.commitTransaction();
+////
+////            this.users = getUsersFromDB();
+////            if (this.users != null) {
+////                this.users.addChangeListener(this.usersListener);
+////            }
+//        } else {
+//            this.users.addChangeListener(this.usersListener);
+//        }
+//    }
+//
+//    public void assignRooms(RealmResults<RRoom> rooms, RealmChangeListener roomsListener) {
+//        this.rooms = rooms;
+//        this.roomsListener = roomsListener;
+//
+//        if (this.rooms == null) {
+////            realm.beginTransaction();
+////            RRoom roomDefault = realm.createObject(RRoom.class);
+////            roomDefault.setKey("7777");
+////            realm.copyToRealmOrUpdate(roomDefault);
+////            realm.commitTransaction();
+////
+////            this.rooms = getRoomsFromDB();
+////            if (this.rooms != null) {
+////                this.rooms.addChangeListener(this.roomsListener);
+////            }
+//        } else {
+//            this.rooms.addChangeListener(this.roomsListener);
+//        }
+//    }
+//    // --------------End Assign------------------
 
 
     // Working with CACHE
