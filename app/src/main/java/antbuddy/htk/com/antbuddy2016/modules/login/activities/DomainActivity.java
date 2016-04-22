@@ -53,6 +53,8 @@ public class DomainActivity extends Activity {
         initViews();
         viewsListener();
 
+        AntbuddyApplication.getInstance().deleteRealm();
+
         // Request Data to show List organizations
         requestAPIToGetOrganizations();
     }

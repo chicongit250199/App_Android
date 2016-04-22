@@ -54,6 +54,11 @@ public class AntbuddyApplication extends Application {
 		Realm.setDefaultConfiguration(realmConfig);
 	}
 
+	public void deleteRealm() {
+		Realm.deleteRealm(realmConfig);
+		Realm.setDefaultConfiguration(realmConfig);
+	}
+
 	private API createAPIService() {
 		retrofit = new Retrofit.Builder()
 				.baseUrl(API.BASE_URL)			//"https://antbuddy.com"

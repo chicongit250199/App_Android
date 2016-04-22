@@ -36,6 +36,40 @@ public class LoadingActivity extends Activity {
     private RealmChangeListener usersListener;
     private RealmChangeListener roomsListener;
 
+    private BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+                String result = intent.getStringExtra("loadingResult");
+
+                if (result.contains("yes")) {
+                    AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
+                }
+
+                if (result.contains("No address associated with hostname")) {
+                    if (userMe.isValid() && users.isValid() && rooms.isValid()) {
+                        AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
+                        unregisterReceiver(loadingReceiver);
+                    }
+                }
+
+                if (result.contains("noRooms")) {
+                    AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
+                }
+
+                if (result.contains("noUsers")) {
+                    AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,38 +128,4 @@ public class LoadingActivity extends Activity {
         realm.close();
         super.onDestroy();
     }
-
-    private BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-                String result = intent.getStringExtra("loadingResult");
-
-                if (result.contains("yes")) {
-                    AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
-                    unregisterReceiver(loadingReceiver);
-                }
-
-                if (result.contains("No address associated with hostname")) {
-                    if (userMe.isValid() && users.isValid() && rooms.isValid()) {
-                        AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
-                        unregisterReceiver(loadingReceiver);
-                    }
-                }
-
-                if (result.contains("noRooms")) {
-                    AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
-                    unregisterReceiver(loadingReceiver);
-                }
-
-                if (result.contains("noUsers")) {
-                    AndroidHelper.gotoActivity(LoadingActivity.this, DomainActivity.class, true);
-                    unregisterReceiver(loadingReceiver);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 }
