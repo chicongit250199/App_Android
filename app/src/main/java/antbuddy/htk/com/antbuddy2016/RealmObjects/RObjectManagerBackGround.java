@@ -190,7 +190,7 @@ public class RObjectManagerBackGround {
         if (service != null) {
             AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
         } else {
-            LogHtk.i(LogHtk.Test3, "Service is still null!");
+            LogHtk.i(LogHtk.ErrorHTK, "Service is still null!");
         }
 
 //        AntbuddyService.getInstance().loadUsers();
@@ -318,10 +318,9 @@ public class RObjectManagerBackGround {
         // Update data in Cache
         userme = getUserMeFromDB();
         if (userme != null) {
-            LogHtk.i(LogHtk.Test3, "Register Userme success!: " + userme.toString());
             userme.addChangeListener(userMeListener);
         } else {
-            LogHtk.e(LogHtk.Test3, "Get UserMe from db is null!");
+            LogHtk.e(LogHtk.ErrorHTK, "Get UserMe from db is null!");
         }
 //
 //        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
@@ -357,7 +356,7 @@ public class RObjectManagerBackGround {
                 if (this.users != null && users.size() > 0) {
                     this.users.addChangeListener(usersListener);
                 } else {
-                    LogHtk.e(LogHtk.Test3, "Users null!");
+                    LogHtk.e(LogHtk.ErrorHTK, "Users null!");
                 }
             }
         } else {
@@ -409,7 +408,7 @@ public class RObjectManagerBackGround {
                 if (this.rooms != null && rooms.size() > 0) {
                     this.rooms.addChangeListener(roomsListener);
                 } else {
-                    LogHtk.e(LogHtk.Test3, "Rooms null!");
+                    LogHtk.e(LogHtk.ErrorHTK, "Rooms null!");
                 }
             }
         } else {

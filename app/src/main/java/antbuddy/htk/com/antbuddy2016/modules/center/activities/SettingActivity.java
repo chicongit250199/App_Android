@@ -23,6 +23,7 @@ import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.LoginActivity;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
+import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -112,7 +113,7 @@ public class SettingActivity extends Activity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                CenterActivity.mIRemoteService.resetXMPP();
+                                AntbuddyService.getInstance().resetXMPP();
                             }
                         }).start();
 
@@ -134,7 +135,7 @@ public class SettingActivity extends Activity {
                         //AntbuddyApplication.getInstance().deleteRealm();
                         ABSharedPreference.resetAccountInSharedPreferences();
                         ABSharedPreference.resetXMPP();
-                        CenterActivity.mIRemoteService.resetXMPP();
+                        AntbuddyService.getInstance().resetXMPP();
                         AntbuddyApplication.getInstance().resetApiService();
                         AndroidHelper.gotoActivity(SettingActivity.this, LoginActivity.class, true, true);
 

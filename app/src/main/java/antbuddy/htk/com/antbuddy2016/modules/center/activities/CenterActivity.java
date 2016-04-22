@@ -66,22 +66,22 @@ public class CenterActivity extends AppCompatActivity {
     private RealmChangeListener roomsListener;
 
 	// Work with service
-    public static AntbuddyService mIRemoteService;
-    private boolean mBound;
-    private final ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
-            mIRemoteService = binder.getService();
-            mBound = true;
-            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            mIRemoteService = null;
-            mBound = false;
-            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
-        }
-    };
+//    public static AntbuddyService mIRemoteService;
+//    private boolean mBound;
+//    private final ServiceConnection mConnection = new ServiceConnection() {
+//        public void onServiceConnected(ComponentName className, IBinder service) {
+//            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
+//            mIRemoteService = binder.getService();
+//            mBound = true;
+//            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
+//        }
+//
+//        public void onServiceDisconnected(ComponentName className) {
+//            mIRemoteService = null;
+//            mBound = false;
+//            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,23 +96,19 @@ public class CenterActivity extends AppCompatActivity {
 
         setupRealmData();
 
-        boolean isConnectService = connectServiceInAndroid();
-        if (!isConnectService) {
-            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
-        }
+//        boolean isConnectService = connectServiceInAndroid();
+//        if (!isConnectService) {
+//            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
+//        }
 
         AntbuddyService.getInstance().loginXMPP();
 
         initView();
         viewsListener();
-
     }
 
     private void setupRealmData() {
         realm  = Realm.getDefaultInstance();
-//        userMe = realm.where(RUserMe.class).notEqualTo("_id", "9999").findFirst();
-//        users  = realm.where(RUser.class).notEqualTo("key", "8888").findAllAsync();
-//        rooms  = realm.where(RRoom.class).notEqualTo("key", "7777").findAllAsync();
 
         userMe = realm.where(RUserMe.class).findFirst();
         users  = realm.where(RUser.class).findAllAsync();
@@ -139,7 +135,7 @@ public class CenterActivity extends AppCompatActivity {
                 if (recentFragment != null && recentFragment.isVisible()) {
                     recentFragment.updateUI();
                 } else {
-                    LogHtk.e(LogHtk.Test3, "Recent is not exist!");
+                    LogHtk.e(LogHtk.WarningHTK, "RecentFragment is not exist!");
                 }
             }
         };
@@ -288,9 +284,9 @@ public class CenterActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if(mBound) {
-            unbindService(mConnection);
-        }
+//        if(mBound) {
+//            unbindService(mConnection);
+//        }
 
         if (userMe != null) {
             userMe.removeChangeListener(userMeListener);
@@ -350,7 +346,6 @@ public class CenterActivity extends AppCompatActivity {
 
 
     protected void loading_UserMe_Users_Rooms() {
-        LogHtk.i(LogHtk.Test3, "Center loading_UserMe_Users_Rooms!");
         Boolean isdataLoadedFromDB = false;
         AntbuddyApplication application = AntbuddyApplication.getInstance();
 //        if (application.isUserMeExist() && application.isUsersExist() && application.isRoomsExist()) {
@@ -380,7 +375,6 @@ public class CenterActivity extends AppCompatActivity {
     }
 
     private void loadUsers() {
-        LogHtk.i(LogHtk.Test3, "Center loadUsers!");
         APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
@@ -399,7 +393,6 @@ public class CenterActivity extends AppCompatActivity {
     }
 
     private void loadRooms() {
-        LogHtk.i(LogHtk.Test3, "Center loadRooms!");
         APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
             @Override
             public void onSuccess(List<Room> rooms) {
@@ -420,15 +413,15 @@ public class CenterActivity extends AppCompatActivity {
         });
     }
 
-    private boolean connectServiceInAndroid() {
-        if(AntbuddyService.mAntbuddyService == null) {
-            Intent intent = new Intent(this, AntbuddyService.class);
-            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-        } else {
-            mIRemoteService = AntbuddyService.mAntbuddyService;
-        }
-        return mIRemoteService != null;
-    }
+//    private boolean connectServiceInAndroid() {
+//        if(AntbuddyService.mAntbuddyService == null) {
+//            Intent intent = new Intent(this, AntbuddyService.class);
+//            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+//        } else {
+//            mIRemoteService = AntbuddyService.mAntbuddyService;
+//        }
+//        return mIRemoteService != null;
+//    }
 
 //    protected static void connectXMPP(RUserMe me) {
 //        LogHtk.i(LogHtk.API_TAG, "Log UserMe success: " + me.getUsername());

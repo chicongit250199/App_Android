@@ -51,7 +51,7 @@ public class LoadingActivity extends Activity {
         userMeListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
+                //LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
 
             }
         };
@@ -59,7 +59,7 @@ public class LoadingActivity extends Activity {
         usersListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.d(LogHtk.Test3, "---> Users Changed");
+                //LogHtk.d(LogHtk.Test3, "---> Users Changed");
             }
         };
 
@@ -67,7 +67,7 @@ public class LoadingActivity extends Activity {
             @Override
             public void onChange() {
                 // ... do something with the updated Dog instance
-                LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
+                //LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
 
             }
         };

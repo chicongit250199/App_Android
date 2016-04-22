@@ -133,6 +133,7 @@ public class RChatMessage extends RealmObject {
         String with       = message.getWith();
         String mBody      = message.getBody();
         String subType    = message.getSubtype();
+        String mType      = message.getType().toString();
         AntBuddyFile file = message.getFile();
 
         // Prepare
@@ -148,13 +149,12 @@ public class RChatMessage extends RealmObject {
         }
 
         // Group
-        if (subType != null  && subType.equals("groupchat")) {
+        if (mType != null  && mType.equals("groupchat")) {
             // to (XMPP message) ~ receiverKey_org (ChatMessage)
             receiverKey = group1;
             org = group2;
             fromKey   = fromSplit[0].split("_")[0];
             senderKey = fromSplit[1].split("_")[0];
-
         } else {    //  1-1
             org = group2;
             receiverKey = with; // with ~ receiverKey

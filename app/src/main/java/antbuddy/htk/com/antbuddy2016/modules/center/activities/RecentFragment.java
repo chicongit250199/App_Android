@@ -65,7 +65,6 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogHtk.i(LogHtk.Test3, "RecentFragment onCreate!");
 
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
@@ -140,7 +139,7 @@ public class RecentFragment extends Fragment {
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CenterActivity.mIRemoteService.resetXMPP();
+                AntbuddyService.getInstance().resetXMPP();
 
                 prb_Loading.setVisibility(View.VISIBLE);
                 btnTry.setVisibility(View.GONE);
@@ -149,7 +148,7 @@ public class RecentFragment extends Fragment {
                     prb_Loading.setVisibility(View.GONE);
                     btnTry.setVisibility(View.VISIBLE);
                 } else {
-                    CenterActivity.mIRemoteService.resetXMPP();
+                    AntbuddyService.getInstance().resetXMPP();
                     updateUI();
                 }
             }
@@ -237,7 +236,6 @@ public class RecentFragment extends Fragment {
             backgroundViews.setVisibility(View.GONE);
             prb_LoadingFisrt.setVisibility(View.GONE);
         } else {
-            LogHtk.i(LogHtk.Test3, "Recent: " + me.toString());
             if (me.getOpeningChatrooms() != null) {
                 recentsData.get(ChatType.Group.getValue()).clear();
                 recentsData.get(ChatType.OneToOne.getValue()).clear();
@@ -251,7 +249,7 @@ public class RecentFragment extends Fragment {
                 backgroundViews.setVisibility(View.VISIBLE);
                 prb_LoadingFisrt.setVisibility(View.GONE);
             } else {
-                LogHtk.i(LogHtk.Test3, "getOpeningChatrooms");
+                LogHtk.i(LogHtk.ErrorHTK, "Opening chat rooms is NUll");
             }
 
 //            CenterActivity.connectXMPP(me);

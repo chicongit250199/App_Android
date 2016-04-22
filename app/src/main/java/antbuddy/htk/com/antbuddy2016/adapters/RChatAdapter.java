@@ -167,98 +167,50 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         return rowView;
     }
 
-    public void addMessages(List<RChatMessage> messages, boolean isGotoBottom) {
-        Rect corners = new Rect();
-        if (!isGotoBottom) {
-            View view = mListView.getChildAt(0);
-            mListView.getLocalVisibleRect(corners);
-        }
-        //update data in view
-        realmResults.addAll(0, messages);
-        notifyDataSetChanged();
+//    public void addMessages(List<RChatMessage> messages, boolean isGotoBottom) {
+//        Rect corners = new Rect();
+//        if (!isGotoBottom) {
+//            View view = mListView.getChildAt(0);
+//            mListView.getLocalVisibleRect(corners);
+//        }
+//        //update data in view
+//        realmResults.addAll(0, messages);
+//        notifyDataSetChanged();
+//
+//        if (!isGotoBottom) {
+//            mListView.setSelected(true);
+//            mListView.setSelectionFromTop(messages.size(), corners.top);
+//        } else {
+//            mListView.setSelected(true);
+//            mListView.setSelection(realmResults.size());
+//        }
+//    }
 
-        if (!isGotoBottom) {
-            mListView.setSelected(true);
-            mListView.setSelectionFromTop(messages.size(), corners.top);
-        } else {
-            mListView.setSelected(true);
-            mListView.setSelection(realmResults.size());
-        }
-    }
-
-    synchronized public void saveMessagesIntoDB(final List<GChatMassage> messages) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-
-                for (int i = 0; i < messages.size(); i++) {
-                    GChatMassage mess = messages.get(i);
-
-                    RChatMessage messageSaved = new RChatMessage();
-                    messageSaved.setId(mess.getId());
-                    messageSaved.setSenderJid(mess.getSenderJid());
-                    messageSaved.setSenderId(mess.getSenderId());
-                    messageSaved.setSenderName(mess.getSenderName());
-                    messageSaved.setBody(mess.getBody());
-                    messageSaved.setFromId(mess.getFromId());
-                    messageSaved.setReceiverJid(mess.getReceiverJid());
-                    messageSaved.setReceiverId(mess.getReceiverId());
-                    messageSaved.setReceiverName(mess.getReceiverName());
-                    messageSaved.setIsModified(mess.isModified());
-                    messageSaved.setType(mess.getType());
-                    messageSaved.setSubtype(mess.getSubtype());
-                    messageSaved.setTime(mess.getTime());
-                    messageSaved.setExpandBody(mess.getExpandBody());
-                    messageSaved.setOrg(mess.getOrg());
-                    messageSaved.setSenderKey(mess.getSenderKey());
-                    messageSaved.setFromKey(mess.getFromKey());
-                    messageSaved.setReceiverKey(mess.getReceiverKey());
-
-                    GFileAntBuddy gFile = mess.getFileAntBuddy();
-                    if (gFile != null) {
-                        RFileAntBuddy rFile = new RFileAntBuddy();
-                        rFile.setSize(gFile.getSize());
-                        rFile.setFileUrl(gFile.getFileUrl());
-                        rFile.setMimeType(gFile.getMimeType());
-                        rFile.setThumbnailUrl(gFile.getThumbnailUrl());
-                        rFile.setThumbnailWidth(gFile.getThumbnailWidth());
-                        rFile.setThumbnailHeight(gFile.getThumbnailHeight());
-                        messageSaved.setFileAntBuddy(rFile);
-                    }
-
-                    realmBG.saveMessage(messageSaved);
-                }
-                realmBG.closeRealm();
-            }
-        }).start();
-    }
-
-    public void saveMessageIntoDB(RChatMessage messages) {
-        realm.beginTransaction();
-        RChatMessage messageSaved = realm.createObject(RChatMessage.class);
-        messageSaved.setSenderJid(messages.getSenderJid());
-        messageSaved.setSenderId(messages.getSenderId());
-        messageSaved.setSenderName(messages.getSenderName());
-        messageSaved.setBody(messages.getBody());
-        messageSaved.setFromId(messages.getFromId());
-        messageSaved.setReceiverJid(messages.getReceiverJid());
-        messageSaved.setReceiverId(messages.getReceiverId());
-        messageSaved.setReceiverName(messages.getReceiverName());
-        messageSaved.setIsModified(messages.isModified());
-        messageSaved.setType(messages.getType());
-        messageSaved.setSubtype(messages.getSubtype());
-        messageSaved.setTime(messages.getTime());
-        messageSaved.setExpandBody(messages.getExpandBody());
-        messageSaved.setOrg(messages.getOrg());
-        messageSaved.setSenderKey(messages.getSenderKey());
-        messageSaved.setFromKey(messages.getFromKey());
-        messageSaved.setReceiverKey(messages.getReceiverKey());
-        messageSaved.setFileAntBuddy(messages.getFileAntBuddy());
-
-        realm.copyToRealmOrUpdate(messageSaved);
-        realm.commitTransaction();
-    }
+//    public void saveMessageIntoDB(RChatMessage messages) {
+//        realm.beginTransaction();
+//        RChatMessage messageSaved = realm.createObject(RChatMessage.class);
+//        messageSaved.setSenderJid(messages.getSenderJid());
+//        messageSaved.setSenderId(messages.getSenderId());
+//        messageSaved.setSenderName(messages.getSenderName());
+//        messageSaved.setBody(messages.getBody());
+//        messageSaved.setFromId(messages.getFromId());
+//        messageSaved.setReceiverJid(messages.getReceiverJid());
+//        messageSaved.setReceiverId(messages.getReceiverId());
+//        messageSaved.setReceiverName(messages.getReceiverName());
+//        messageSaved.setIsModified(messages.isModified());
+//        messageSaved.setType(messages.getType());
+//        messageSaved.setSubtype(messages.getSubtype());
+//        messageSaved.setTime(messages.getTime());
+//        messageSaved.setExpandBody(messages.getExpandBody());
+//        messageSaved.setOrg(messages.getOrg());
+//        messageSaved.setSenderKey(messages.getSenderKey());
+//        messageSaved.setFromKey(messages.getFromKey());
+//        messageSaved.setReceiverKey(messages.getReceiverKey());
+//        messageSaved.setFileAntBuddy(messages.getFileAntBuddy());
+//
+//        realm.copyToRealmOrUpdate(messageSaved);
+//        realm.commitTransaction();
+//    }
 
     public void addMessage(RChatMessage message, boolean isGotoBottom) {
 //        Rect corners = new Rect();
@@ -311,14 +263,6 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
             isTheFisrtTimeLoadMessage = false;
         }
         return before;
-    }
-
-    public void setBefore(String before) {
-        this.before = before;
-    }
-
-    public void updateBefore() {
-        this.before = realmResults.last().getTime();
     }
 
     public void updateAdapter(int sizeFromTop) {

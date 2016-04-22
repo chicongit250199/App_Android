@@ -110,13 +110,12 @@ public class AntbuddyService extends Service {
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
 			@Override
 			public void onSuccess(UserMe me) {
-				LogHtk.i(LogHtk.Test3, "Userme loaded at Service!");
 				RObjectManager.getInstance().saveUserMeOrUpdate(me);
 			}
 
 			@Override
 			public void onError(String error) {
-				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load UserMe from server!");
+				LogHtk.e(LogHtk.ErrorHTK, "Error! Can not load UserMe from server!");
 			}
 		});
 	}
@@ -140,18 +139,16 @@ public class AntbuddyService extends Service {
 	}
 
 	public void loadUsers() {
-		LogHtk.i(LogHtk.Test3, "Service loadUsers!");
 		APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
 			@Override
 			public void onSuccess(List<User> users) {
 				RObjectManager.getInstance().saveUsersOrUpdate(users);
-				LogHtk.i(LogHtk.Test3, "Service loadUsers!");
 				loadRooms();
 			}
 
 			@Override
 			public void onError(String error) {
-				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load Users from server!");
+				LogHtk.e(LogHtk.ErrorHTK, "Error! Can not load Users from server!");
 				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
 				intent.putExtra("loadingResult", "noUsers");
 				getApplicationContext().sendBroadcast(intent);
@@ -160,7 +157,6 @@ public class AntbuddyService extends Service {
 	}
 
 	private void loadRooms() {
-		LogHtk.i(LogHtk.Test3, "Service loadRooms!");
 		APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
 			@Override
 			public void onSuccess(List<Room> rooms) {
@@ -173,7 +169,7 @@ public class AntbuddyService extends Service {
 
 			@Override
 			public void onError(String error) {
-				LogHtk.e(LogHtk.SERVICE_TAG, "Error! Can not load Rooms from server!");
+				LogHtk.e(LogHtk.ErrorHTK, "Error! Can not load Rooms from server!");
 				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
 				intent.putExtra("loadingResult", "noRooms");
 				getApplicationContext().sendBroadcast(intent);
@@ -214,7 +210,7 @@ public class AntbuddyService extends Service {
 
 	public void sendMessageOut(ChatMessage chatMessage) {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
-		mXmppConnection.sendMessageOut(chatMessage);
+		mXmppConnection.messageOUT(chatMessage);
 	}
 
 	public void resetXMPP() {

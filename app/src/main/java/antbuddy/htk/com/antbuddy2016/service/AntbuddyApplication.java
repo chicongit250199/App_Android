@@ -47,8 +47,8 @@ public class AntbuddyApplication extends Application {
 		createAPIService();
 
 		realmConfig = new RealmConfiguration.Builder(this)
-											.schemaVersion(5)
-											.name("demo5.realm")
+											.schemaVersion(6)
+											.name("demo6.realm")
 											.build();
 		//Realm.deleteRealm(realmConfig);
 		Realm.setDefaultConfiguration(realmConfig);

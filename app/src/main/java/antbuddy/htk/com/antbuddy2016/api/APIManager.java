@@ -168,13 +168,12 @@ public class APIManager {
     }
 
     public static void GETUserMe(final HttpRequestReceiver<UserMe> receiver) {
-        LogHtk.i(LogHtk.Test3, "Token 123: " + ABSharedPreference.getAccountConfig().getToken());
         Call<UserMe> call = AntbuddyApplication.getInstance().getApiService().GETUserProfile(ABSharedPreference.getAccountConfig().getToken());
         call.enqueue(new Callback<UserMe>() {
             @Override
             public void onResponse(Response<UserMe> response) {
                 if (response.body() != null) {
-                    LogHtk.i(LogHtk.Test3, "GETUserMe: " + response.body());
+//                    LogHtk.i(LogHtk.Test3, "GETUserMe: " + response.body());
 
                     receiver.onSuccess(response.body());
                 } else {
