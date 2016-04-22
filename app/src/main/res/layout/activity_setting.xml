@@ -88,7 +88,8 @@
             android:drawableLeft="@drawable/ic_user"
             android:drawablePadding="15dp"
             android:background="#00000000"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -99,7 +100,8 @@
             android:drawableLeft="@drawable/ic_swap"
             android:drawablePadding="20dp"
             android:background="#00000000"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -110,7 +112,8 @@
             android:drawableLeft="@drawable/ic_sign_out"
             android:drawablePadding="15dp"
             android:background="#00000000"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 

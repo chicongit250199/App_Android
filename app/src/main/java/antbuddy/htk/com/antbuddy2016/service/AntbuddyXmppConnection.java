@@ -34,6 +34,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
@@ -306,12 +307,15 @@ public class AntbuddyXmppConnection {
 		}
 	}
 
-	public void messageOUT(final ChatMessage chatMessage) {
+	public void messageOUT(final RChatMessage chatMessage) {
+		RObjectManagerOne realmManager = new RObjectManagerOne();
+		realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+
 		if(xmppConnection == null || !xmppConnection.isConnected()) {
 			LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect!");
 			return;
 		}
-		RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
+		RUserMe userMe = realmManager.getUserme();
 		if (userMe == null) {
 			LogHtk.e(LogHtk.ErrorHTK, "ERROR! Cannot send message out because Userme is Null!");
 			return;
@@ -348,6 +352,8 @@ public class AntbuddyXmppConnection {
 			msg.setTo(mReceiverJid);
 			xmppConnection.sendPacket(msg);
 		}
+
+		realmManager.closeRealm();
 	}
 
 //    public void sendToMyself(XMPPMessage messageChatting, String with) {

@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
@@ -48,6 +49,8 @@ public class SettingActivity extends Activity {
     private ProgressBar prb_Loading;
     private Button btnTry;
 
+    private RObjectManagerOne realmManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,11 +58,20 @@ public class SettingActivity extends Activity {
         imgAvatar    = (ImageView) findViewById(R.id.imgAvatar);
         tv_user_name = (TextView) findViewById(R.id.tv_user_name);
 
+        realmManager = new RObjectManagerOne();
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+
         initViews();
 
 //        loading_UserMe();
-        updateUI(RObjectManager.getInstance().getUserMeFromCache());
+        updateUI(realmManager.getUserme());
         viewsListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        realmManager.closeRealm();
+        super.onDestroy();
     }
 
     private void initViews() {
@@ -164,7 +176,7 @@ public class SettingActivity extends Activity {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    RObjectManager.getInstance().saveUserMeOrUpdate(me);
+                    realmManager.saveUserMeOrUpdate(me);
 //                    application.setUserme(RObjectManager.getInstance().getUserMe());
 //                    updateUI(application.getUserme());
                 }

@@ -24,9 +24,12 @@ public class RObjectManagerOne {
     private RealmResults<RUser> users;
     private RealmResults<RRoom> rooms;
 
+    private RealmResults<RChatMessage> chatMessages;
+
     private RealmChangeListener userMeListener;
     private RealmChangeListener usersListener;
     private RealmChangeListener roomsListener;
+    private RealmChangeListener chatMessagesListener;
 
     public RObjectManagerOne() {
         realm = Realm.getDefaultInstance();
@@ -176,13 +179,13 @@ public class RObjectManagerOne {
 
     public void loading_UserMe_Users_Rooms() {
         AntbuddyService service = AntbuddyService.getInstance();
+
         if (service != null) {
+            LogHtk.i(LogHtk.Test1, "11");
             AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
         } else {
-            LogHtk.i(LogHtk.ErrorHTK, "Service is still null!");
+            LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ Service is still null!");
         }
-
-//        AntbuddyService.getInstance().loadUsers();
     }
 
 
@@ -306,10 +309,10 @@ public class RObjectManagerOne {
 
         // Update data in Cache
         userme = getUserMeFromDB();
-        if (userme != null) {
+        if (userme != null && userMeListener != null) {
             userme.addChangeListener(userMeListener);
         } else {
-            LogHtk.e(LogHtk.ErrorHTK, "Get UserMe from db is null!");
+            LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ UserMe is null or userMeListener is null!");
         }
 //
 //        LogHtk.i(LogHtk.Test2, "END saveUserMeOrUpdate");
@@ -342,10 +345,10 @@ public class RObjectManagerOne {
                 // Check and Update Notification
                 // Update data in Cache
                 this.users = getUsersFromDB();
-                if (this.users != null && users.size() > 0) {
+                if (this.users != null && users.size() > 0 && usersListener != null) {
                     this.users.addChangeListener(usersListener);
                 } else {
-                    LogHtk.e(LogHtk.Test3, "Users null!");
+                    LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ Users is null or usersListener is null!");
                 }
             }
         } else {
@@ -394,10 +397,10 @@ public class RObjectManagerOne {
 
                 // Check and Update Notification
                 this.rooms = getRoomsFromDB();
-                if (this.rooms != null && rooms.size() > 0) {
+                if (this.rooms != null && rooms.size() > 0  && roomsListener != null) {
                     this.rooms.addChangeListener(roomsListener);
                 } else {
-                    LogHtk.e(LogHtk.ErrorHTK, "Rooms null!");
+                    LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ Rooms is null or roomsListener is null!");
                 }
             }
         } else {
@@ -405,7 +408,104 @@ public class RObjectManagerOne {
         }
     }
 
+    public void addUserMeListener(RealmChangeListener listener) {
+        new Exception().printStackTrace();
+        userMeListener = listener;
+        if (userme != null) {
+            userme.addChangeListener(userMeListener);
+        } else {
+            LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ Userme is null!");
+        }
+    }
+
+    public void addUsersListener(RealmChangeListener listener) {
+        usersListener = listener;
+        if (users != null) {
+            users.addChangeListener(usersListener);
+        } else {
+            LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ Users is null!");
+        }
+    }
+
+    public void addRoomsListener(RealmChangeListener listener) {
+        roomsListener = listener;
+        if (rooms != null) {
+            rooms.addChangeListener(roomsListener);
+        } else {
+            LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ Rooms is null!");
+        }
+    }
+
+    public void addChatMessagesListener(RealmChangeListener listener) {
+        chatMessagesListener = listener;
+        if (chatMessages != null) {
+            chatMessages.addChangeListener(chatMessagesListener);
+        } else {
+            LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ ChatMessages is null!");
+        }
+    }
+
+    public void removeUserMeListener() {
+        if (userme != null) {
+            userme.removeChangeListener(userMeListener);
+        }
+    }
+
+    public void removeUsersListener() {
+        if (users != null) {
+            users.removeChangeListener(usersListener);
+        }
+    }
+
+    public void removeRoomsListener() {
+        if (rooms != null) {
+            rooms.removeChangeListener(roomsListener);
+        }
+    }
+
+    public void removeChatMessagesListener() {
+        if (chatMessages != null) {
+            chatMessages.removeChangeListener(chatMessagesListener);
+        }
+    }
+
     public Realm getRealm() {
         return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    public RUserMe getUserme() {
+        return userme;
+    }
+
+    public void setUserme(RUserMe userme) {
+        this.userme = userme;
+    }
+
+    public RealmResults<RUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(RealmResults<RUser> users) {
+        this.users = users;
+    }
+
+    public RealmResults<RRoom> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(RealmResults<RRoom> rooms) {
+        this.rooms = rooms;
+    }
+
+    public RealmResults<RChatMessage> getChatMessages() {
+        return chatMessages;
+    }
+
+    public void setChatMessages(RealmResults<RChatMessage> chatMessages) {
+        this.chatMessages = chatMessages;
     }
 }

@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
@@ -27,14 +28,8 @@ import io.realm.RealmResults;
  * Created by thanhnguyen on 19/04/2016.
  */
 public class LoadingActivity extends Activity {
-    private Realm realm;
-    private RUserMe userMe;
-    private RealmResults<RUser> users;
-    private RealmResults<RRoom> rooms;
 
-    private RealmChangeListener userMeListener;
-    private RealmChangeListener usersListener;
-    private RealmChangeListener roomsListener;
+    private RObjectManagerOne realmManager;
 
     private BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
         @Override
@@ -49,7 +44,7 @@ public class LoadingActivity extends Activity {
                 }
 
                 if (result.contains("No address associated with hostname")) {
-                    if (userMe.isValid() && users.isValid() && rooms.isValid()) {
+                    if (realmManager.getUserme().isValid() && realmManager.getUsers().isValid() && realmManager.getRooms().isValid()) {
                         AndroidHelper.gotoActivity(LoadingActivity.this, CenterActivity.class, true);
                         unregisterReceiver(loadingReceiver);
                     }
@@ -76,42 +71,37 @@ public class LoadingActivity extends Activity {
         setContentView(R.layout.activity_loading);
 
         registerReceiver(loadingReceiver, new IntentFilter(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS));
+        setupRealmOne();
+    }
 
-        realm  = Realm.getDefaultInstance();
-        userMe = realm.where(RUserMe.class).findFirst();
-        users  = realm.where(RUser.class).findAllAsync();
-        rooms  = realm.where(RRoom.class).findAllAsync();
+    private void setupRealmOne() {
+        realmManager = new RObjectManagerOne();
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+        realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
+        realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());
 
-        userMeListener = new RealmChangeListener() {
+        realmManager.addUserMeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                //LogHtk.d(LogHtk.Test3, "---> UserMe Changed");
 
             }
-        };
+        });
 
-        usersListener = new RealmChangeListener() {
+        realmManager.addUsersListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                //LogHtk.d(LogHtk.Test3, "---> Users Changed");
-            }
-        };
 
-        roomsListener = new RealmChangeListener() {
+            }
+        });
+
+        realmManager.addRoomsListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                // ... do something with the updated Dog instance
-                //LogHtk.i(LogHtk.Test3, "Rooms onChange at Center Activity");
 
             }
-        };
+        });
 
-        RObjectManager.getInstance().assignRealm(this.realm);
-        RObjectManager.getInstance().assignUserMe(this.userMe, this.userMeListener);
-        RObjectManager.getInstance().assignUsers(this.users, this.usersListener);
-        RObjectManager.getInstance().assignRooms(this.rooms, this.roomsListener);
-
-        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
+        realmManager.loading_UserMe_Users_Rooms();
     }
 
     @Override
@@ -125,7 +115,7 @@ public class LoadingActivity extends Activity {
             loadingReceiver = null;
         }
 
-        realm.close();
+        realmManager.closeRealm();
         super.onDestroy();
     }
 }

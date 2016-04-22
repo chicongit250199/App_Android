@@ -413,68 +413,68 @@ public class ChatMessage implements Parcelable {
         fileAntBuddy = (FileAntBuddy)in.readParcelable(FileAntBuddy.class.getClassLoader());
     }
     public ChatMessage(final Message message) {
-        idMessage = message.getPacketID();
-        Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getTo());
-        while (m.find()) {
-            org = m.group(2);
-            receiverKey = m.group(1);
-        }
-
-        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
-        if (message.getFrom().contains("/")) {
-            String params[] = message.getFrom().split("/");
-            if (params[0].endsWith(userMe.getChatMucDomain())){
-                fromKey =  params[0].split("_")[0];
-                senderKey = params[1].split("_")[0];
-            } else {
-                senderKey = fromKey =  params[0].split("_")[0];
-            }
-
-            if (senderKey.endsWith(receiverKey) && !TextUtils.isEmpty(message.getWith())) {
-                fromKey = message.getWith();
-            }
-
-            if(message.getFile() != null) {
-                fileAntBuddy = new FileAntBuddy(message.getFile());
-                body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
-            } else {
-                try {
-                    body = new String( message.getBody().getBytes(), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    body = message.getBody();
-                    e.printStackTrace();
-                }
-            }
-
-            type = message.getType().toString();
-
-            if(message.getSubtype() != null) {
-                subtype = message.getSubtype();
-            } else {
-                subtype = null;
-            }
-            time = NationalTime.getLocalTimeToUTCTime();
-            isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
-        }
+//        idMessage = message.getPacketID();
+//        Matcher m = Pattern.compile("([^_]+)_([^_]+)(@[^//]+)/*").matcher(message.getTo());
+//        while (m.find()) {
+//            org = m.group(2);
+//            receiverKey = m.group(1);
+//        }
+//
+////        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
+//        if (message.getFrom().contains("/")) {
+//            String params[] = message.getFrom().split("/");
+//            if (params[0].endsWith(userMe.getChatMucDomain())){
+//                fromKey =  params[0].split("_")[0];
+//                senderKey = params[1].split("_")[0];
+//            } else {
+//                senderKey = fromKey =  params[0].split("_")[0];
+//            }
+//
+//            if (senderKey.endsWith(receiverKey) && !TextUtils.isEmpty(message.getWith())) {
+//                fromKey = message.getWith();
+//            }
+//
+//            if(message.getFile() != null) {
+//                fileAntBuddy = new FileAntBuddy(message.getFile());
+//                body = message.getFile().getName() + " " + message.getFile().getSize() + " KB";
+//            } else {
+//                try {
+//                    body = new String( message.getBody().getBytes(), "UTF-8");
+//                } catch (UnsupportedEncodingException e) {
+//                    body = message.getBody();
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            type = message.getType().toString();
+//
+//            if(message.getSubtype() != null) {
+//                subtype = message.getSubtype();
+//            } else {
+//                subtype = null;
+//            }
+//            time = NationalTime.getLocalTimeToUTCTime();
+//            isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
+//        }
     }
 
     public ChatMessage(final String _receiverKey, final String _body, final Boolean isMuc) {
-        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
-        ROrg currentOrg = userMe.getFullCurrentOrg();
-        if (currentOrg == null) {
-            LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
-            return;
-        }
-        type = (isMuc? "groupchat": "chat");
-        org = currentOrg.getOrgKey();
-        senderKey = userMe.getKey();
-        receiverKey = _receiverKey;
-        if (isMuc) {
-            fromKey = receiverKey;
-        } else {
-            fromKey = senderKey;
-        }
-        body = _body;
+//        RUserMe userMe = RObjectManager.getInstance().getUserMeFromCache();
+//        ROrg currentOrg = userMe.getFullCurrentOrg();
+//        if (currentOrg == null) {
+//            LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
+//            return;
+//        }
+//        type = (isMuc? "groupchat": "chat");
+//        org = currentOrg.getOrgKey();
+//        senderKey = userMe.getKey();
+//        receiverKey = _receiverKey;
+//        if (isMuc) {
+//            fromKey = receiverKey;
+//        } else {
+//            fromKey = senderKey;
+//        }
+//        body = _body;
     }
 
     public static class MessageComparator implements Comparator<ChatMessage>

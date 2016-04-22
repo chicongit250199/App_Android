@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;
@@ -226,14 +227,14 @@ public class APIManager {
         });
     }
 
-    public static void newMessageToHistory(ChatMessage chatMessage, String idMessage) {
+    public static void newMessageToHistory(RChatMessage chatMessage, String idMessage) {
 
         HashMap<String, Object> body = new HashMap<>();
         body.put("body", chatMessage.getBody());
         body.put("fromKey", chatMessage.getFromKey());
         body.put("receiverKey", chatMessage.getReceiverKey());
         body.put("senderKey", chatMessage.getSenderKey());
-        body.put("subtype", chatMessage.getSubType());
+        body.put("subtype", chatMessage.getSubtype());
         body.put("type", chatMessage.getType());
         LogHtk.i(LogHtk.Test1, "id message saved on Server: " + idMessage);
         body.put("id", idMessage);

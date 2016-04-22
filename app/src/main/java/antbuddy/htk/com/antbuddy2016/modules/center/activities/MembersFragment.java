@@ -18,6 +18,7 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.adapters.UserAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
@@ -40,13 +41,17 @@ public class MembersFragment extends Fragment {
     private ProgressBar prb_Loading;
     private Button btnTry;
 
+    private RObjectManagerOne realmManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_members, container, false);
+        realmManager = ((CenterActivity) getActivity()).getRealmManager();
+
         lv_member = (ListView)rootView.findViewById(R.id.lv_member);
 
         if (mUserAdapter == null) {
-            mUserAdapter = new UserAdapter(getContext(), lv_member, RObjectManager.getInstance().getUsersFromCache());
+            mUserAdapter = new UserAdapter(getContext(), lv_member, realmManager.getUsers());
         }
         lv_member.setAdapter(mUserAdapter);
         lv_member.setDividerHeight(0);

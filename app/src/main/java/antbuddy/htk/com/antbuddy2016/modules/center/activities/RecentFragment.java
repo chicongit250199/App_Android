@@ -18,6 +18,7 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
@@ -51,6 +52,8 @@ public class RecentFragment extends Fragment {
     private Button btnTry;
     private ProgressBar prb_LoadingFisrt;
 
+    private RObjectManagerOne realmManager;
+
     public enum ChatType {
         Group(0), OneToOne(1);
         private final int value;
@@ -67,6 +70,9 @@ public class RecentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
+
+        realmManager = ((CenterActivity) getActivity()).getRealmManager();
+
         list_recent = (ExpandableListView) rootView.findViewById(R.id.list_recent);
         ArrayList<String> groupNames = new ArrayList<>();
         groupNames.add("GROUPS");
@@ -76,7 +82,7 @@ public class RecentFragment extends Fragment {
         recentsData.add(new ArrayList<ROpeningChatRoom>());
         recentsData.add(new ArrayList<ROpeningChatRoom>());
 
-        recentsAdapter = new RecentsAdapter(getContext(),groupNames, recentsData);
+        recentsAdapter = new RecentsAdapter(getContext(),groupNames, recentsData, ((CenterActivity) getActivity()).getRealmManager());
         list_recent.setAdapter(recentsAdapter);
         list_recent.expandGroup(1);
         list_recent.expandGroup(0);
@@ -172,7 +178,7 @@ public class RecentFragment extends Fragment {
             APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
                 @Override
                 public void onSuccess(UserMe me) {
-                    RObjectManager.getInstance().saveUserMeOrUpdate(me);
+                    realmManager.saveUserMeOrUpdate(me);
 //                    AntbuddyApplication.getInstance().setUserme(RObjectManager.getInstance().getUserMe());
                     loadUsers();
                 }
@@ -227,7 +233,7 @@ public class RecentFragment extends Fragment {
     }
 
     protected void updateUI() {
-        RUserMe me = RObjectManager.getInstance().getUserMeFromCache();
+        RUserMe me = realmManager.getUserMeFromCache();
 
         if (me == null) {
             backgroundTry.setVisibility(View.VISIBLE);

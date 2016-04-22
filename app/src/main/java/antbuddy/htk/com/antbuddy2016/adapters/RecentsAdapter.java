@@ -15,11 +15,13 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
+import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -32,13 +34,15 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
     private List<String> parents;
     private List<List<ROpeningChatRoom>> childers;
     private LayoutInflater inflater;
+    private RObjectManagerOne realmManager;
 
     public RecentsAdapter(Context context,
                           ArrayList<String> parents,
-                          List<List<ROpeningChatRoom>> childers) {
-        this.context = context;
-        this.parents = parents;
-        this.childers = childers;
+                          List<List<ROpeningChatRoom>> childers, RObjectManagerOne realmManager) {
+        this.context      = context;
+        this.parents      = parents;
+        this.childers     = childers;
+        this.realmManager = realmManager;
         inflater = LayoutInflater.from(context);
     }
 
@@ -119,7 +123,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.width = 60;
             layoutParams.height = 60;
             holder.imgAvatar.setLayoutParams(layoutParams);
-            for (RRoom room : RObjectManager.getInstance().getRoomsFromCache()) {
+            for (RRoom room : realmManager.getRooms()) {
                 if (room.getKey().equals(openingChatroom.getChatRoomKey())) {
                     if (room.getIsPublic()) {
                         Glide.with(context)
@@ -143,7 +147,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             layoutParams.height = 160;
             holder.imgAvatar.setLayoutParams(layoutParams);
             //holder.ic_status.setVisibility(View.VISIBLE);
-            for (RUser user : RObjectManager.getInstance().getUsersFromCache()) {
+            for (RUser user : realmManager.getUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     Glide.with(context)
                             .load(user.getAvatar())

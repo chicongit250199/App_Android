@@ -19,6 +19,7 @@ import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.adapters.GroupAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
@@ -45,10 +46,15 @@ public class GroupsFragment extends Fragment {
     private ProgressBar prb_Loading;
     private Button btnTry;
 
+    private RObjectManagerOne realmManager;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_groups, container, false);
+
+        realmManager = ((CenterActivity) getActivity()).getRealmManager();
+
         initViews(rootView);
         viewsListener();
 
@@ -63,7 +69,7 @@ public class GroupsFragment extends Fragment {
         btnTry = (Button) rootView.findViewById(R.id.btnTry);
         prb_Loading = (ProgressBar) rootView.findViewById(R.id.prb_Loading);
         groupsView=(GridView)rootView.findViewById(R.id.gridView);
-        adapter = new GroupAdapter(getContext(), groupsView, RObjectManager.getInstance().getRoomsFromCache());
+        adapter = new GroupAdapter(getContext(), groupsView, realmManager.getRooms());
         groupsView.setAdapter(adapter);
     }
 
@@ -86,7 +92,7 @@ public class GroupsFragment extends Fragment {
         groupsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RRoom room = RObjectManager.getInstance().getRoomsFromCache().get(position);
+                RRoom room = realmManager.getRooms().get(position);
                 Bundle args = new Bundle();
                 args.putString(ChatActivity.kKeyRoom, room.getKey());
                 args.putBoolean(ChatActivity.key_type, true);
@@ -127,7 +133,7 @@ public class GroupsFragment extends Fragment {
     }
 
     private void updateUI() {
-        RealmResults<RRoom> rooms = RObjectManager.getInstance().getRoomsFromCache();
+        RealmResults<RRoom> rooms = realmManager.getRooms();
 
         adapter.notifyDataSetChanged();
 

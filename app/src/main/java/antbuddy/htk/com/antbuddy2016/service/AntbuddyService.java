@@ -17,6 +17,8 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
@@ -109,8 +111,15 @@ public class AntbuddyService extends Service {
 	public void loadUserMe() {
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
 			@Override
-			public void onSuccess(UserMe me) {
-				RObjectManager.getInstance().saveUserMeOrUpdate(me);
+			public void onSuccess(final UserMe me) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						RObjectManagerOne realmManager = new RObjectManagerOne();
+						realmManager.saveUserMeOrUpdate(me);
+						realmManager.closeRealm();
+					}
+				});
 			}
 
 			@Override
@@ -124,9 +133,16 @@ public class AntbuddyService extends Service {
 	public void loading_UserMe_Users_Rooms() {
 		APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
 			@Override        // Main Thread
-			public void onSuccess(UserMe me) {
-				RObjectManager.getInstance().saveUserMeOrUpdate(me);
-				loadUsers();
+			public void onSuccess(final UserMe me) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						RObjectManagerOne realmManager = new RObjectManagerOne();
+						realmManager.saveUserMeOrUpdate(me);
+						realmManager.closeRealm();
+						loadUsers();
+					}
+				}).start();
 			}
 
 			@Override        // Main Thread
@@ -141,9 +157,16 @@ public class AntbuddyService extends Service {
 	public void loadUsers() {
 		APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
 			@Override
-			public void onSuccess(List<User> users) {
-				RObjectManager.getInstance().saveUsersOrUpdate(users);
-				loadRooms();
+			public void onSuccess(final List<User> users) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						RObjectManagerOne realmManager = new RObjectManagerOne();
+						realmManager.saveUsersOrUpdate(users);
+						realmManager.closeRealm();
+						loadRooms();
+					}
+				}).start();
 			}
 
 			@Override
@@ -159,12 +182,18 @@ public class AntbuddyService extends Service {
 	private void loadRooms() {
 		APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
 			@Override
-			public void onSuccess(List<Room> rooms) {
-				RObjectManager.getInstance().saveRoomsOrUpdate(rooms);
-
-				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
-				intent.putExtra("loadingResult", "yes");
-				getApplicationContext().sendBroadcast(intent);
+			public void onSuccess(final List<Room> rooms) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						RObjectManagerOne realmManager = new RObjectManagerOne();
+						realmManager.saveRoomsOrUpdate(rooms);
+						realmManager.closeRealm();
+						Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
+						intent.putExtra("loadingResult", "yes");
+						getApplicationContext().sendBroadcast(intent);
+					}
+				}).start();
 			}
 
 			@Override
@@ -208,7 +237,7 @@ public class AntbuddyService extends Service {
 //		});
 	}
 
-	public void sendMessageOut(ChatMessage chatMessage) {
+	public void sendMessageOut(RChatMessage chatMessage) {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
 		mXmppConnection.messageOUT(chatMessage);
 	}

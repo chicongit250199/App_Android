@@ -46,6 +46,10 @@ import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RChatAdapter;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
@@ -83,9 +87,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     private ListView            lv_messages;
 
+    private RObjectManagerOne realmManager;
 
     private RChatAdapter        chatAdapter;
-    private RealmResults<RChatMessage> chatMessages;
+//    private RealmResults<RChatMessage> chatMessages;
 
 
     private SwipyRefreshLayout  mSwipyRefreshLayout;
@@ -165,16 +170,20 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setupRealmOne();
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             keyRoom = bundle.getString(kKeyRoom);
             isGroup = bundle.getBoolean(key_type);
             title = bundle.getString(key_title);
-            keyMe = RObjectManager.getInstance().getUserMeFromCache().getKey();
+            keyMe = realmManager.getUserme().getKey();
         }
         setContentView(R.layout.activity_chat);
         registerReceiver(loadMoreReceiver, new IntentFilter(BroadcastConstant.LOAD_MORE_CHATMESSAGE));
         isloadedMessages = false;
+
         loadingDatabase();
 
         initViews();
@@ -191,12 +200,50 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //        }
     }
 
+    private void setupRealmOne() {
+        realmManager = new RObjectManagerOne();
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+        realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
+        realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());
+
+        realmManager.addUserMeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+
+            }
+        });
+
+        realmManager.addUsersListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+
+            }
+        });
+
+        realmManager.addRoomsListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         LogHtk.i(LogHtk.Test1, "CenterActivity onDestroy!");
         unregisterReceiver(messageReceiver);
         unregisterReceiver(loadMoreReceiver);
-        realm.close();
+//        realm.close();
+
+
+
+
+        realmManager.removeUserMeListener();
+        realmManager.removeRoomsListener();
+        realmManager.removeUsersListener();
+        realmManager.removeChatMessagesListener();
+        realmManager.closeRealm();
+
         super.onDestroy();
     }
 
@@ -216,20 +263,20 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void loadingDatabase() {
-        realm = Realm.getDefaultInstance();
+
 
         if (isGroup) {  // Groups
-            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id");
+            realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id"));
         } else {    // 1-1, myseft
             if (keyMe == keyRoom) {
 
-                chatMessages = realm.where(RChatMessage.class)
+                realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class)
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyRoom)
-                        .findAll().distinct("id");
+                        .findAll().distinct("id"));
             } else {   // 1-1
-                chatMessages = realm.where(RChatMessage.class)
+                realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class)
                         .equalTo("fromKey", keyMe)
                         .equalTo("senderKey", keyMe)
                         .equalTo("receiverKey", keyRoom)
@@ -237,20 +284,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyMe)
-                        .findAll().distinct("id");
+                        .findAll().distinct("id"));
             }
         }
 
-        chatMessages.sort("time", Sort.ASCENDING);
-
-
-//        for (int i = 0; i < chatMessages.size() ; i++) {
-//            LogHtk.i(LogHtk.Test1, "------------------");
-//            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
-//            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
-//        }
-
-        chatMessages.addChangeListener(new RealmChangeListener() {
+        realmManager.getChatMessages().sort("time", Sort.ASCENDING);
+        realmManager.addChatMessagesListener(new RealmChangeListener() {
             @Override
             public void onChange() {
                 lv_messages.setSelection(lv_messages.getCount() - 1);
@@ -261,6 +300,55 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
+
+
+
+//--------
+//        realm = Realm.getDefaultInstance();
+//
+//        if (isGroup) {  // Groups
+//            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id");
+//        } else {    // 1-1, myseft
+//            if (keyMe == keyRoom) {
+//
+//                chatMessages = realm.where(RChatMessage.class)
+//                        .equalTo("fromKey", keyRoom)
+//                        .equalTo("senderKey", keyRoom)
+//                        .equalTo("receiverKey", keyRoom)
+//                        .findAll().distinct("id");
+//            } else {   // 1-1
+//                chatMessages = realm.where(RChatMessage.class)
+//                        .equalTo("fromKey", keyMe)
+//                        .equalTo("senderKey", keyMe)
+//                        .equalTo("receiverKey", keyRoom)
+//                        .or()
+//                        .equalTo("fromKey", keyRoom)
+//                        .equalTo("senderKey", keyRoom)
+//                        .equalTo("receiverKey", keyMe)
+//                        .findAll().distinct("id");
+//            }
+//        }
+//
+//        chatMessages.sort("time", Sort.ASCENDING);
+//
+//
+////        for (int i = 0; i < chatMessages.size() ; i++) {
+////            LogHtk.i(LogHtk.Test1, "------------------");
+////            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
+////            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
+////        }
+//
+//        chatMessages.addChangeListener(new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//                lv_messages.setSelection(lv_messages.getCount() - 1);
+//                if (!isloadedMessages) {
+//                    lv_messages.setSelection(lv_messages.getCount() - 1);
+//                } else {
+//
+//                }
+//            }
+//        });
     }
 
     private void initViews() {
@@ -271,12 +359,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
 
         if (chatAdapter == null) {
-            chatAdapter = new RChatAdapter(this, lv_messages, realm, chatMessages, keyMe, true);
-            chatAdapter.updateRealmResults(chatMessages);
+            chatAdapter = new RChatAdapter(this, lv_messages, realm, realmManager.getChatMessages(), keyMe, true);
+            chatAdapter.updateRealmResults(realmManager.getChatMessages());
         }
 
         lv_messages.setAdapter(chatAdapter);
-        lv_messages.setSelection(chatMessages.size());
+        lv_messages.setSelection(realmManager.getChatMessages().size());
 
         lv_messages.setDividerHeight(0);
         lv_messages.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
@@ -349,8 +437,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 // Send message
                 String text_body = etTypingMessage.getText().toString().trim();
                 if (!TextUtils.isEmpty(text_body)) {
-                    ChatMessage chatMessage = new ChatMessage(keyRoom, text_body, isGroup);
-                    chatMessage.showLog();
+                    RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, realmManager.getUserme());
+//                    chatMessage.showLog();
                     AntbuddyService.getInstance().sendMessageOut(chatMessage);
                     etTypingMessage.setText("");
                 }

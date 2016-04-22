@@ -59,14 +59,14 @@ public class CenterActivity extends AppCompatActivity {
     private Button btnSetting;
 
     private RObjectManagerOne realmManager;
-    private Realm realm;
-    private RUserMe userMe;
-    private RealmResults<RUser> users;
-    private RealmResults<RRoom> rooms;
-
-    private RealmChangeListener userMeListener;
-    private RealmChangeListener usersListener;
-    private RealmChangeListener roomsListener;
+//    private Realm realm;
+//    private RUserMe userMe;
+//    private RealmResults<RUser> users;
+//    private RealmResults<RRoom> rooms;
+//
+//    private RealmChangeListener userMeListener;
+//    private RealmChangeListener usersListener;
+//    private RealmChangeListener roomsListener;
 
 	// Work with service
 //    public static AntbuddyService mIRemoteService;
@@ -98,8 +98,8 @@ public class CenterActivity extends AppCompatActivity {
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, true);
 
 
-        realmManager = new RObjectManagerOne();
-        setupRealmData();
+        setupRealmOne();
+//        setupRealmData();
 
 //        boolean isConnectService = connectServiceInAndroid();
 //        if (!isConnectService) {
@@ -112,28 +112,20 @@ public class CenterActivity extends AppCompatActivity {
         viewsListener();
     }
 
-    private void setupRealmData() {
-        realm  = Realm.getDefaultInstance();
+    private void setupRealmOne() {
+        realmManager = new RObjectManagerOne();
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+        realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
+        realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());
 
-        userMe = realm.where(RUserMe.class).findFirst();
-        users  = realm.where(RUser.class).findAllAsync();
-        rooms  = realm.where(RRoom.class).findAllAsync();
-
-        userMeListener = new RealmChangeListener() {
+        realmManager.addUserMeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                //AntbuddyService.getInstance().loginXMPP();
 
-                RecentFragment recentFragment = isRecentFragmentExist();
-                if (recentFragment == null) {
-
-                } else {
-
-                }
             }
-        };
+        });
 
-        usersListener = new RealmChangeListener() {
+        realmManager.addUsersListener(new RealmChangeListener() {
             @Override
             public void onChange() {
                 RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
@@ -143,21 +135,64 @@ public class CenterActivity extends AppCompatActivity {
                     LogHtk.e(LogHtk.WarningHTK, "RecentFragment is not exist!");
                 }
             }
-        };
+        });
 
-        roomsListener = new RealmChangeListener() {
+        realmManager.addRoomsListener(new RealmChangeListener() {
             @Override
             public void onChange() {
+
             }
-        };
+        });
 
-        RObjectManager.getInstance().assignRealm(this.realm);
-        RObjectManager.getInstance().assignUserMe(this.userMe, this.userMeListener);
-        RObjectManager.getInstance().assignUsers(this.users, this.usersListener);
-        RObjectManager.getInstance().assignRooms(this.rooms, this.roomsListener);
-
-        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
+        realmManager.loading_UserMe_Users_Rooms();
     }
+
+//    private void setupRealmData() {
+//        realm  = Realm.getDefaultInstance();
+//
+////        userMe = realm.where(RUserMe.class).findFirst();
+////        users  = realm.where(RUser.class).findAllAsync();
+////        rooms  = realm.where(RRoom.class).findAllAsync();
+//
+//        userMeListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//                //AntbuddyService.getInstance().loginXMPP();
+//
+//                RecentFragment recentFragment = isRecentFragmentExist();
+//                if (recentFragment == null) {
+//
+//                } else {
+//
+//                }
+//            }
+//        };
+//
+//        usersListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//                RecentFragment recentFragment = (RecentFragment) mTabFragments.get(0);
+//                if (recentFragment != null && recentFragment.isVisible()) {
+//                    recentFragment.updateUI();
+//                } else {
+//                    LogHtk.e(LogHtk.WarningHTK, "RecentFragment is not exist!");
+//                }
+//            }
+//        };
+//
+//        roomsListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//            }
+//        };
+//
+//        RObjectManager.getInstance().assignRealm(this.realm);
+//        RObjectManager.getInstance().assignUserMe(this.userMe, this.userMeListener);
+//        RObjectManager.getInstance().assignUsers(this.users, this.usersListener);
+//        RObjectManager.getInstance().assignRooms(this.rooms, this.roomsListener);
+//
+//        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
+//    }
 
     private void initView() {
         btnSearch       = (Button) findViewById(R.id.btnSearch);
@@ -293,11 +328,16 @@ public class CenterActivity extends AppCompatActivity {
 //            unbindService(mConnection);
 //        }
 
-        if (userMe != null) {
-            userMe.removeChangeListener(userMeListener);
-        }
+//        if (userMe != null) {
+//            userMe.removeChangeListener(userMeListener);
+//        }
+//
+//        realm.close();
 
-        realm.close();
+        realmManager.removeUserMeListener();
+        realmManager.removeRoomsListener();
+        realmManager.removeUsersListener();
+        realmManager.closeRealm();
         super.onDestroy();
     }
 
@@ -477,5 +517,9 @@ public class CenterActivity extends AppCompatActivity {
         } else {
             return null;
         }
+    }
+
+    public RObjectManagerOne getRealmManager() {
+        return realmManager;
     }
 }

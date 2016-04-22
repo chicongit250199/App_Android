@@ -154,7 +154,11 @@ public class RChatMessage extends RealmObject {
             receiverKey = group1;
             org = group2;
             fromKey   = fromSplit[0].split("_")[0];
-            senderKey = fromSplit[1].split("_")[0];
+
+            if (fromSplit.length > 1) {
+                senderKey = fromSplit[1].split("_")[0];
+            }
+
         } else {    //  1-1
             org = group2;
             receiverKey = with; // with ~ receiverKey
@@ -183,6 +187,24 @@ public class RChatMessage extends RealmObject {
         }
         time = NationalTime.getLocalTimeToUTCTime();
         isModified = message.getExtension("replace", "urn:xmpp:message-correct:0") != null;
+    }
+
+    public RChatMessage(final String _receiverKey, final String _body, final Boolean isMuc, RUserMe userMe) {
+        ROrg currentOrg = userMe.getFullCurrentOrg();
+        if (currentOrg == null) {
+            LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
+            return;
+        }
+        type = (isMuc? "groupchat": "chat");
+        org = currentOrg.getOrgKey();
+        senderKey = userMe.getKey();
+        receiverKey = _receiverKey;
+        if (isMuc) {
+            fromKey = receiverKey;
+        } else {
+            fromKey = senderKey;
+        }
+        body = _body;
     }
 
     public String getOrg() {
@@ -336,6 +358,8 @@ public class RChatMessage extends RealmObject {
     public void setExpandBody(String expandBody) {
         this.expandBody = expandBody;
     }
+
+
 
     public String toString() {
         StringBuilder result = new StringBuilder();

@@ -10,6 +10,7 @@ import android.os.Handler;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
@@ -29,14 +30,7 @@ public class SplashScreenActivity extends Activity {
     // Splash screen timer
     private static int SPLASH_TIME_OUT = 1000;
 
-    private Realm realm;
-    private RUserMe userMe;
-    private RealmResults<RUser> users;
-    private RealmResults<RRoom> rooms;
-
-    private RealmChangeListener userMeListener;
-    private RealmChangeListener usersListener;
-    private RealmChangeListener roomsListener;
+    private RObjectManagerOne realmManager;
 
     // Get broadcast from local service
     private BroadcastReceiver loadingReceiver = new BroadcastReceiver() {
@@ -51,7 +45,7 @@ public class SplashScreenActivity extends Activity {
                 }
 
                 if (result.contains("No address associated with hostname")) {
-                    if (userMe.isValid() && users.isValid() && rooms.isValid()) {
+                    if (realmManager.getUserme().isValid() && realmManager.getUsers().isValid() && realmManager.getRooms().isValid()) {
                         AndroidHelper.gotoActivity(SplashScreenActivity.this, CenterActivity.class, true);
                         unregisterReceiver(loadingReceiver);
                     }
@@ -79,6 +73,7 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         registerReceiver(loadingReceiver, new IntentFilter(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS));
+        realmManager = new RObjectManagerOne();
 
         setContentView(R.layout.activity_splash);
         new Handler().postDelayed(new Runnable() {
@@ -117,7 +112,8 @@ public class SplashScreenActivity extends Activity {
                 }
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY.toString())) {
-                    loadingCenter();
+                    //loadingCenter();
+                    setupRealmOne();
                 }
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CREATE_ACCOUNT_ACTIVITY.toString())) {
@@ -153,45 +149,72 @@ public class SplashScreenActivity extends Activity {
             loadingReceiver = null;
         }
 
-        if (realm != null) {
-            realm.close();
-        }
+        realmManager.closeRealm();
 
         super.onDestroy();
     }
 
     private void loadingCenter() {
-        realm  = Realm.getDefaultInstance();
-        userMe = realm.where(RUserMe.class).findFirst();
-        users  = realm.where(RUser.class).findAllAsync();
-        rooms  = realm.where(RRoom.class).findAllAsync();
+//        realm  = Realm.getDefaultInstance();
+//        userMe = realm.where(RUserMe.class).findFirst();
+//        users  = realm.where(RUser.class).findAllAsync();
+//        rooms  = realm.where(RRoom.class).findAllAsync();
+//
+//        userMeListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//
+//            }
+//        };
+//
+//        usersListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//
+//            }
+//        };
+//
+//        roomsListener = new RealmChangeListener() {
+//            @Override
+//            public void onChange() {
+//
+//            }
+//        };
+//
+//        RObjectManager.getInstance().assignRealm(realm);
+//        RObjectManager.getInstance().assignUserMe(userMe, userMeListener);
+//        RObjectManager.getInstance().assignUsers(users, usersListener);
+//        RObjectManager.getInstance().assignRooms(rooms, roomsListener);
+//
+//        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
+    }
 
-        userMeListener = new RealmChangeListener() {
+    private void setupRealmOne() {
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+        realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
+        realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());
+
+        realmManager.addUserMeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
 
             }
-        };
+        });
 
-        usersListener = new RealmChangeListener() {
+        realmManager.addUsersListener(new RealmChangeListener() {
             @Override
             public void onChange() {
 
             }
-        };
+        });
 
-        roomsListener = new RealmChangeListener() {
+        realmManager.addRoomsListener(new RealmChangeListener() {
             @Override
             public void onChange() {
 
             }
-        };
+        });
 
-        RObjectManager.getInstance().assignRealm(realm);
-        RObjectManager.getInstance().assignUserMe(userMe, userMeListener);
-        RObjectManager.getInstance().assignUsers(users, usersListener);
-        RObjectManager.getInstance().assignRooms(rooms, roomsListener);
-
-        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
+        realmManager.loading_UserMe_Users_Rooms();
     }
 }

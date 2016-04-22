@@ -37,12 +37,12 @@ public class RObjectManager {
 
     }
 
-    public static RObjectManager getInstance() {
-        if (realmObject == null) {
-            realmObject = new RObjectManager();
-        }
-        return realmObject;
-    }
+//    public static RObjectManager getInstance() {
+//        if (realmObject == null) {
+//            realmObject = new RObjectManager();
+//        }
+//        return realmObject;
+//    }
 
     // ASSIGN
     public void assignRealm(Realm realm) {
