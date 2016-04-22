@@ -70,6 +70,7 @@ public class AntbuddyXmppConnection {
 	public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
 	public static final String SERVICE_START_ERROR   = "XMPP_START_ERROR";
 	public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
+	public static final String SERVICE_ALREADY_LOGGED = "XMPP_ALREADY_LOGGED";
 
 	//private static Map<String, List<ChatMessage>> historyMessages;
 	private static Context mContext;
@@ -127,7 +128,7 @@ public class AntbuddyXmppConnection {
 		xmppConnection = connection;
 	}
 
-	public void connectXMPP(final Context context, final XMPPReceiver receiver) {
+	synchronized private void connectXMPP(final Context context, final XMPPReceiver receiver) {
 		if (xmppConnection != null && xmppConnection.isConnected()) {
 			receiver.onSuccess(SERVICE_ALREADY_START);
 			return;
@@ -175,11 +176,20 @@ public class AntbuddyXmppConnection {
 			receiver.onSuccess(SERVICE_START_SUCCESS);
 		} catch (XMPPException ex) {
             ex.printStackTrace();
+			LogHtk.i(LogHtk.ErrorHTK, "--1-> " + ex.getMessage());
+
 			xmppConnection = null;
 			receiver.onError(SERVICE_START_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
-			xmppConnection = null;
+			String result = e.getMessage();
+			if (result.contains("Already logged in to server.")) {
+				receiver.onSuccess(SERVICE_ALREADY_LOGGED);
+			} else {
+				xmppConnection = null;
+			}
+
+			LogHtk.i(LogHtk.Test1, "--2-> " + e.getMessage());
 			receiver.onError(SERVICE_START_ERROR);
 		}
 	}
@@ -309,6 +319,7 @@ public class AntbuddyXmppConnection {
 //				mContext.sendBroadcast(intent);
 //				System.out.println("reconnectionFailed");
 				LogHtk.i(LogHtk.XMPP_TAG, "Failed to reconnect to the XMPP server.");
+				e.printStackTrace();
 			}
 
 			@Override
@@ -323,6 +334,7 @@ public class AntbuddyXmppConnection {
 			@Override
 			public void connectionClosedOnError(Exception e) {
 				LogHtk.i(LogHtk.XMPP_TAG, "Connection to XMPP server was lost.");
+				e.printStackTrace();
 			}
 
 			@Override
@@ -350,14 +362,7 @@ public class AntbuddyXmppConnection {
 		presenceListener = new PacketListener() {
 			public void processPacket(Packet packet) {
 				Presence presence = (Presence) packet;
-                LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
-
-
-//				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_RECEIVER_PRESENCE);
-//				intent.putExtra(AntbuddyConstant.PRESENCE_FROM, presence.getFrom());
-//				intent.putExtra(AntbuddyConstant.PRESENCE_TYPE, presence.getType());
-//				intent.putExtra(AntbuddyConstant.PRESENCE_MODE, presence.getMode());
-//				mContext.sendBroadcast(intent);
+                //LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
 			}
 		};
 		xmppConnection.addPacketListener(presenceListener, presenceFilter);
@@ -442,7 +447,6 @@ public class AntbuddyXmppConnection {
 	 */
 	private void sendPresenceOutFromOpeningRooms() {
 		if (openingRoom == null || !openingRoom.isAlive()) {
-			new Exception("GoiNhieu").printStackTrace();
 			openingRoom = new Thread(new Runnable() {
 				@Override
 				public void run() {

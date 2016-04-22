@@ -11,6 +11,10 @@ import android.os.Looper;
 import java.util.EmptyStackException;
 import java.util.List;
 
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
@@ -217,6 +221,95 @@ public class AntbuddyService extends Service {
 		mXmppConnection = AntbuddyXmppConnection.getInstance();
 		mXmppConnection.disconnect();
 		AntbuddyXmppConnection.instance = null;
+	}
+
+	public void loadMessage(String before, String keyRoom, boolean isGroup) {
+		Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
+		intent.putExtra("loadMessage", "start");
+		getApplicationContext().sendBroadcast(intent);
+
+		APIManager.GETMessages1(before, keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
+			@Override
+			public void onSuccess(final List<GChatMassage> listMessages) {
+				LogHtk.i(LogHtk.Test1, "----loadMoreMessages1---");
+				LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
+
+				if (listMessages.size() > 0) {
+					LogHtk.i(LogHtk.Test1, "----111---");
+					Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
+					intent.putExtra("loadMessage", "loaded");
+					intent.putExtra("sizeMessages", listMessages.size());
+					getApplicationContext().sendBroadcast(intent);
+					LogHtk.i(LogHtk.Test1, "----222---");
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+
+							for (int i = 0; i < listMessages.size(); i++) {
+								GChatMassage mess = listMessages.get(i);
+
+								RChatMessage messageSaved = new RChatMessage();
+								messageSaved.setId(mess.getId());
+								messageSaved.setSenderJid(mess.getSenderJid());
+								messageSaved.setSenderId(mess.getSenderId());
+								messageSaved.setSenderName(mess.getSenderName());
+								messageSaved.setBody(mess.getBody());
+								messageSaved.setFromId(mess.getFromId());
+								messageSaved.setReceiverJid(mess.getReceiverJid());
+								messageSaved.setReceiverId(mess.getReceiverId());
+								messageSaved.setReceiverName(mess.getReceiverName());
+								messageSaved.setIsModified(mess.isModified());
+								messageSaved.setType(mess.getType());
+								messageSaved.setSubtype(mess.getSubtype());
+								messageSaved.setTime(mess.getTime());
+								messageSaved.setExpandBody(mess.getExpandBody());
+								messageSaved.setOrg(mess.getOrg());
+								messageSaved.setSenderKey(mess.getSenderKey());
+								messageSaved.setFromKey(mess.getFromKey());
+								messageSaved.setReceiverKey(mess.getReceiverKey());
+
+								GFileAntBuddy gFile = mess.getFileAntBuddy();
+								if (gFile != null) {
+									RFileAntBuddy rFile = new RFileAntBuddy();
+									rFile.setSize(gFile.getSize());
+									rFile.setFileUrl(gFile.getFileUrl());
+									rFile.setMimeType(gFile.getMimeType());
+									rFile.setThumbnailUrl(gFile.getThumbnailUrl());
+									rFile.setThumbnailWidth(gFile.getThumbnailWidth());
+									rFile.setThumbnailHeight(gFile.getThumbnailHeight());
+									messageSaved.setFileAntBuddy(rFile);
+								}
+
+								realmBG.saveMessage(messageSaved);
+							}
+							realmBG.closeRealm();
+							Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
+							intent.putExtra("loadMessage", "saved");
+							intent.putExtra("sizeMessages", listMessages.size());
+							getApplicationContext().sendBroadcast(intent);
+							LogHtk.i(LogHtk.Test1, "----444---");
+						}
+					}).start();
+				} else {
+					Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
+					intent.putExtra("loadMessage", "empty");
+					intent.putExtra("sizeMessages", listMessages.size());
+					getApplicationContext().sendBroadcast(intent);
+				}
+
+				//mSwipyRefreshLayout.setRefreshing(false);
+			}
+
+			@Override
+			public void onError(String error) {
+				LogHtk.i(LogHtk.ChatActivity, "-->Error");
+				//mSwipyRefreshLayout.setRefreshing(false);
+				Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
+				intent.putExtra("loadMessage", "error");
+				getApplicationContext().sendBroadcast(intent);
+			}
+		});
 	}
 
 //	public String logout() throws RemoteException {

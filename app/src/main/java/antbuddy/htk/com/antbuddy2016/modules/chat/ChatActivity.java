@@ -94,6 +94,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private EmojiconEditText    etTypingMessage;
     private ImageView           imgSendMessage;
 
+    private boolean isloadedMessages;
+
     private Realm realm;
 
     public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
@@ -113,6 +115,53 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
     };
 
+    private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String loadMessage = intent.getStringExtra("loadMessage");
+            if (loadMessage.equals("start")) {
+                LogHtk.i(LogHtk.Test1, "-->start");
+                isloadedMessages = false;
+            }
+            if (loadMessage.equals("loaded")) {
+                LogHtk.i(LogHtk.Test1, "----333---");
+                isloadedMessages = false;
+                mSwipyRefreshLayout.setRefreshing(false);
+                LogHtk.i(LogHtk.Test1, "-->done");
+                int sizeMessages = intent.getIntExtra("sizeMessages", 0);
+                chatAdapter.updateAdapter(sizeMessages);
+            }
+
+            if (loadMessage.equals("saved")) {
+                isloadedMessages = true;
+            }
+
+            if (loadMessage.equals("error")) {
+                LogHtk.i(LogHtk.Test1, "-->error");
+                mSwipyRefreshLayout.setRefreshing(false);
+            }
+            if (loadMessage.equals("empty")) {
+                LogHtk.i(LogHtk.Test1, "-->empty");
+                mSwipyRefreshLayout.setRefreshing(false);
+            }
+        }
+    };
+
+    /**
+     * chatReceiver broadcast. Receive chat from xmpp
+     */
+    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String idMessage = intent.getStringExtra("idMessage");
+                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +173,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             keyMe = RObjectManager.getInstance().getUserMeFromCache().getKey();
         }
         setContentView(R.layout.activity_chat);
-
+        registerReceiver(loadMoreReceiver, new IntentFilter(BroadcastConstant.LOAD_MORE_CHATMESSAGE));
+        isloadedMessages = false;
         loadingDatabase();
 
         initViews();
@@ -144,6 +194,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         unregisterReceiver(messageReceiver);
+        unregisterReceiver(loadMoreReceiver);
         realm.close();
         super.onDestroy();
     }
@@ -192,16 +243,21 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         chatMessages.sort("time", Sort.ASCENDING);
 
 
-        for (int i = 0; i < chatMessages.size() ; i++) {
-            LogHtk.i(LogHtk.Test1, "------------------");
-            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
-            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
-        }
+//        for (int i = 0; i < chatMessages.size() ; i++) {
+//            LogHtk.i(LogHtk.Test1, "------------------");
+//            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
+//            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
+//        }
 
         chatMessages.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
                 lv_messages.setSelection(lv_messages.getCount() - 1);
+                if (!isloadedMessages) {
+                    lv_messages.setSelection(lv_messages.getCount() - 1);
+                } else {
+
+                }
             }
         });
     }
@@ -214,7 +270,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
 
         if (chatAdapter == null) {
-            chatAdapter = new RChatAdapter(this, lv_messages, realm, chatMessages, true);
+            chatAdapter = new RChatAdapter(this, lv_messages, realm, chatMessages, keyMe, true);
             chatAdapter.updateRealmResults(chatMessages);
         }
 
@@ -343,53 +399,29 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             return;
         }
 
-        APIManager.GETMessages1(chatAdapter.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
-            @Override
-            public void onSuccess(List<GChatMassage> listMessages) {
-                // Save into DB
-                //realm.allObjects()
-                LogHtk.i(LogHtk.Test1, "----loadMoreMessages1---");
-                LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
+        AntbuddyService.getInstance().loadMessage(chatAdapter.getBefore(), keyRoom, isGroup);
 
-                //Collections.reverse(listMessages);
-                mSwipyRefreshLayout.setRefreshing(false);
-
-                chatAdapter.saveMessagesIntoDB(listMessages);
-                chatAdapter.updateAdapter();
+//        APIManager.GETMessages1(chatAdapter.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
+//            @Override
+//            public void onSuccess(List<GChatMassage> listMessages) {
+//                LogHtk.i(LogHtk.Test1, "----loadMoreMessages1---");
+//                LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
+//
 //                if (listMessages.size() > 0) {
-//                    before = listMessages.get(0).getDatetime();
+//                    chatAdapter.saveMessagesIntoDB(listMessages);
+//                    chatAdapter.updateAdapter(listMessages.size());
 //                }
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.i(LogHtk.ChatActivity, "-->Error");
-                mSwipyRefreshLayout.setRefreshing(false);
-            }
-        });
+//
+//                mSwipyRefreshLayout.setRefreshing(false);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                LogHtk.i(LogHtk.ChatActivity, "-->Error");
+//                mSwipyRefreshLayout.setRefreshing(false);
+//            }
+//        });
     }
-
-    /**
-     * chatReceiver broadcast. Receive chat from xmpp
-     */
-    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                // TODO: Check cho nay
-//                String idMessage = intent.getStringExtra("person_id");
-                String idMessage = intent.getStringExtra("idMessage");
-                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
-
-//                if (keyRoom.equals(chatMessage.getFromKey())) {
-//                    mChatAdapter1.saveMessageIntoDB(chatMessage);
-//                    isFister = false;
-//                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     @Override
     public void onClick(View v) {

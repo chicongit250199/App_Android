@@ -24,6 +24,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
@@ -64,25 +65,14 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         public RelativeLayout rl_message_image_left;
     }
 
-    public RChatAdapter(Context context,  ListView mListView, Realm realm, RealmResults<RChatMessage> realmResults, boolean automaticUpdate) {
+    public RChatAdapter(Context context,  ListView mListView, Realm realm, RealmResults<RChatMessage> realmResults, String keyMe, boolean automaticUpdate) {
         super(context, realmResults, automaticUpdate);
         this.realmResults = realmResults;
 
         this.mListView = mListView;
         this.realm = realm;
         this.ctx = context;
-        APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
-            @Override
-            public void onSuccess(UserMe me) {
-                //RObjectManager.saveUserMeOrUpdate(me);
-                //keyMe = RObjectManager.getUserMe().getKey();
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.API_TAG, "Error! can not load userme!");
-            }
-        });
+        this.keyMe = keyMe;
     }
 
     @Override
@@ -196,46 +186,52 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         }
     }
 
-    synchronized public void saveMessagesIntoDB(List<GChatMassage> messages) {
-        for (int i = 0; i < messages.size(); i++) {
-            GChatMassage mess = messages.get(i);
+    synchronized public void saveMessagesIntoDB(final List<GChatMassage> messages) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
 
-            RChatMessage messageSaved = new RChatMessage();
-            messageSaved.setId(mess.getId());
-            messageSaved.setSenderJid(mess.getSenderJid());
-            messageSaved.setSenderId(mess.getSenderId());
-            messageSaved.setSenderName(mess.getSenderName());
-            messageSaved.setBody(mess.getBody());
-            messageSaved.setFromId(mess.getFromId());
-            messageSaved.setReceiverJid(mess.getReceiverJid());
-            messageSaved.setReceiverId(mess.getReceiverId());
-            messageSaved.setReceiverName(mess.getReceiverName());
-            messageSaved.setIsModified(mess.isModified());
-            messageSaved.setType(mess.getType());
-            messageSaved.setSubtype(mess.getSubtype());
-            messageSaved.setTime(mess.getTime());
-            messageSaved.setExpandBody(mess.getExpandBody());
-            messageSaved.setOrg(mess.getOrg());
-            messageSaved.setSenderKey(mess.getSenderKey());
-            messageSaved.setFromKey(mess.getFromKey());
-            messageSaved.setReceiverKey(mess.getReceiverKey());
+                for (int i = 0; i < messages.size(); i++) {
+                    GChatMassage mess = messages.get(i);
 
-            GFileAntBuddy gFile = mess.getFileAntBuddy();
-            if (gFile != null) {
-                RFileAntBuddy rFile = new RFileAntBuddy();
-                rFile.setSize(gFile.getSize());
-                rFile.setFileUrl(gFile.getFileUrl());
-                rFile.setMimeType(gFile.getMimeType());
-                rFile.setThumbnailUrl(gFile.getThumbnailUrl());
-                rFile.setThumbnailWidth(gFile.getThumbnailWidth());
-                rFile.setThumbnailHeight(gFile.getThumbnailHeight());
-                messageSaved.setFileAntBuddy(rFile);
+                    RChatMessage messageSaved = new RChatMessage();
+                    messageSaved.setId(mess.getId());
+                    messageSaved.setSenderJid(mess.getSenderJid());
+                    messageSaved.setSenderId(mess.getSenderId());
+                    messageSaved.setSenderName(mess.getSenderName());
+                    messageSaved.setBody(mess.getBody());
+                    messageSaved.setFromId(mess.getFromId());
+                    messageSaved.setReceiverJid(mess.getReceiverJid());
+                    messageSaved.setReceiverId(mess.getReceiverId());
+                    messageSaved.setReceiverName(mess.getReceiverName());
+                    messageSaved.setIsModified(mess.isModified());
+                    messageSaved.setType(mess.getType());
+                    messageSaved.setSubtype(mess.getSubtype());
+                    messageSaved.setTime(mess.getTime());
+                    messageSaved.setExpandBody(mess.getExpandBody());
+                    messageSaved.setOrg(mess.getOrg());
+                    messageSaved.setSenderKey(mess.getSenderKey());
+                    messageSaved.setFromKey(mess.getFromKey());
+                    messageSaved.setReceiverKey(mess.getReceiverKey());
+
+                    GFileAntBuddy gFile = mess.getFileAntBuddy();
+                    if (gFile != null) {
+                        RFileAntBuddy rFile = new RFileAntBuddy();
+                        rFile.setSize(gFile.getSize());
+                        rFile.setFileUrl(gFile.getFileUrl());
+                        rFile.setMimeType(gFile.getMimeType());
+                        rFile.setThumbnailUrl(gFile.getThumbnailUrl());
+                        rFile.setThumbnailWidth(gFile.getThumbnailWidth());
+                        rFile.setThumbnailHeight(gFile.getThumbnailHeight());
+                        messageSaved.setFileAntBuddy(rFile);
+                    }
+
+                    realmBG.saveMessage(messageSaved);
+                }
+                realmBG.closeRealm();
             }
-
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(messageSaved);
-            realm.commitTransaction();
-        }
+        }).start();
     }
 
     public void saveMessageIntoDB(RChatMessage messages) {
@@ -325,14 +321,14 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         this.before = realmResults.last().getTime();
     }
 
-    public void updateAdapter() {
+    public void updateAdapter(int sizeFromTop) {
         if (isTheFisrtTimeLoadMessage) {    // the first time
             mListView.setSelected(true);
             mListView.setSelection(realmResults.size());
         } else {        // Load more
             Rect corners = new Rect();
             mListView.getLocalVisibleRect(corners);
-            mListView.setSelectionFromTop(50, corners.top);
+            mListView.setSelectionFromTop(sizeFromTop, corners.top);
         }
 
         if (realmResults != null && realmResults.size() > 0) {
