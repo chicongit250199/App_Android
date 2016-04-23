@@ -128,6 +128,7 @@ public class AntbuddyXmppConnection {
 
 	synchronized private void connectXMPP(final Context context, final XMPPReceiver receiver) {
 		if (xmppConnection != null && xmppConnection.isConnected()) {
+			LogHtk.d(LogHtk.Test1, "-->111");
 			receiver.onSuccess(SERVICE_ALREADY_START);
 			return;
 		}
@@ -135,19 +136,27 @@ public class AntbuddyXmppConnection {
 		mContext = context;
 		ABXMPPConfig config = getABXMPPConfig();
 
+
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
-		xmppConnection = new XMPPConnection(connConfig);
+
+		if (xmppConnection == null) {
+			LogHtk.d(LogHtk.Test1, "-->222 Create new XMPP Connection");
+			xmppConnection = new XMPPConnection(connConfig);
+		}
+
 		try {
 			xmppConnection.connect();
 		} catch (XMPPException e) {
 			e.printStackTrace();
 			xmppConnection = null;
 			receiver.onError(e.getMessage());
+			LogHtk.d(LogHtk.Test1, "-->333");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			xmppConnection = null;
 			receiver.onError(e.getMessage());
+			LogHtk.d(LogHtk.Test1, "-->444");
 			return;
 		}
 
@@ -187,7 +196,6 @@ public class AntbuddyXmppConnection {
 				xmppConnection = null;
 			}
 
-			LogHtk.i(LogHtk.Test1, "--2-> " + e.getMessage());
 			receiver.onError(SERVICE_START_ERROR);
 		}
 	}
@@ -234,7 +242,7 @@ public class AntbuddyXmppConnection {
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
 				LogHtk.i(LogHtk.XMPP_TAG, "Successfully reconnected to the XMPP server.");
-				sendPresenceOutFromOpeningRooms();
+				//sendPresenceOutFromOpeningRooms();
 			}
 
 			@Override
@@ -343,7 +351,7 @@ public class AntbuddyXmppConnection {
 		msg.setPacketID(id);
 		msg.setBody(chatMessage.getBody());
 		msg.setWith(chatMessage.getReceiverKey());
-		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
+//		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
 		xmppConnection.sendPacket(msg);
 		APIManager.newMessageToHistory(chatMessage, id);
 		//fix not update in other device
@@ -415,14 +423,11 @@ public class AntbuddyXmppConnection {
     /**
      * Handle disconnect
      */
-	public void disconnect() {
-
+	public void disconnectXMPP() {
+		LogHtk.i(LogHtk.Test1, "123");
 		if (xmppConnection != null) {
-			xmppConnection.setConnected(false);
-
-			if (mConnectionListener != null) {
-				xmppConnection.removeConnectionListener(mConnectionListener);
-			}
+			LogHtk.i(LogHtk.Test1, "disconnect XMPP");
+//			xmppConnection.setConnected(false);
 
 			if (chatListener != null) {
 				xmppConnection.removePacketListener(chatListener);
@@ -440,9 +445,13 @@ public class AntbuddyXmppConnection {
 				xmppConnection.removePacketListener(presenceListener);
 			}
 
-			xmppConnection.disconnect();
+			if (mConnectionListener != null) {
+				xmppConnection.removeConnectionListener(mConnectionListener);
+			}
 
-			xmppConnection = null;
+			xmppConnection.disconnect();
+			LogHtk.i(LogHtk.Test1, "333");
+			//xmppConnection = null;
 		}
 
 //		setmUserInfo(null);

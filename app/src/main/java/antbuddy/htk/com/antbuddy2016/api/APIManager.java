@@ -236,7 +236,6 @@ public class APIManager {
         body.put("senderKey", chatMessage.getSenderKey());
         body.put("subtype", chatMessage.getSubtype());
         body.put("type", chatMessage.getType());
-        LogHtk.i(LogHtk.Test1, "id message saved on Server: " + idMessage);
         body.put("id", idMessage);
 
         Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), body);

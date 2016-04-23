@@ -181,7 +181,6 @@ public class RObjectManagerOne {
         AntbuddyService service = AntbuddyService.getInstance();
 
         if (service != null) {
-            LogHtk.i(LogHtk.Test1, "11");
             AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
         } else {
             LogHtk.i(LogHtk.ErrorHTK, "RObjectManagerOne/ Service is still null!");
@@ -409,7 +408,6 @@ public class RObjectManagerOne {
     }
 
     public void addUserMeListener(RealmChangeListener listener) {
-        new Exception().printStackTrace();
         userMeListener = listener;
         if (userme != null) {
             userme.addChangeListener(userMeListener);

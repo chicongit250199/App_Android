@@ -331,39 +331,39 @@ public class RObjectManager {
         realm.close();
     }
 
-    public void saveUsersOrUpdate(List<User> users) {
-        if (users != null && users.size() > 0) {
-            for (User user : users) {
-                RUser realmUser = new RUser();
-                realmUser.setAvatar(user.getAvatar());
-                realmUser.setUsername(user.getUsername());
-                realmUser.setKey(user.getKey());
-                realmUser.setName(user.getName());
-                realmUser.setEmail(user.getEmail());
-                realmUser.setNonce(user.getNonce());
-                realmUser.setBio(user.getBio());
-                realmUser.setPhone(user.getPhone());
-                realmUser.setRole(user.getRole());
-                realmUser.setActive(user.isActive());
-                realmUser.setIsFavorite(user.isFavorite());
-
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(realmUser);
-                realm.commitTransaction();
-
-                // Check and Update Notification
-                // Update data in Cache
-                this.users = getUsersFromDB();
-                if (this.users != null && users.size() > 0) {
-                    this.users.addChangeListener(usersListener);
-                } else {
-                    LogHtk.e(LogHtk.Test3, "Users null!");
-                }
-            }
-        } else {
-            LogHtk.e(LogHtk.Realm, "Warning! Users is null or size == 0!");
-        }
-    }
+//    public void saveUsersOrUpdate(List<User> users) {
+//        if (users != null && users.size() > 0) {
+//            for (User user : users) {
+//                RUser realmUser = new RUser();
+//                realmUser.setAvatar(user.getAvatar());
+//                realmUser.setUsername(user.getUsername());
+//                realmUser.setKey(user.getKey());
+//                realmUser.setName(user.getName());
+//                realmUser.setEmail(user.getEmail());
+//                realmUser.setNonce(user.getNonce());
+//                realmUser.setBio(user.getBio());
+//                realmUser.setPhone(user.getPhone());
+//                realmUser.setRole(user.getRole());
+//                realmUser.setActive(user.isActive());
+//                realmUser.setIsFavorite(user.isFavorite());
+//
+//                realm.beginTransaction();
+//                realm.copyToRealmOrUpdate(realmUser);
+//                realm.commitTransaction();
+//
+//                // Check and Update Notification
+//                // Update data in Cache
+//                this.users = getUsersFromDB();
+//                if (this.users != null && users.size() > 0) {
+//                    this.users.addChangeListener(usersListener);
+//                } else {
+//                    LogHtk.e(LogHtk.Test3, "Users null!");
+//                }
+//            }
+//        } else {
+//            LogHtk.e(LogHtk.Realm, "Warning! Users is null or size == 0!");
+//        }
+//    }
 
     public void saveRoomsOrUpdate(List<Room> rooms) {
         if (rooms != null && rooms.size() > 0) {

@@ -125,14 +125,13 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             String loadMessage = intent.getStringExtra("loadMessage");
             if (loadMessage.equals("start")) {
-                LogHtk.i(LogHtk.Test1, "-->start");
+//                LogHtk.i(LogHtk.Test1, "-->start");
                 isloadedMessages = false;
             }
             if (loadMessage.equals("loaded")) {
-                LogHtk.i(LogHtk.Test1, "----333---");
                 isloadedMessages = false;
                 mSwipyRefreshLayout.setRefreshing(false);
-                LogHtk.i(LogHtk.Test1, "-->done");
+//                LogHtk.i(LogHtk.Test1, "-->done");
                 int sizeMessages = intent.getIntExtra("sizeMessages", 0);
                 chatAdapter.updateAdapter(sizeMessages);
             }
@@ -142,11 +141,11 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             }
 
             if (loadMessage.equals("error")) {
-                LogHtk.i(LogHtk.Test1, "-->error");
+//                LogHtk.i(LogHtk.Test1, "-->error");
                 mSwipyRefreshLayout.setRefreshing(false);
             }
             if (loadMessage.equals("empty")) {
-                LogHtk.i(LogHtk.Test1, "-->empty");
+//                LogHtk.i(LogHtk.Test1, "-->empty");
                 mSwipyRefreshLayout.setRefreshing(false);
             }
         }
@@ -160,7 +159,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             try {
                 String idMessage = intent.getStringExtra("idMessage");
-                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
+//                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -230,13 +229,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        LogHtk.i(LogHtk.Test1, "CenterActivity onDestroy!");
         unregisterReceiver(messageReceiver);
         unregisterReceiver(loadMoreReceiver);
-//        realm.close();
-
-
-
 
         realmManager.removeUserMeListener();
         realmManager.removeRoomsListener();

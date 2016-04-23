@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
@@ -49,6 +50,13 @@ public class DomainActivity extends Activity {
         setContentView(R.layout.activity_domain);
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.DOMAIN_ACTIVITY);
         ABSharedPreference.save(ABSharedPreference.KEY_IS_LOGIN, false);
+
+        RObjectManagerOne realmManager = new RObjectManagerOne();
+        realmManager.getRealm().beginTransaction();
+        realmManager.getRealm().deleteAll();
+        realmManager.getRealm().commitTransaction();
+        realmManager.closeRealm();
+
 
         initViews();
         viewsListener();

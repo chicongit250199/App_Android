@@ -18,6 +18,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Token;
@@ -52,10 +53,16 @@ public class LoginActivity extends Activity {
 
         ABSharedPreference.triggerCurrentScreen(ABSharedPreference.CURRENTSCREEN.LOGIN_ACTIVITY);
 
-
         //AntbuddyApplication.getInstance().deleteRealm();
+        RObjectManagerOne realmManager = new RObjectManagerOne();
+        realmManager.getRealm().beginTransaction();
+        realmManager.getRealm().deleteAll();
+        realmManager.getRealm().commitTransaction();
+        realmManager.closeRealm();
 
-        if(AntbuddyService.mAntbuddyService == null) {
+
+        if(AntbuddyService.getInstance() == null) {
+            LogHtk.i(LogHtk.Test1, "--->Login startService ");
             startService(new Intent(this, AntbuddyService.class));
         }
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();

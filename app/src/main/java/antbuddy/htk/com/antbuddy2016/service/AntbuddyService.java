@@ -38,7 +38,7 @@ public class AntbuddyService extends Service {
     public class LocalBinder extends Binder {
         public AntbuddyService getService() {
             mAntbuddyService = AntbuddyService.this;
-			LogHtk.i(LogHtk.Test2, "LocalBinder return service!");
+//			LogHtk.i(LogHtk.Test2, "LocalBinder return service!");
             return mAntbuddyService;
         }
     }
@@ -55,15 +55,16 @@ public class AntbuddyService extends Service {
 
 	@Override
 	public void onCreate() {
-		LogHtk.i(LogHtk.Test2, "Service onCreate!");
+		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onCreate SERVICE<----------------");
 		super.onCreate();
 
 		mAntbuddyService = AntbuddyService.this;
+
+		loginXMPP();
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		LogHtk.i(LogHtk.Test2, "Service onBind!");
 		return serviceBinder;
 	}
 
@@ -71,7 +72,6 @@ public class AntbuddyService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onStartCommand SERVICE<----------------");
 
-		loginXMPP();
 		return START_STICKY;
 	}
 
@@ -89,6 +89,14 @@ public class AntbuddyService extends Service {
 	public void onTaskRemoved(Intent rootIntent) {
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onTaskRemoved SERVICE<----------------");
 		//saveService();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mXmppConnection.disconnectXMPP();
+			}
+		}).start();
+
 		super.onTaskRemoved(rootIntent);
 		//stop
 	}
@@ -97,6 +105,7 @@ public class AntbuddyService extends Service {
 	public void onDestroy() {
 		LogHtk.e(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
 
+		LogHtk.i(LogHtk.Test1, "--->Service onDestroy startService ");
 		startService(new Intent(this, AntbuddyService.class));
 	}
 
@@ -243,9 +252,14 @@ public class AntbuddyService extends Service {
 	}
 
 	public void resetXMPP() {
-		mXmppConnection = AntbuddyXmppConnection.getInstance();
-		mXmppConnection.disconnect();
-		AntbuddyXmppConnection.instance = null;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mXmppConnection = AntbuddyXmppConnection.getInstance();
+				mXmppConnection.disconnectXMPP();
+				AntbuddyXmppConnection.instance = null;
+			}
+		}).start();
 	}
 
 	public void loadMessage(String before, String keyRoom, boolean isGroup) {
@@ -256,16 +270,12 @@ public class AntbuddyService extends Service {
 		APIManager.GETMessages1(before, keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
 			@Override
 			public void onSuccess(final List<GChatMassage> listMessages) {
-				LogHtk.i(LogHtk.Test1, "----loadMoreMessages1---");
-				LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
 
 				if (listMessages.size() > 0) {
-					LogHtk.i(LogHtk.Test1, "----111---");
 					Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
 					intent.putExtra("loadMessage", "loaded");
 					intent.putExtra("sizeMessages", listMessages.size());
 					getApplicationContext().sendBroadcast(intent);
-					LogHtk.i(LogHtk.Test1, "----222---");
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -313,7 +323,6 @@ public class AntbuddyService extends Service {
 							intent.putExtra("loadMessage", "saved");
 							intent.putExtra("sizeMessages", listMessages.size());
 							getApplicationContext().sendBroadcast(intent);
-							LogHtk.i(LogHtk.Test1, "----444---");
 						}
 					}).start();
 				} else {
@@ -328,7 +337,6 @@ public class AntbuddyService extends Service {
 
 			@Override
 			public void onError(String error) {
-				LogHtk.i(LogHtk.ChatActivity, "-->Error");
 				//mSwipyRefreshLayout.setRefreshing(false);
 				Intent intent = new Intent(BroadcastConstant.LOAD_MORE_CHATMESSAGE);
 				intent.putExtra("loadMessage", "error");

@@ -125,7 +125,8 @@ public class LoReActivity extends Activity {
     // Service process
     private void bindService() {
         try {
-            if(AntbuddyService.mAntbuddyService == null) {
+            if(AntbuddyService.getInstance() == null) {
+                LogHtk.i(LogHtk.Test1, "--->LoRy startService ");
                 startService(new Intent(this, AntbuddyService.class));
                 Intent intent = new Intent(this, Class.forName(AntbuddyService.class.getName()));
                 // binding to remote service
