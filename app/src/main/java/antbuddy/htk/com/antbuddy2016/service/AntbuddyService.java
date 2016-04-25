@@ -90,21 +90,20 @@ public class AntbuddyService extends Service {
 		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onTaskRemoved SERVICE<----------------");
 		//saveService();
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mXmppConnection.disconnectXMPP();
-			}
-		}).start();
-
 		super.onTaskRemoved(rootIntent);
 		//stop
 	}
 
 	@Override
 	public void onDestroy() {
-		LogHtk.e(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
+		LogHtk.d(LogHtk.SERVICE_TAG, "------------------>onDestroy SERVICE<----------------");
 
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mXmppConnection.disconnectXMPP();
+			}
+		}).start();
 		LogHtk.i(LogHtk.Test1, "--->Service onDestroy startService ");
 		startService(new Intent(this, AntbuddyService.class));
 	}

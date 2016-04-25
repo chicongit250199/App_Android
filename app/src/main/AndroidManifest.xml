@@ -111,7 +111,8 @@
         </activity>
 
         <!-- Service -->
-        <service android:name="antbuddy.htk.com.antbuddy2016.service.AntbuddyService">
+        <service android:name="antbuddy.htk.com.antbuddy2016.service.AntbuddyService"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.htk.antbuddy.services.AntbuddyService.BIND" />
                 <action android:name="com.htk.antbuddy.services.AntbuddyService.UNBIND" />
