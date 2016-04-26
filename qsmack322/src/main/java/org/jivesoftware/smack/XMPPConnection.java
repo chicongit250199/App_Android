@@ -457,7 +457,7 @@ public class XMPPConnection extends Connection {
 	        this.setWasAuthenticated(authenticated);
 	        authenticated = false;
 	        connected = false;
-	
+
 	        packetReader.shutdown();
 	        packetWriter.shutdown();
     	}

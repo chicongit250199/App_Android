@@ -141,48 +141,13 @@ public class SplashScreenActivity extends Activity {
                 this.unregisterReceiver(loadingReceiver);
             }
         } catch (IllegalArgumentException e) {
-            LogHtk.i(LogHtk.ErrorHTK, "epicReciver is already unregistered");
+            LogHtk.i(LogHtk.ErrorHTK, "SplashScreenActivity/ loadingReceiver is already unregistered");
             loadingReceiver = null;
         }
 
         realmManager.closeRealm();
 
         super.onDestroy();
-    }
-
-    private void loadingCenter() {
-//        realm  = Realm.getDefaultInstance();
-//        userMe = realm.where(RUserMe.class).findFirst();
-//        users  = realm.where(RUser.class).findAllAsync();
-//        rooms  = realm.where(RRoom.class).findAllAsync();
-//
-//        userMeListener = new RealmChangeListener() {
-//            @Override
-//            public void onChange() {
-//
-//            }
-//        };
-//
-//        usersListener = new RealmChangeListener() {
-//            @Override
-//            public void onChange() {
-//
-//            }
-//        };
-//
-//        roomsListener = new RealmChangeListener() {
-//            @Override
-//            public void onChange() {
-//
-//            }
-//        };
-//
-//        RObjectManager.getInstance().assignRealm(realm);
-//        RObjectManager.getInstance().assignUserMe(userMe, userMeListener);
-//        RObjectManager.getInstance().assignUsers(users, usersListener);
-//        RObjectManager.getInstance().assignRooms(rooms, roomsListener);
-//
-//        RObjectManager.getInstance().loading_UserMe_Users_Rooms();
     }
 
     private void setupRealmOne() {

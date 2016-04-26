@@ -141,6 +141,7 @@ class PacketReader {
                 }
             }
         }
+
         done = true;
 
         // Shut down the listener executor.

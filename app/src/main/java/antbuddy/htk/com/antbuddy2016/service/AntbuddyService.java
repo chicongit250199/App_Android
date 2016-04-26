@@ -238,6 +238,8 @@ public class AntbuddyService extends Service {
 				} else {
 					LogHtk.i(LogHtk.ErrorHTK, "AntbuddyService/ XMPPConnection is null! So, No need to disconnect XMPP!");
 				}
+
+//				AntbuddyService.getInstance().stopSelf();
 			}
 		}).start();
 	}

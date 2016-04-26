@@ -49,6 +49,7 @@ public class AntbuddyXmppConnection {
     public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
     public static final String SERVICE_START_ERROR = "XMPP_START_ERROR";
     public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
+    public static final String SERVICE_ALREADY_CONNECTED_AND_AUTHEN = "XMPP_ALREADY_CONNECTED_AND_AUTHEN";
     public static final String SERVICE_ALREADY_LOGGED = "XMPP_ALREADY_LOGGED";
 
     private static Context mContext;
@@ -118,18 +119,17 @@ public class AntbuddyXmppConnection {
     }
 
     synchronized private void connectXMPP(final Context context, final XMPPReceiver receiver) {
-        if (xmppConnection != null && xmppConnection.isConnected()) {
-            receiver.onSuccess(SERVICE_ALREADY_START);
+        if (xmppConnection != null && xmppConnection.isConnected() && xmppConnection.isAuthenticated()) {
+            receiver.onSuccess(SERVICE_ALREADY_CONNECTED_AND_AUTHEN);
             return;
         }
 
         mContext = context;
         ABXMPPConfig config = getABXMPPConfig();
-
-
         ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 
         if (xmppConnection == null) {
+            LogHtk.i(LogHtk.Test1, "XmppConnection is created!");
             xmppConnection = new XMPPConnection(connConfig);
         }
 
@@ -137,13 +137,13 @@ public class AntbuddyXmppConnection {
             xmppConnection.connect();
         } catch (XMPPException e) {
             e.printStackTrace();
-            xmppConnection = null;
-            receiver.onError(e.getMessage());
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            xmppConnection = null;
-            receiver.onError(e.getMessage());
+            String result = e.getMessage();
+            if (result.contains("Already logged in to server.")) {
+                receiver.onSuccess(SERVICE_ALREADY_LOGGED);
+            } else {
+//                xmppConnection = null;
+                receiver.onError(e.getMessage());
+            }
             return;
         }
 
@@ -168,20 +168,14 @@ public class AntbuddyXmppConnection {
             sendPresenceOutFromOpeningRooms();
 
             receiver.onSuccess(SERVICE_START_SUCCESS);
-        } catch (XMPPException ex) {
-            ex.printStackTrace();
-            xmppConnection = null;
-            receiver.onError(SERVICE_START_ERROR);
         } catch (Exception e) {
             e.printStackTrace();
             String result = e.getMessage();
             if (result.contains("Already logged in to server.")) {
                 receiver.onSuccess(SERVICE_ALREADY_LOGGED);
             } else {
-                xmppConnection = null;
+                receiver.onError(result);
             }
-
-            receiver.onError(SERVICE_START_ERROR);
         }
     }
 
@@ -407,9 +401,9 @@ public class AntbuddyXmppConnection {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+                            //LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
                         } else {
-                            LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+                            //LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
                         }
                     }
                     realmBG.closeRealm();
@@ -425,7 +419,7 @@ public class AntbuddyXmppConnection {
     public void disconnectXMPP() {
         if (xmppConnection != null) {
             LogHtk.i(LogHtk.Test1, "disconnect XMPP");
-//			xmppConnection.setConnected(false);
+			xmppConnection.setConnected(false);
 
             if (chatListener != null) {
                 xmppConnection.removePacketListener(chatListener);
@@ -448,7 +442,7 @@ public class AntbuddyXmppConnection {
             }
 
             xmppConnection.disconnect();
-            //xmppConnection = null;
+            xmppConnection = null;
         }
 
 //		setmUserInfo(null);
