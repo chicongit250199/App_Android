@@ -1,8 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
 
-import android.text.TextUtils;
-
 import org.jivesoftware.smack.packet.AntBuddyFile;
 import org.jivesoftware.smack.packet.Message;
 
@@ -11,8 +9,6 @@ import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
-import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import io.realm.RealmObject;

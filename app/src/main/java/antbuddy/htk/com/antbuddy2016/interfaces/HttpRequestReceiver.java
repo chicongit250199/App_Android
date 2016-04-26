@@ -1,7 +1,5 @@
 package antbuddy.htk.com.antbuddy2016.interfaces;
 
-import org.json.JSONArray;
-
 /**
  * Created by thanhnguyen on 29/03/2016.
  */

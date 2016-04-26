@@ -1,13 +1,9 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
-import android.os.SystemClock;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.model.OpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;

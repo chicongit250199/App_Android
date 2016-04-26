@@ -4,8 +4,6 @@ import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.provider.Settings;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -31,8 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
@@ -41,330 +37,330 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
-import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.model.UserMe;
-import antbuddy.htk.com.antbuddy2016.objects.XMPPMessage;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.setting.ABXMPPConfig;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
-import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class AntbuddyXmppConnection {
 
-	// Used when connect to XMPP Server successful or unsuccessful.
-	public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
-	public static final String SERVICE_START_ERROR   = "XMPP_START_ERROR";
-	public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
-	public static final String SERVICE_ALREADY_LOGGED = "XMPP_ALREADY_LOGGED";
+    // Used when connect to XMPP Server successful or unsuccessful.
+    public static final String SERVICE_START_SUCCESS = "XMPP_START_SUCCESS";
+    public static final String SERVICE_START_ERROR = "XMPP_START_ERROR";
+    public static final String SERVICE_ALREADY_START = "XMPP_ALREADY_START";
+    public static final String SERVICE_ALREADY_LOGGED = "XMPP_ALREADY_LOGGED";
 
-	private static Context mContext;
+    private static Context mContext;
 
-	private XMPPConnection xmppConnection;
-	private ConnectionListener mConnectionListener;
-	private PacketListener chatListener;
-	private PacketListener groupChatListener;
-	private PacketListener deleteListener;
-	private PacketListener presenceListener;
+    private XMPPConnection xmppConnection;
+    private ConnectionListener mConnectionListener;
+    private PacketListener chatListener;
+    private PacketListener groupChatListener;
+    private PacketListener deleteListener;
+    private PacketListener presenceListener;
 
-	/**
-	 * Notification
-	 */
-	private NotificationManager myNotificationManager;
-	private Map<String, Integer> notificationInfo = new HashMap<String, Integer>(); // include notificationID and number messages
+    /**
+     * Notification
+     */
+    private NotificationManager myNotificationManager;
+    private Map<String, Integer> notificationInfo = new HashMap<String, Integer>(); // include notificationID and number messages
 
-	protected static AntbuddyXmppConnection instance;
-	synchronized public static AntbuddyXmppConnection getInstance() {
-		if (instance == null) {
-			instance = new AntbuddyXmppConnection();
-			LogHtk.i(LogHtk.XMPP_TAG, "Created a new XMPP connection!");
-		}
-		return instance;
-	}
+    protected static AntbuddyXmppConnection instance;
 
-	public void connectXMPP(RUserMe me) {
-		if (me != null) {
-			String[] accountXMPP = me.getChatToken().split(":");
-			String username = accountXMPP[0];
-			String password = accountXMPP[1];
+    synchronized public static AntbuddyXmppConnection getInstance() {
+        if (instance == null) {
+            instance = new AntbuddyXmppConnection();
+            LogHtk.i(LogHtk.XMPP_TAG, "Created a new XMPP connection!");
+        }
+        return instance;
+    }
 
-			Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
-			Matcher m = p.matcher(me.getChatUrl());
-			String hostXMPP = "";
-			if (m.matches()) {
-				hostXMPP = m.group(1);
-			}
+    public void connectXMPP(RUserMe me) {
+        if (me != null) {
+            String[] accountXMPP = me.getChatToken().split(":");
+            String username = accountXMPP[0];
+            String password = accountXMPP[1];
 
-			int portXMPP = 5222;    // Default
-			String domainXMPP = me.getChatDomain();
+            Pattern p = Pattern.compile(".*\\/\\/([^:^\\/]+).*");
+            Matcher m = p.matcher(me.getChatUrl());
+            String hostXMPP = "";
+            if (m.matches()) {
+                hostXMPP = m.group(1);
+            }
 
-			if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
-				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
-				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
-				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
-				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
-				ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
+            int portXMPP = 5222;    // Default
+            String domainXMPP = me.getChatDomain();
 
-				// LOGIN XMPP
-				connectXMPP(AntbuddyService.getInstance().getApplicationContext(), new XMPPReceiver() {
-					@Override
-					public void onSuccess(String result) {
-						LogHtk.d(LogHtk.XMPP_TAG, "-->Connect XMPP:  " + result);
-					}
+            if (hostXMPP.length() > 0 && username.length() > 0 && password.length() > 0 && domainXMPP.length() > 0) {
+                ABSharedPreference.save(ABSharedPreference.KEY_XMPP_HOST, hostXMPP);
+                ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PORT, portXMPP);
+                ABSharedPreference.save(ABSharedPreference.KEY_XMPP_DOMAIN, domainXMPP);
+                ABSharedPreference.save(ABSharedPreference.KEY_XMPP_USERNAME, username);
+                ABSharedPreference.save(ABSharedPreference.KEY_XMPP_PASSWORD, password);
 
-					@Override
-					public void onError(String error) {
-						LogHtk.e(LogHtk.XMPP_TAG, "-->Connect XMPP " + error);
-					}
-				});
-			}
-		} else {
-			new Exception("Cannot connect XMPP! Cause Userme is NULL!").printStackTrace();
-		}
-	}
+                // LOGIN XMPP
+                connectXMPP(AntbuddyService.getInstance().getApplicationContext(), new XMPPReceiver() {
+                    @Override
+                    public void onSuccess(String result) {
+                        LogHtk.d(LogHtk.XMPP_TAG, "-->Connect XMPP:  " + result);
+                    }
 
-	synchronized private void connectXMPP(final Context context, final XMPPReceiver receiver) {
-		if (xmppConnection != null && xmppConnection.isConnected()) {
-			LogHtk.d(LogHtk.Test1, "-->111");
-			receiver.onSuccess(SERVICE_ALREADY_START);
-			return;
-		}
+                    @Override
+                    public void onError(String error) {
+                        LogHtk.e(LogHtk.XMPP_TAG, "-->Connect XMPP " + error);
+                    }
+                });
+            }
+        } else {
+            new Exception("Cannot connect XMPP! Cause Userme is NULL!").printStackTrace();
+        }
+    }
 
-		mContext = context;
-		ABXMPPConfig config = getABXMPPConfig();
+    synchronized private void connectXMPP(final Context context, final XMPPReceiver receiver) {
+        if (xmppConnection != null && xmppConnection.isConnected()) {
+            receiver.onSuccess(SERVICE_ALREADY_START);
+            return;
+        }
+
+        mContext = context;
+        ABXMPPConfig config = getABXMPPConfig();
 
 
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
+        ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 
-		if (xmppConnection == null) {
-			LogHtk.d(LogHtk.Test1, "-->222 Create new XMPP Connection");
-			xmppConnection = new XMPPConnection(connConfig);
-		}
+        if (xmppConnection == null) {
+            xmppConnection = new XMPPConnection(connConfig);
+        }
 
-		try {
-			xmppConnection.connect();
-		} catch (XMPPException e) {
-			e.printStackTrace();
-			xmppConnection = null;
-			receiver.onError(e.getMessage());
-			LogHtk.d(LogHtk.Test1, "-->333");
-			return;
-		} catch (Exception e) {
-			e.printStackTrace();
-			xmppConnection = null;
-			receiver.onError(e.getMessage());
-			LogHtk.d(LogHtk.Test1, "-->444");
-			return;
-		}
+        try {
+            xmppConnection.connect();
+        } catch (XMPPException e) {
+            e.printStackTrace();
+            xmppConnection = null;
+            receiver.onError(e.getMessage());
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            xmppConnection = null;
+            receiver.onError(e.getMessage());
+            return;
+        }
 
-		ProviderManager pm = ProviderManager.getInstance();
-		pm.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
+        ProviderManager pm = ProviderManager.getInstance();
+        pm.addIQProvider("command", "http://jabber.org/protocol/commands", new AdHocCommandDataProvider());
 
-		try {
-			SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+        try {
+            SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-			xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
+            xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
 
-			// After connect successful
-			// set connectionXmpp
-			xmppConnection.setConnected(true);
+            // After connect successful
+            // set connectionXmpp
+            xmppConnection.setConnected(true);
 
-			// Register: MessageListener, ConnectionListener, PresenceListener
-			addMessageListener();
-			addConnectionListener();
-			addPresenceListener();
+            // Register: MessageListener, ConnectionListener, PresenceListener
+            addMessageListener();
+            addConnectionListener();
+            addPresenceListener();
 
-			// send presence out to Server XMPP
-			sendPresenceOutFromOpeningRooms();
+            // send presence out to Server XMPP
+            sendPresenceOutFromOpeningRooms();
 
-			receiver.onSuccess(SERVICE_START_SUCCESS);
-		} catch (XMPPException ex) {
+            receiver.onSuccess(SERVICE_START_SUCCESS);
+        } catch (XMPPException ex) {
             ex.printStackTrace();
-			LogHtk.i(LogHtk.ErrorHTK, "--1-> " + ex.getMessage());
+            xmppConnection = null;
+            receiver.onError(SERVICE_START_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            String result = e.getMessage();
+            if (result.contains("Already logged in to server.")) {
+                receiver.onSuccess(SERVICE_ALREADY_LOGGED);
+            } else {
+                xmppConnection = null;
+            }
 
-			xmppConnection = null;
-			receiver.onError(SERVICE_START_ERROR);
-		} catch (Exception e) {
-			e.printStackTrace();
-			String result = e.getMessage();
-			if (result.contains("Already logged in to server.")) {
-				receiver.onSuccess(SERVICE_ALREADY_LOGGED);
-			} else {
-				xmppConnection = null;
-			}
+            receiver.onError(SERVICE_START_ERROR);
+        }
+    }
 
-			receiver.onError(SERVICE_START_ERROR);
-		}
-	}
+    /**
+     * Add message listener
+     */
+    private void addMessageListener() {
+        PacketFilter messageFilter = new MessageTypeFilter(Type.chat);
+        chatListener = new PacketListener() {
+            public void processPacket(Packet packet) {
+                messageIN(packet);
+            }
+        };
 
-	/**
-	 * Add message listener
-	 */
-	private void addMessageListener() {
-		PacketFilter messageFilter = new MessageTypeFilter(Type.chat);
-		chatListener = new PacketListener() {
-			public void processPacket(Packet packet) {
-				messageIN(packet);
-			}
-		};
-
-		PacketFilter groupChatFilter = new MessageTypeFilter(Type.groupchat);
-		groupChatListener = new PacketListener() {
-			public void processPacket(Packet packet) {
-				messageIN(packet);
-			}
-		};
+        PacketFilter groupChatFilter = new MessageTypeFilter(Type.groupchat);
+        groupChatListener = new PacketListener() {
+            public void processPacket(Packet packet) {
+                messageIN(packet);
+            }
+        };
 
         PacketFilter messageDelete = new MessageTypeFilter(Type.event);
         deleteListener = new PacketListener() {
             public void processPacket(Packet packet) {
-				messageIN(packet);
+                messageIN(packet);
             }
         };
         // register packet listener
-		xmppConnection.addPacketListener(chatListener, messageFilter);
-		xmppConnection.addPacketListener(deleteListener, messageDelete);
-		xmppConnection.addPacketListener(groupChatListener, groupChatFilter);
-	}
+        xmppConnection.addPacketListener(chatListener, messageFilter);
+        xmppConnection.addPacketListener(deleteListener, messageDelete);
+        xmppConnection.addPacketListener(groupChatListener, groupChatFilter);
+    }
 
-	/**
-	 * Add connection listener
-	 */
-	private void addConnectionListener() {
-		mConnectionListener = new ConnectionListener() {
+    /**
+     * Add connection listener
+     */
+    private void addConnectionListener() {
+        mConnectionListener = new ConnectionListener() {
 
-			@Override
-			public void reconnectionSuccessful() {
+            @Override
+            public void reconnectionSuccessful() {
 //				Intent intent = new Intent(BroadcastConstant.BROAD_CAST_CONNECTION_STATUS);
 //				intent.putExtra(AntbuddyConstant.CONNECTION_STATUS, AntbuddyConstant.CONNECTION_STATUS_SUCCESS_MESSAGE);
 //				mContext.sendBroadcast(intent);
-				LogHtk.i(LogHtk.XMPP_TAG, "Successfully reconnected to the XMPP server.");
-				//sendPresenceOutFromOpeningRooms();
-			}
+                LogHtk.i(LogHtk.XMPP_TAG, "Successfully reconnected to the XMPP server.");
+                //sendPresenceOutFromOpeningRooms();
+            }
 
-			@Override
-			public void reconnectionFailed(Exception e) {
-				LogHtk.i(LogHtk.XMPP_TAG, "Failed to reconnect to the XMPP server.");
-				e.printStackTrace();
-			}
+            @Override
+            public void reconnectionFailed(Exception e) {
+                LogHtk.i(LogHtk.XMPP_TAG, "Failed to reconnect to the XMPP server.");
+                e.printStackTrace();
+            }
 
-			@Override
-			public void reconnectingIn(int seconds) {
-				LogHtk.i(LogHtk.XMPP_TAG, "Reconnecting in " + seconds + " seconds.");
-			}
+            @Override
+            public void reconnectingIn(int seconds) {
+                LogHtk.i(LogHtk.XMPP_TAG, "Reconnecting in " + seconds + " seconds.");
+            }
 
-			@Override
-			public void connectionClosedOnError(Exception e) {
-				LogHtk.i(LogHtk.XMPP_TAG, "Connection to XMPP server was lost.");
-				e.printStackTrace();
-			}
+            @Override
+            public void connectionClosedOnError(Exception e) {
+                LogHtk.i(LogHtk.XMPP_TAG, "Connection to XMPP server was lost.");
+                e.printStackTrace();
+            }
 
-			@Override
-			public void connectionClosed() {
-				LogHtk.i(LogHtk.XMPP_TAG, "XMPP connection was closed.");
-			}
-		};
-		try {
-			xmppConnection.addConnectionListener(mConnectionListener);
-		} catch (IllegalStateException ex) {
-			LogHtk.i(LogHtk.XMPP_TAG, "loi Gi day: " + ex.toString());
-		}
+            @Override
+            public void connectionClosed() {
+                LogHtk.i(LogHtk.XMPP_TAG, "XMPP connection was closed.");
+            }
+        };
+        try {
+            xmppConnection.addConnectionListener(mConnectionListener);
+        } catch (IllegalStateException ex) {
+            LogHtk.i(LogHtk.XMPP_TAG, "loi Gi day: " + ex.toString());
+        }
 
-	}
+    }
 
-	/**
-	 * Add presence listener
-	 */
-	private void addPresenceListener() {
-		PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
-		presenceListener = new PacketListener() {
-			public void processPacket(Packet packet) {
-				Presence presence = (Presence) packet;
-				//LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
-			}
-		};
-		xmppConnection.addPacketListener(presenceListener, presenceFilter);
-	}
+    /**
+     * Add presence listener
+     */
+    private void addPresenceListener() {
+        PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
+        presenceListener = new PacketListener() {
+            public void processPacket(Packet packet) {
+                Presence presence = (Presence) packet;
+                //LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+            }
+        };
+        xmppConnection.addPacketListener(presenceListener, presenceFilter);
+    }
 
-	/**
-	 * part packet to message object and later broadcast it to activity
-	 * al
-	 * @param packet
-	 */
-	private void messageIN(Packet packet) {
+    /**
+     * part packet to message object and later broadcast it to activity
+     * al
+     *
+     * @param packet
+     */
+    private void messageIN(Packet packet) {
 
-		final Message message = (Message) packet;
-		LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
-		String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+        final Message message = (Message) packet;
+        //LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
+        String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
 
-		if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
+        if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-					RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-					LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
-					realmBG.saveMessage(chatMessage);
-					realmBG.closeRealm();
-				}
-			}).start();
-		}
-	}
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+                    RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+                    //LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
+                    realmBG.saveMessage(chatMessage);
+                    realmBG.closeRealm();
+                }
+            }).start();
+        }
+    }
 
-	public void messageOUT(final RChatMessage chatMessage) {
-		if(xmppConnection == null || !xmppConnection.isConnected()) {
-			LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect!");
-			return;
-		}
+    public void messageOUT(final RChatMessage chatMessage) {
+        if (xmppConnection == null || !xmppConnection.isConnected()) {
+            LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect! --> Try to connect XMPP ... ");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    RObjectManagerOne realmManager = new RObjectManagerOne();
+                    realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+                    connectXMPP(realmManager.getUserme());
+                    realmManager.closeRealm();
+                }
+            }).start();
 
-		RObjectManagerOne realmManager = new RObjectManagerOne();
-		realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
-		RUserMe userMe = realmManager.getUserme();
-		if (userMe == null) {
-			LogHtk.e(LogHtk.ErrorHTK, "ERROR! Cannot send message out because Userme is Null!");
-			realmManager.closeRealm();
-			return;
-		}
+            return;
+        }
 
-		ROrg currentOrg = userMe.getFullCurrentOrg();
-		if (currentOrg == null) {
-			LogHtk.e(LogHtk.API_TAG, "Warning! Oragnization is null in UserMe: ");
-			realmManager.closeRealm();
-			return;
-		}
-		String orgKey = currentOrg.getOrgKey();
-		final String chatMucDomain = userMe.getChatMucDomain();
-		String receiverJid;
-		Message.Type type;
-		if(chatMessage.getType().equals("groupchat")) {
-			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, chatMucDomain);
-			type = Message.Type.groupchat;
-		} else {
-			receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
-			type = Message.Type.chat;
-		}
+        RObjectManagerOne realmManager = new RObjectManagerOne();
+        realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+        RUserMe userMe = realmManager.getUserme();
+        if (userMe == null) {
+            LogHtk.e(LogHtk.ErrorHTK, "ERROR! Cannot send message out because Userme is Null!");
+            realmManager.closeRealm();
+            return;
+        }
 
-		String id = chatMessage.getFromKey()+ AndroidHelper.renID();
-		Message msg = new Message(receiverJid, type);
-		msg.setPacketID(id);
-		msg.setBody(chatMessage.getBody());
-		msg.setWith(chatMessage.getReceiverKey());
+        ROrg currentOrg = userMe.getFullCurrentOrg();
+        if (currentOrg == null) {
+            LogHtk.e(LogHtk.API_TAG, "Warning! Oragnization is null in UserMe: ");
+            realmManager.closeRealm();
+            return;
+        }
+        String orgKey = currentOrg.getOrgKey();
+        final String chatMucDomain = userMe.getChatMucDomain();
+        String receiverJid;
+        Message.Type type;
+        if (chatMessage.getType().equals("groupchat")) {
+            receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, chatMucDomain);
+            type = Message.Type.groupchat;
+        } else {
+            receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
+            type = Message.Type.chat;
+        }
+
+        String id = chatMessage.getFromKey() + AndroidHelper.renID();
+        Message msg = new Message(receiverJid, type);
+        msg.setPacketID(id);
+        msg.setBody(chatMessage.getBody());
+        msg.setWith(chatMessage.getReceiverKey());
 //		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
-		xmppConnection.sendPacket(msg);
-		APIManager.newMessageToHistory(chatMessage, id);
-		//fix not update in other device
-		if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
-			String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
-			msg.setTo(mReceiverJid);
-			xmppConnection.sendPacket(msg);
-		}
+        xmppConnection.sendPacket(msg);
+        APIManager.newMessageToHistory(chatMessage, id);
+        //fix not update in other device
+        if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
+            String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
+            msg.setTo(mReceiverJid);
+            xmppConnection.sendPacket(msg);
+        }
 
-		realmManager.closeRealm();
-	}
+        realmManager.closeRealm();
+    }
 
 //    public void sendToMyself(XMPPMessage messageChatting, String with) {
 //        // for  1-1: Need to send a message to myself
@@ -379,82 +375,81 @@ public class AntbuddyXmppConnection {
 //        mConnection.sendPacket(msg);
 //    }
 
-	Thread openingRoom;
-	/*
-	 * In CHATGROUP case:
-	 * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
-	 */
-	private void sendPresenceOutFromOpeningRooms() {
-		if (openingRoom == null || !openingRoom.isAlive()) {
-			openingRoom = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-					RealmResults<RRoom> rooms = realmBG.getRoomsFromDB();
-					RUserMe userMe = realmBG.getUserMeFromDB();
-					if (userMe == null) {
-						realmBG.closeRealm();
-						return;
-					}
+    Thread openingRoom;
 
-					for (RRoom room : rooms) {
-						RUserMe me = userMe;
-						String key_org = me.getFullCurrentOrg().getOrgKey();
-						String key_me = me.getKey();
-						Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
-						presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
-						if (xmppConnection != null && xmppConnection.isConnected()) {
-							xmppConnection.sendPacket(presence);
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-						} else {
-							LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
-						}
-					}
-					realmBG.closeRealm();
-				}
-			});
-			openingRoom.start();
-		}
-	}
+    /*
+     * In CHATGROUP case:
+     * we must send Presence assigned to notification GroupChatRoom. Then you can send Message to Room.
+     */
+    private void sendPresenceOutFromOpeningRooms() {
+        if (openingRoom == null || !openingRoom.isAlive()) {
+            openingRoom = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+                    RealmResults<RRoom> rooms = realmBG.getRoomsFromDB();
+                    RUserMe userMe = realmBG.getUserMeFromDB();
+                    if (userMe == null) {
+                        realmBG.closeRealm();
+                        return;
+                    }
+
+                    for (RRoom room : rooms) {
+                        RUserMe me = userMe;
+                        String key_org = me.getFullCurrentOrg().getOrgKey();
+                        String key_me = me.getKey();
+                        Presence presence = new Presence(org.jivesoftware.smack.packet.Presence.Type.available);
+                        presence.setTo(room.getKey() + "_" + key_org + "@conference.antbuddy.com/" + key_me + "_" + key_org);
+                        if (xmppConnection != null && xmppConnection.isConnected()) {
+                            xmppConnection.sendPacket(presence);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+                        } else {
+                            LogHtk.i(LogHtk.XMPP_TAG, "Out/GROUP_PRESENCE: " + presence.toXML());
+                        }
+                    }
+                    realmBG.closeRealm();
+                }
+            });
+            openingRoom.start();
+        }
+    }
 
     /**
      * Handle disconnect
      */
-	public void disconnectXMPP() {
-		LogHtk.i(LogHtk.Test1, "123");
-		if (xmppConnection != null) {
-			LogHtk.i(LogHtk.Test1, "disconnect XMPP");
+    public void disconnectXMPP() {
+        if (xmppConnection != null) {
+            LogHtk.i(LogHtk.Test1, "disconnect XMPP");
 //			xmppConnection.setConnected(false);
 
-			if (chatListener != null) {
-				xmppConnection.removePacketListener(chatListener);
-			}
+            if (chatListener != null) {
+                xmppConnection.removePacketListener(chatListener);
+            }
 
-			if (deleteListener != null) {
-				xmppConnection.removePacketListener(deleteListener);
-			}
+            if (deleteListener != null) {
+                xmppConnection.removePacketListener(deleteListener);
+            }
 
-			if (groupChatListener != null) {
-				xmppConnection.removePacketListener(groupChatListener);
-			}
+            if (groupChatListener != null) {
+                xmppConnection.removePacketListener(groupChatListener);
+            }
 
-			if (presenceListener != null) {
-				xmppConnection.removePacketListener(presenceListener);
-			}
+            if (presenceListener != null) {
+                xmppConnection.removePacketListener(presenceListener);
+            }
 
-			if (mConnectionListener != null) {
-				xmppConnection.removeConnectionListener(mConnectionListener);
-			}
+            if (mConnectionListener != null) {
+                xmppConnection.removeConnectionListener(mConnectionListener);
+            }
 
-			xmppConnection.disconnect();
-			LogHtk.i(LogHtk.Test1, "333");
-			//xmppConnection = null;
-		}
+            xmppConnection.disconnect();
+            //xmppConnection = null;
+        }
 
 //		setmUserInfo(null);
 //		setListRoom(null);
@@ -466,9 +461,9 @@ public class AntbuddyXmppConnection {
 //        if(myNotificationManager != null) {
 //            myNotificationManager.cancelAll();
 //        }
-	}
+    }
 
-	private static Pattern maskNameUser = Pattern.compile("@[a-zA-Z]+");
+    private static Pattern maskNameUser = Pattern.compile("@[a-zA-Z]+");
 //	public boolean isCanShowNotification(XMPPMessage message, Context context)
 //	{
 //        // check gitlab message
@@ -603,37 +598,40 @@ public class AntbuddyXmppConnection {
 
     /**
      * Reset notification count with id
+     *
      * @param jid
      */
     public void resetNotificationCount(String jid) {
-        if(notificationInfo.containsKey(jid)) {
+        if (notificationInfo.containsKey(jid)) {
             notificationInfo.put(jid, 0);
         }
     }
 
     /**
      * Check package is foreground
+     *
      * @param myPackage
      * @return
      */
-    public boolean isForeground(String myPackage){
+    public boolean isForeground(String myPackage) {
         ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(1);
+        List<ActivityManager.RunningTaskInfo> runningTaskInfo = manager.getRunningTasks(1);
 
         ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
-        if(componentInfo.getPackageName().equals(myPackage)) return true;
+        if (componentInfo.getPackageName().equals(myPackage)) return true;
         return false;
     }
 
-	private ABXMPPConfig getABXMPPConfig() {
-		return ABSharedPreference.getXMPPConfig();
-	}
+    private ABXMPPConfig getABXMPPConfig() {
+        return ABSharedPreference.getXMPPConfig();
+    }
 
-	/**
-	 * set connectionsenderId
-	 * @param connection
-	 */
-	public void setConnection(XMPPConnection connection) {
-		xmppConnection = connection;
-	}
+    /**
+     * set connectionsenderId
+     *
+     * @param connection
+     */
+    public void setConnection(XMPPConnection connection) {
+        xmppConnection = connection;
+    }
 }

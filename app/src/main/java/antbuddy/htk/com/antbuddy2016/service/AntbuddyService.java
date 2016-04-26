@@ -1,28 +1,21 @@
 package antbuddy.htk.com.antbuddy2016.service;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Looper;
 
-import java.util.EmptyStackException;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
-import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
@@ -229,20 +222,6 @@ public class AntbuddyService extends Service {
 				rObjectManagerBG.closeRealm();
 			}
 		}).start();
-
-
-//		mXmppConnection = AntbuddyXmppConnection.getInstance();
-//		mXmppConnection.connectXMPP(AntbuddyService.this, new XMPPReceiver() {
-//			@Override
-//			public void onSuccess(String result) {
-//				LogHtk.d(LogHtk.XMPP_TAG, "Login and Connect XMPP:  " + result);
-//			}
-//
-//			@Override
-//			public void onError(String error) {
-//				LogHtk.e(LogHtk.XMPP_TAG, "Login and Connect XMPP " + error);
-//			}
-//		});
 	}
 
 	public void sendMessageOut(RChatMessage chatMessage) {
@@ -332,8 +311,6 @@ public class AntbuddyService extends Service {
 					intent.putExtra("sizeMessages", listMessages.size());
 					getApplicationContext().sendBroadcast(intent);
 				}
-
-				//mSwipyRefreshLayout.setRefreshing(false);
 			}
 
 			@Override

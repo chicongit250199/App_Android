@@ -1,9 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.GsonObjects;
 
 
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
-import io.realm.RealmObject;
-
 /**
  * Created by thanhnguyen on 12/04/2016.
  */

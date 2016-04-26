@@ -4,7 +4,6 @@ import android.util.Log;
 
 import antbuddy.htk.com.antbuddy2016.modules.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.activities.DomainActivity;
-import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 
 /**
  * Created by htk on 16/04/2015.

@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,13 +16,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RCurrentOrg;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 
 /**
  * Created by Micky on 4/1/2016.

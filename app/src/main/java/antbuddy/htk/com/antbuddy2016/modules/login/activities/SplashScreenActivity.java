@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
@@ -19,9 +18,7 @@ import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 29/03/2016.

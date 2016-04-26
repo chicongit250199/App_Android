@@ -1,23 +1,16 @@
 package antbuddy.htk.com.antbuddy2016.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
-
-import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**

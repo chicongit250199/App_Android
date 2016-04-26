@@ -1,10 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.RealmObjects;
 
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 14/04/2016.

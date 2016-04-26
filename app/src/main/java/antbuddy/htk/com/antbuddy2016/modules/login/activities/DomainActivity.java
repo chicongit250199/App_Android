@@ -1,12 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,14 +17,9 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
-import antbuddy.htk.com.antbuddy2016.modules.center.activities.CenterActivity;
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.DomainAdapter;
-import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
-import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 29/03/2016.

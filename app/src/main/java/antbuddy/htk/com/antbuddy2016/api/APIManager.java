@@ -2,9 +2,6 @@ package antbuddy.htk.com.antbuddy2016.api;
 
 import android.app.Activity;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +20,6 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import io.realm.Realm;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;

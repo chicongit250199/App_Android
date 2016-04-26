@@ -14,14 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
-import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.model.User;
-import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**

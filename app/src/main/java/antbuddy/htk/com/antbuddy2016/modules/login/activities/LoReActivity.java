@@ -3,7 +3,6 @@ package antbuddy.htk.com.antbuddy2016.modules.login.activities;
 import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -14,8 +13,6 @@ import android.widget.Button;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
-import antbuddy.htk.com.antbuddy2016.service.LocalBinder;
-import antbuddy.htk.com.antbuddy2016.service.LocalService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;

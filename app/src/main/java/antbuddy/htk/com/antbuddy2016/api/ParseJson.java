@@ -1,14 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import antbuddy.htk.com.antbuddy2016.model.Organization;
-import antbuddy.htk.com.antbuddy2016.util.JSONKey;
 
 /**
  * Created by thanhnguyen on 30/03/2016.

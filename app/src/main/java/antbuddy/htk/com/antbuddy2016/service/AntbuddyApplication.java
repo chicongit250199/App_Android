@@ -1,29 +1,12 @@
 package antbuddy.htk.com.antbuddy2016.service;
 
 import android.app.Application;
-import android.content.Context;
-import android.text.TextUtils;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.API;
-import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
-import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 

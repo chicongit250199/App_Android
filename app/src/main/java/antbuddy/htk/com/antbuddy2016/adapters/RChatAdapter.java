@@ -11,26 +11,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.Collections;
-import java.util.List;
-
-import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
-import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
-import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.model.UserMe;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import io.realm.Realm;

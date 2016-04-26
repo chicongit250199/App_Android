@@ -2,16 +2,10 @@ package antbuddy.htk.com.antbuddy2016.model;
 
 import android.text.TextUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
-import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconHandler;
 

@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
-
 import antbuddy.htk.com.antbuddy2016.modules.login.adapter.WalkThroughAdapder;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.Constants;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 28/03/2016.
