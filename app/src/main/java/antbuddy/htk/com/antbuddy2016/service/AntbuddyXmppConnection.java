@@ -316,22 +316,24 @@ public class AntbuddyXmppConnection {
 	}
 
 	public void messageOUT(final RChatMessage chatMessage) {
-		RObjectManagerOne realmManager = new RObjectManagerOne();
-		realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
-
 		if(xmppConnection == null || !xmppConnection.isConnected()) {
 			LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect!");
 			return;
 		}
+
+		RObjectManagerOne realmManager = new RObjectManagerOne();
+		realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
 		RUserMe userMe = realmManager.getUserme();
 		if (userMe == null) {
 			LogHtk.e(LogHtk.ErrorHTK, "ERROR! Cannot send message out because Userme is Null!");
+			realmManager.closeRealm();
 			return;
 		}
 
 		ROrg currentOrg = userMe.getFullCurrentOrg();
 		if (currentOrg == null) {
 			LogHtk.e(LogHtk.API_TAG, "Warning! Oragnization is null in UserMe: ");
+			realmManager.closeRealm();
 			return;
 		}
 		String orgKey = currentOrg.getOrgKey();

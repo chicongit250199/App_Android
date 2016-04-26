@@ -254,9 +254,11 @@ public class AntbuddyService extends Service {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				mXmppConnection = AntbuddyXmppConnection.getInstance();
-				mXmppConnection.disconnectXMPP();
-				AntbuddyXmppConnection.instance = null;
+				if (AntbuddyXmppConnection.instance != null) {
+					mXmppConnection.disconnectXMPP();
+				} else {
+					LogHtk.i(LogHtk.ErrorHTK, "AntbuddyService/ XMPPConnection is null! So, No need to disconnect XMPP!");
+				}
 			}
 		}).start();
 	}

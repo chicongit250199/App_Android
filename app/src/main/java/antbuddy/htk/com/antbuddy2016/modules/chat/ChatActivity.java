@@ -232,11 +232,13 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         unregisterReceiver(messageReceiver);
         unregisterReceiver(loadMoreReceiver);
 
-        realmManager.removeUserMeListener();
-        realmManager.removeRoomsListener();
-        realmManager.removeUsersListener();
-        realmManager.removeChatMessagesListener();
-        realmManager.closeRealm();
+        if (realmManager != null) {
+            realmManager.removeUserMeListener();
+            realmManager.removeRoomsListener();
+            realmManager.removeUsersListener();
+            realmManager.removeChatMessagesListener();
+            realmManager.closeRealm();
+        }
 
         super.onDestroy();
     }
@@ -431,9 +433,13 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 // Send message
                 String text_body = etTypingMessage.getText().toString().trim();
                 if (!TextUtils.isEmpty(text_body)) {
-                    RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, realmManager.getUserme());
+                    RUserMe userMe = realmManager.getUserme();
+                    if (userMe != null) {
+                        RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, userMe);
 //                    chatMessage.showLog();
-                    AntbuddyService.getInstance().sendMessageOut(chatMessage);
+                        AntbuddyService.getInstance().sendMessageOut(chatMessage);
+                    }
+
                     etTypingMessage.setText("");
                 }
             }

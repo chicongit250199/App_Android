@@ -334,10 +334,13 @@ public class CenterActivity extends AppCompatActivity {
 //
 //        realm.close();
 
-        realmManager.removeUserMeListener();
-        realmManager.removeRoomsListener();
-        realmManager.removeUsersListener();
-        realmManager.closeRealm();
+        if (realmManager != null) {
+            realmManager.removeUserMeListener();
+            realmManager.removeRoomsListener();
+            realmManager.removeUsersListener();
+            realmManager.closeRealm();
+        }
+
         super.onDestroy();
     }
 
