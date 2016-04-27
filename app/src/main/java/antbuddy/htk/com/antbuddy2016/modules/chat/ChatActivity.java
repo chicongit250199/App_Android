@@ -5,16 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,6 +38,9 @@ import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.Sort;
@@ -51,55 +59,34 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private String title;
     private String keyMe = "";
 
-    private Boolean isFister = true;
-
-    private ListView            lv_messages;
+    private boolean isloadedMessages;
 
     private RObjectManagerOne realmManager;
 
-    private RChatAdapter        chatAdapter;
-//    private RealmResults<RChatMessage> chatMessages;
-
-
+    private View rootView;
     private SwipyRefreshLayout  mSwipyRefreshLayout;
     private TextView            tv_title;
     private RelativeLayout      areaBack;
+
+    private ListView            lv_messages;
+    private RChatAdapter        chatAdapter;
     private EmojiconEditText    etTypingMessage;
     private ImageView           imgSendMessage;
-
-    private boolean isloadedMessages;
-
-    private Realm realm;
-
-//    public static AntbuddyService mIRemoteService = AntbuddyService.mAntbuddyService;
-//    private boolean mBound;
-//    private final ServiceConnection mConnection = new ServiceConnection() {
-//        public void onServiceConnected(ComponentName className, IBinder service) {
-//            AntbuddyService.LocalBinder binder = (AntbuddyService.LocalBinder) service;
-//            mIRemoteService = binder.getService();
-//            mBound = true;
-//            LogHtk.d(LogHtk.SERVICE_TAG, "CenterActivity/onServiceConnected");
-//        }
-//
-//        public void onServiceDisconnected(ComponentName className) {
-//            mIRemoteService = null;
-//            mBound = false;
-//            LogHtk.e(LogHtk.SERVICE_TAG, "CenterActivity/onServiceDisconnected");
-//        }
-//    };
+    private ImageView           btn_smile;
+    private EmojiconsPopup popup;
 
     private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String loadMessage = intent.getStringExtra("loadMessage");
             if (loadMessage.equals("start")) {
-//                LogHtk.i(LogHtk.Test1, "-->start");
+                //LogHtk.i(LogHtk.Test1, "-->start");
                 isloadedMessages = false;
             }
             if (loadMessage.equals("loaded")) {
                 isloadedMessages = false;
                 mSwipyRefreshLayout.setRefreshing(false);
-//                LogHtk.i(LogHtk.Test1, "-->done");
+                //LogHtk.i(LogHtk.Test1, "-->done");
                 int sizeMessages = intent.getIntExtra("sizeMessages", 0);
                 chatAdapter.updateAdapter(sizeMessages);
             }
@@ -109,27 +96,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             }
 
             if (loadMessage.equals("error")) {
-//                LogHtk.i(LogHtk.Test1, "-->error");
+                //LogHtk.i(LogHtk.Test1, "-->error");
                 mSwipyRefreshLayout.setRefreshing(false);
             }
             if (loadMessage.equals("empty")) {
-//                LogHtk.i(LogHtk.Test1, "-->empty");
+                //LogHtk.i(LogHtk.Test1, "-->empty");
                 mSwipyRefreshLayout.setRefreshing(false);
-            }
-        }
-    };
-
-    /**
-     * chatReceiver broadcast. Receive chat from xmpp
-     */
-    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String idMessage = intent.getStringExtra("idMessage");
-//                LogHtk.i(LogHtk.Test1, "Nhan Message = " + idMessage);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     };
@@ -158,8 +130,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         updateUI();
 
         loadMoreMessages1();
-//        loadMoreMessages();
-        registerReceiver(messageReceiver, new IntentFilter(BroadcastConstant.BROAD_CAST_RECEIVER_CHAT));
 
 //        boolean isConnectService = connectServiceInAndroid();
 //        if (!isConnectService) {
@@ -197,7 +167,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(messageReceiver);
         unregisterReceiver(loadMoreReceiver);
 
         if (realmManager != null) {
@@ -211,28 +180,16 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         super.onDestroy();
     }
 
-//    private boolean connectServiceInAndroid() {
-//        if(AntbuddyService.mAntbuddyService == null) {
-//            Intent intent = new Intent(this, AntbuddyService.class);
-//            bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-//        } else {
-//            mIRemoteService = AntbuddyService.mAntbuddyService;
-//        }
-//        return mIRemoteService != null;
-//    }
-
     @Override
     public void setTitle(CharSequence title) {
         tv_title.setText(title);
     }
 
     private void loadingDatabase() {
-
-
         if (isGroup) {  // Groups
             realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id"));
         } else {    // 1-1, myseft
-            if (keyMe == keyRoom) {
+            if (keyMe.equals(keyRoom)) {
 
                 realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class)
                         .equalTo("fromKey", keyRoom)
@@ -253,69 +210,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
 
         realmManager.getChatMessages().sort("time", Sort.ASCENDING);
-        realmManager.addChatMessagesListener(new RealmChangeListener() {
-            @Override
-            public void onChange() {
-                lv_messages.setSelection(lv_messages.getCount() - 1);
-                if (!isloadedMessages) {
-                    lv_messages.setSelection(lv_messages.getCount() - 1);
-                } else {
-
-                }
-            }
-        });
-
-
-
-//--------
-//        realm = Realm.getDefaultInstance();
-//
-//        if (isGroup) {  // Groups
-//            chatMessages = realm.where(RChatMessage.class).equalTo("fromKey", keyRoom).findAll().distinct("id");
-//        } else {    // 1-1, myseft
-//            if (keyMe == keyRoom) {
-//
-//                chatMessages = realm.where(RChatMessage.class)
-//                        .equalTo("fromKey", keyRoom)
-//                        .equalTo("senderKey", keyRoom)
-//                        .equalTo("receiverKey", keyRoom)
-//                        .findAll().distinct("id");
-//            } else {   // 1-1
-//                chatMessages = realm.where(RChatMessage.class)
-//                        .equalTo("fromKey", keyMe)
-//                        .equalTo("senderKey", keyMe)
-//                        .equalTo("receiverKey", keyRoom)
-//                        .or()
-//                        .equalTo("fromKey", keyRoom)
-//                        .equalTo("senderKey", keyRoom)
-//                        .equalTo("receiverKey", keyMe)
-//                        .findAll().distinct("id");
-//            }
-//        }
-//
-//        chatMessages.sort("time", Sort.ASCENDING);
-//
-//
-////        for (int i = 0; i < chatMessages.size() ; i++) {
-////            LogHtk.i(LogHtk.Test1, "------------------");
-////            LogHtk.i(LogHtk.Test1, "id: " + chatMessages.get(i).getId());
-////            LogHtk.i(LogHtk.Test1, "body: " + chatMessages.get(i).getBody());
-////        }
-//
-//        chatMessages.addChangeListener(new RealmChangeListener() {
-//            @Override
-//            public void onChange() {
-//                lv_messages.setSelection(lv_messages.getCount() - 1);
-//                if (!isloadedMessages) {
-//                    lv_messages.setSelection(lv_messages.getCount() - 1);
-//                } else {
-//
-//                }
-//            }
-//        });
     }
 
     private void initViews() {
+        rootView = findViewById(R.id.root_view);
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
         etTypingMessage = (EmojiconEditText) findViewById(R.id.text_send);
@@ -323,7 +221,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         mSwipyRefreshLayout = (SwipyRefreshLayout) findViewById(R.id.swipyrefreshlayout);
 
         if (chatAdapter == null) {
-            chatAdapter = new RChatAdapter(this, lv_messages, realm, realmManager.getChatMessages(), keyMe, true);
+            chatAdapter = new RChatAdapter(this, lv_messages, realmManager.getRealm(), realmManager.getChatMessages(), keyMe, true);
             chatAdapter.updateRealmResults(realmManager.getChatMessages());
         }
 
@@ -337,6 +235,72 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
                 loadMoreMessages1();
+            }
+        });
+
+        // EMOJICONs
+        btn_smile = (ImageView) findViewById(R.id.btn_smile);
+        popup = new EmojiconsPopup(mSwipyRefreshLayout, this);
+
+        //Will automatically set size according to the soft keyboard size
+        popup.setSizeForSoftKeyboard();
+
+        //If the emoji popup is dismissed, change emojiButton to smiley icon
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                changeEmojiKeyboardIcon(btn_smile, R.drawable.smiley);
+            }
+        });
+
+        //If the text keyboard closes, also dismiss the emoji popup
+        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+
+            @Override
+            public void onKeyboardOpen(int keyBoardHeight) {
+                LogHtk.i(LogHtk.Test1, "-->keyBoardHeight = " + keyBoardHeight);
+                LogHtk.i(LogHtk.Test1, "popupHeight = " + popup.getHeight());
+
+            }
+
+            @Override
+            public void onKeyboardClose() {
+                LogHtk.i(LogHtk.Test1, "->onKeyboardClose");
+                if (popup.isShowing())
+                    popup.dismiss();
+            }
+        });
+
+        //On emoji clicked, add it to edittext
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+                if (etTypingMessage == null || emojicon == null) {
+                    return;
+                }
+
+                int start = etTypingMessage.getSelectionStart();
+                int end = etTypingMessage.getSelectionEnd();
+                if (start < 0) {
+                    etTypingMessage.append(emojicon.getEmoji());
+                } else {
+                    etTypingMessage.getText().replace(Math.min(start, end),
+                            Math.max(start, end), emojicon.getEmoji(), 0,
+                            emojicon.getEmoji().length());
+                }
+            }
+        });
+
+        //On backspace clicked, emulate the KEYCODE_DEL key event
+        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+            @Override
+            public void onEmojiconBackspaceClicked(View v) {
+                KeyEvent event = new KeyEvent(
+                        0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                etTypingMessage.dispatchKeyEvent(event);
             }
         });
 
@@ -391,6 +355,39 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void viewsListener() {
+        // To toggle between text keyboard and emoji keyboard keyboard(Popup)
+        btn_smile.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                //If popup is not showing => emoji keyboard is not visible, we need to show it
+                if (!popup.isShowing()) {
+
+                    //If keyboard is visible, simply show the emoji popup
+                    if (popup.isKeyBoardOpen()) {
+                        popup.showAtBottom();
+                        changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
+                    }
+
+                    //else, open the text keyboard first and immediately after that show the emoji popup
+                    else {
+                        etTypingMessage.setFocusableInTouchMode(true);
+                        etTypingMessage.requestFocus();
+                        popup.showAtBottomPending();
+                        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
+                        changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
+                    }
+                }
+
+                //If popup is showing, simply dismiss it to show the undelying text keyboard
+                else {
+                    popup.dismiss();
+                }
+            }
+        });
+
         imgSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -409,6 +406,18 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     }
 
                     etTypingMessage.setText("");
+                }
+            }
+        });
+
+        realmManager.addChatMessagesListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                lv_messages.setSelection(lv_messages.getCount() - 1);
+                if (!isloadedMessages) {
+                    lv_messages.setSelection(lv_messages.getCount() - 1);
+                } else {
+
                 }
             }
         });
@@ -457,27 +466,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
 
         AntbuddyService.getInstance().loadMessage(chatAdapter.getBefore(), keyRoom, isGroup);
-
-//        APIManager.GETMessages1(chatAdapter.getBefore(), keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
-//            @Override
-//            public void onSuccess(List<GChatMassage> listMessages) {
-//                LogHtk.i(LogHtk.Test1, "----loadMoreMessages1---");
-//                LogHtk.i(LogHtk.Test1, "listMessages: " + listMessages.size());
-//
-//                if (listMessages.size() > 0) {
-//                    chatAdapter.saveMessagesIntoDB(listMessages);
-//                    chatAdapter.updateAdapter(listMessages.size());
-//                }
-//
-//                mSwipyRefreshLayout.setRefreshing(false);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                LogHtk.i(LogHtk.ChatActivity, "-->Error");
-//                mSwipyRefreshLayout.setRefreshing(false);
-//            }
-//        });
     }
 
     @Override
@@ -497,5 +485,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //            mIRemoteService.sendMessageOut(chatMessage);
 //            etTypingMessage.setText("");
 //        }
+    }
+
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
+        iconToBeChanged.setImageResource(drawableResourceId);
     }
 }

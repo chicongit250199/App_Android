@@ -35,6 +35,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,6 +44,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
 
@@ -155,34 +158,29 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             Rect r = new Rect();
             rootView.getWindowVisibleDisplayFrame(r);
 
-            int screenHeight = rootView.getRootView()
-                    .getHeight();
-            int heightDifference;
-            if (Build.VERSION.SDK_INT >= 21) {
-                heightDifference = screenHeight
-                        - r.bottom - r.top;
-            }else
-            {
-                heightDifference = screenHeight
-                        - (r.bottom - r.top);
-            }
-            int resourceId = mContext.getResources()
-                    .getIdentifier("status_bar_height",
-                            "dimen", "android");
-            if (resourceId > 0) {
-                heightDifference -= mContext.getResources()
-                        .getDimensionPixelSize(resourceId);
-            }
+			int screenHeight = getUsableScreenHeight();
+			int heightDifference = screenHeight
+					- (r.bottom - r.top);
+			int resourceId = mContext.getResources()
+					.getIdentifier("status_bar_height",
+							"dimen", "android");
+			if (resourceId > 0) {
+				heightDifference -= mContext.getResources()
+						.getDimensionPixelSize(resourceId);
+			}
+
             if (heightDifference > 100) {
                 keyBoardHeight = heightDifference;
                 setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                if(onSoftKeyboardOpenCloseListener!=null)
-                    onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
-                isOpened = true;
-                if(pendingOpen){
-                    showAtBottom();
-                    pendingOpen = false;
-                }
+				if (!isOpened) {
+					if (onSoftKeyboardOpenCloseListener != null)
+						onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+				}
+				isOpened = true;
+				if (pendingOpen) {
+					showAtBottom();
+					pendingOpen = false;
+				}
             }
             else{
                 isOpened = false;
@@ -201,6 +199,20 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 	public void setSize(int width, int height){
 		setWidth(width);
 		setHeight(height);
+	}
+
+	private int getUsableScreenHeight() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+
+			WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+			windowManager.getDefaultDisplay().getMetrics(metrics);
+
+			return metrics.heightPixels;
+
+		} else {
+			return rootView.getRootView().getHeight();
+		}
 	}
 
 	private View createCustomView() {

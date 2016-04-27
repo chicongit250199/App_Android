@@ -14,6 +14,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.Room;
@@ -216,10 +217,16 @@ public class AntbuddyService extends Service {
 			@Override
 			public void run() {
 				LogHtk.i(LogHtk.SERVICE_TAG, "------------------>loginXMPP<----------------");
-				RObjectManagerBackGround rObjectManagerBG = new RObjectManagerBackGround();
-				mXmppConnection = AntbuddyXmppConnection.getInstance();
-				mXmppConnection.connectXMPP(rObjectManagerBG.getUserMeFromDB());
-				rObjectManagerBG.closeRealm();
+				RObjectManagerOne realmManager = new RObjectManagerOne();
+				realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+				RUserMe userMe = realmManager.getUserme();
+				if (userMe != null) {
+					mXmppConnection = AntbuddyXmppConnection.getInstance();
+					mXmppConnection.connectXMPP(userMe);
+				} else {
+					new Exception("Warning! Userme is null! Can not login XMPP");
+				}
+				realmManager.closeRealm();
 			}
 		}).start();
 	}
