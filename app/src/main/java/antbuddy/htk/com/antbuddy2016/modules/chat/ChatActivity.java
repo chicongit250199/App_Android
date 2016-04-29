@@ -256,7 +256,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(btn_smile, R.drawable.smiley);
+                changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
+//                qImageView.setBackgroundResource(R.drawable.thumbs_down);
             }
         });
 
@@ -266,24 +267,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             @Override
             public void onKeyboardOpen(int keyBoardHeight) {
                 LogHtk.i(LogHtk.Test1, "->onKeyboardOpen");
-                LogHtk.i(LogHtk.Test1, "keyBoardHeight = " + keyBoardHeight);
-                LogHtk.i(LogHtk.Test1, "popupHeight = " + popup.getHeight());
                 popup.dismiss();
-
-                // Update height root view
-//                rootView.getLayoutParams().height = popup.getScreenHeight() - popup.getKeyBoardHeightBefore() - getHeightStatusBar();
-//                rootView.requestLayout();
             }
 
             @Override
             public void onKeyboardClose() {
                 LogHtk.i(LogHtk.Test1, "->onKeyboardClose");
-                // Update height root view
-//                if (!popup.isShowing() && (rootView.getLayoutParams().height != popup.getScreenHeight() - getHeightStatusBar())) {
-//                    LogHtk.i(LogHtk.Test1, "onKeyboardClose -- > 111");
-//                    rootView.getLayoutParams().height = popup.getScreenHeight() - getHeightStatusBar();
-//                    rootView.requestLayout();
-//                }
             }
         });
 
@@ -386,10 +375,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onClick(View v) {
-
-//                popup.showPopup();
-//                rootView.getLayoutParams().height = popup.getScreenHeight() - popup.getKeyBoardHeightBefore() - getHeightStatusBar();
-//                rootView.requestLayout();
 //
                 if (popup.isShowing()) {
                     // Show keyboard
@@ -398,10 +383,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     etTypingMessage.requestFocus();
                     final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
-                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
-
-                    // Hide popup
-//                    popup.dismiss();
+                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
                 } else {
                     LogHtk.i(LogHtk.Test1, "222");
 
@@ -412,12 +394,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     }
 
                     popup.showPopup();
+                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_keyboard);
                 }
-//
-//                if (popup.isShowing()) {
-//                    LogHtk.i(LogHtk.Test1, "Popup da show roi!");
-//
-//                }
             }
         });
 
@@ -466,30 +444,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
 //                .into(imgSendMessage);
     }
-    
-    //goi len webservice lay tin nhan cua room / uses
-    public void loadMoreMessages(){
-//        APIManager.GETMessages(mChatAdapter1.getBefore(), keyReceiver, (isRoom ? "groupchat" : "chat"), new HttpRequestReceiver<List<ChatMessage>>() {
-//            @Override
-//            public void onSuccess(List<ChatMessage> listMessages) {
-//
-//                Collections.reverse(listMessages);
-//                mSwipyRefreshLayout.setRefreshing(false);
-//                mChatAdapter.addMessages(listMessages, isFister);
-//
-//                isFister = false;
-//                if (listMessages.size() > 0) {
-//                    before = listMessages.get(0).getDatetime();
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                LogHtk.i(LogHtk.ChatActivity, "-->Error");
-//                mSwipyRefreshLayout.setRefreshing(false);
-//            }
-//        });
-    }
 
     public void loadMoreMessages1(){
         // Check internet
@@ -534,6 +488,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
-        iconToBeChanged.setImageResource(drawableResourceId);
+        iconToBeChanged.setBackgroundResource(drawableResourceId);
+
     }
 }
