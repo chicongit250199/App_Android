@@ -11,13 +11,17 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -63,7 +67,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
     private RObjectManagerOne realmManager;
 
-    private View rootView;
+    private LinearLayout rootView;
     private SwipyRefreshLayout  mSwipyRefreshLayout;
     private TextView            tv_title;
     private RelativeLayout      areaBack;
@@ -74,6 +78,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private ImageView           imgSendMessage;
     private ImageView           btn_smile;
     private EmojiconsPopup popup;
+    private ImageView popupView;
 
     private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
         @Override
@@ -213,7 +218,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void initViews() {
-        rootView = findViewById(R.id.root_view);
+        rootView = (LinearLayout) findViewById(R.id.root_view);
+        popupView = (ImageView) findViewById(R.id.popupView);
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
         etTypingMessage = (EmojiconEditText) findViewById(R.id.text_send);
@@ -240,7 +246,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         // EMOJICONs
         btn_smile = (ImageView) findViewById(R.id.btn_smile);
-        popup = new EmojiconsPopup(mSwipyRefreshLayout, this);
+        popup = new EmojiconsPopup(rootView, this);
 
         //Will automatically set size according to the soft keyboard size
         popup.setSizeForSoftKeyboard();
@@ -259,16 +265,25 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onKeyboardOpen(int keyBoardHeight) {
-                LogHtk.i(LogHtk.Test1, "-->keyBoardHeight = " + keyBoardHeight);
+                LogHtk.i(LogHtk.Test1, "->onKeyboardOpen");
+                LogHtk.i(LogHtk.Test1, "keyBoardHeight = " + keyBoardHeight);
                 LogHtk.i(LogHtk.Test1, "popupHeight = " + popup.getHeight());
+                popup.dismiss();
 
+                // Update height root view
+//                rootView.getLayoutParams().height = popup.getScreenHeight() - popup.getKeyBoardHeightBefore() - getHeightStatusBar();
+//                rootView.requestLayout();
             }
 
             @Override
             public void onKeyboardClose() {
                 LogHtk.i(LogHtk.Test1, "->onKeyboardClose");
-                if (popup.isShowing())
-                    popup.dismiss();
+                // Update height root view
+//                if (!popup.isShowing() && (rootView.getLayoutParams().height != popup.getScreenHeight() - getHeightStatusBar())) {
+//                    LogHtk.i(LogHtk.Test1, "onKeyboardClose -- > 111");
+//                    rootView.getLayoutParams().height = popup.getScreenHeight() - getHeightStatusBar();
+//                    rootView.requestLayout();
+//                }
             }
         });
 
@@ -352,6 +367,17 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         });
 
         imgSendMessage = (ImageView) findViewById(R.id.imgSendMessage);
+
+
+        Rect r = new Rect();
+        rootView.getWindowVisibleDisplayFrame(r);
+        LogHtk.i(LogHtk.Test1, "222");
+    }
+
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return dp;
     }
 
     private void viewsListener() {
@@ -361,30 +387,37 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
 
-                //If popup is not showing => emoji keyboard is not visible, we need to show it
-                if (!popup.isShowing()) {
+//                popup.showPopup();
+//                rootView.getLayoutParams().height = popup.getScreenHeight() - popup.getKeyBoardHeightBefore() - getHeightStatusBar();
+//                rootView.requestLayout();
+//
+                if (popup.isShowing()) {
+                    // Show keyboard
+                    LogHtk.i(LogHtk.Test1, "111");
+                    etTypingMessage.setFocusableInTouchMode(true);
+                    etTypingMessage.requestFocus();
+                    final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
+                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
 
-                    //If keyboard is visible, simply show the emoji popup
+                    // Hide popup
+//                    popup.dismiss();
+                } else {
+                    LogHtk.i(LogHtk.Test1, "222");
+
                     if (popup.isKeyBoardOpen()) {
-                        popup.showAtBottom();
-                        changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
+                        // Dismiss Keyboard
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(rootView.getWindowToken(), 0);
                     }
 
-                    //else, open the text keyboard first and immediately after that show the emoji popup
-                    else {
-                        etTypingMessage.setFocusableInTouchMode(true);
-                        etTypingMessage.requestFocus();
-                        popup.showAtBottomPending();
-                        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
-                        changeEmojiKeyboardIcon(btn_smile, R.drawable.ic_action_keyboard);
-                    }
+                    popup.showPopup();
                 }
-
-                //If popup is showing, simply dismiss it to show the undelying text keyboard
-                else {
-                    popup.dismiss();
-                }
+//
+//                if (popup.isShowing()) {
+//                    LogHtk.i(LogHtk.Test1, "Popup da show roi!");
+//
+//                }
             }
         });
 
@@ -466,6 +499,19 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
 
         AntbuddyService.getInstance().loadMessage(chatAdapter.getBefore(), keyRoom, isGroup);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (popup.isShowing()) {
+            popup.dismiss();
+            return;
+        }
+
+        if (popup.isKeyBoardOpen()) {
+//            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
