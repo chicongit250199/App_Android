@@ -223,7 +223,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 				isOpened = false;
 				if (isShowing()) {
 					Log.i("Test1", "popup dang show 2");
-					rootView.requestLayout();
+//					rootView.requestLayout();
 					return;
 				}
 
