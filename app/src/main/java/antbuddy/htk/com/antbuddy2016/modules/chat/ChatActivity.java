@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,6 +48,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RChatAdapter;
+import antbuddy.htk.com.antbuddy2016.customview.HTKPhoToView;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
@@ -90,7 +92,9 @@ public class ChatActivity extends Activity {
     static int TAKE_PIC =1;
     Uri outPutfileUri;
 
-    private ImageView imgPhoto;
+
+    private HTKPhoToView imgPhoto;
+    private ImageView imgDelete;
 
     private ListView            lv_messages;
     private RChatAdapter        chatAdapter;
@@ -98,7 +102,6 @@ public class ChatActivity extends Activity {
     private ImageView           imgSendMessage;
     private ImageView           btn_smile;
     private EmojiconsPopup popup;
-    private ImageView popupView;
 
     private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
         @Override
@@ -239,10 +242,12 @@ public class ChatActivity extends Activity {
 
     private void initViews() {
         cameraView = (LinearLayout) findViewById(R.id.cameraView);
-        imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
+        imgPhoto = (HTKPhoToView) findViewById(R.id.imgPhoto);
         imgPhoto.setVisibility(View.GONE);
+
+        imgDelete = (ImageView) findViewById(R.id.imgDelete);
+        imgDelete.setVisibility(View.GONE);
         rootView = (LinearLayout) findViewById(R.id.root_view);
-        popupView = (ImageView) findViewById(R.id.popupView);
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
         etTypingMessage = (EmojiconEditText) findViewById(R.id.text_send);
@@ -408,6 +413,16 @@ public class ChatActivity extends Activity {
             }
         });
 
+
+        imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogHtk.i(LogHtk.Test1, "Delete Photo!!!");
+                imgPhoto.setVisibility(View.GONE);
+                imgDelete.setVisibility(View.GONE);
+            }
+        });
+
         // To toggle between text keyboard and emoji keyboard keyboard(Popup)
         btn_smile.setOnClickListener(new View.OnClickListener() {
 
@@ -497,10 +512,12 @@ public class ChatActivity extends Activity {
 
             // Show image in Edit Text
             imgPhoto.setVisibility(View.VISIBLE);
+
             LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
             Glide.with(getApplicationContext())
                     .load(new File(outPutfileUri.getPath()))
                     .into(imgPhoto);
+            imgDelete.setVisibility(View.VISIBLE);
         }
     }
 
