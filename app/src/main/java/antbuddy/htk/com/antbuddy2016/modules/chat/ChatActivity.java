@@ -5,9 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -26,9 +30,15 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
@@ -41,6 +51,7 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -52,7 +63,7 @@ import io.realm.Sort;
 /**
  * Created by Micky on 4/1/2016.
  */
-public class ChatActivity extends Activity implements View.OnClickListener {
+public class ChatActivity extends Activity {
     public final static String kKeyRoom = "Key of Room";
     public final static String key_type = "type";
     public final static String key_title = "title";
@@ -71,6 +82,15 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private SwipyRefreshLayout  mSwipyRefreshLayout;
     private TextView            tv_title;
     private RelativeLayout      areaBack;
+
+
+
+    // Input message
+    private LinearLayout cameraView;
+    static int TAKE_PIC =1;
+    Uri outPutfileUri;
+
+    private ImageView imgPhoto;
 
     private ListView            lv_messages;
     private RChatAdapter        chatAdapter;
@@ -218,6 +238,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void initViews() {
+        cameraView = (LinearLayout) findViewById(R.id.cameraView);
+        imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
+        imgPhoto.setVisibility(View.GONE);
         rootView = (LinearLayout) findViewById(R.id.root_view);
         popupView = (ImageView) findViewById(R.id.popupView);
         tv_title = (TextView) findViewById(R.id.tv_title);
@@ -360,7 +383,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         Rect r = new Rect();
         rootView.getWindowVisibleDisplayFrame(r);
-        LogHtk.i(LogHtk.Test1, "222");
     }
 
     public int pxToDp(int px) {
@@ -370,6 +392,22 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     private void viewsListener() {
+
+        cameraView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogHtk.i(LogHtk.Test1, "Camera!!!");
+
+                Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File file = new File(Environment.getExternalStorageDirectory(),
+                        "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
+
+                outPutfileUri = Uri.fromFile(file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
+                startActivityForResult(intent, TAKE_PIC);
+            }
+        });
+
         // To toggle between text keyboard and emoji keyboard keyboard(Popup)
         btn_smile.setOnClickListener(new View.OnClickListener() {
 
@@ -378,15 +416,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //
                 if (popup.isShowing()) {
                     // Show keyboard
-                    LogHtk.i(LogHtk.Test1, "111");
                     etTypingMessage.setFocusableInTouchMode(true);
                     etTypingMessage.requestFocus();
                     final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
                     changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
                 } else {
-                    LogHtk.i(LogHtk.Test1, "222");
-
                     if (popup.isKeyBoardOpen()) {
                         // Dismiss Keyboard
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -412,7 +447,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                     RUserMe userMe = realmManager.getUserme();
                     if (userMe != null) {
                         RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, userMe);
-//                    chatMessage.showLog();
                         AntbuddyService.getInstance().sendMessageOut(chatMessage);
                     }
 
@@ -456,6 +490,21 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
+            Toast.makeText(this, outPutfileUri.toString(), Toast.LENGTH_LONG).show();
+
+            // Show image in Edit Text
+            imgPhoto.setVisibility(View.VISIBLE);
+            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
+            Glide.with(getApplicationContext())
+                    .load(new File(outPutfileUri.getPath()))
+                    .into(imgPhoto);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (popup.isShowing()) {
             popup.dismiss();
@@ -468,8 +517,8 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         super.onBackPressed();
     }
 
-    @Override
-    public void onClick(View v) {
+//    @Override
+//    public void onClick(View v) {
 //        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
 //            return;
 //        }
@@ -485,7 +534,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 //            mIRemoteService.sendMessageOut(chatMessage);
 //            etTypingMessage.setText("");
 //        }
-    }
+//    }
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
         iconToBeChanged.setBackgroundResource(drawableResourceId);
