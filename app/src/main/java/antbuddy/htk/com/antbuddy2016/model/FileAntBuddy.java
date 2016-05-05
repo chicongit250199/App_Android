@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 
 public class FileAntBuddy implements Parcelable {
-	
+
 	private final static String key_name = "name";
 	private final static String key_size = "size";
 	private final static String key_fileUrl = "fileUrl";
@@ -48,7 +48,7 @@ public class FileAntBuddy implements Parcelable {
 		this.mimeType = mimeType;
 		this.thumbnailUrl = thumbnailUrl;
 	}
-	
+
 	public FileAntBuddy(JSONObject json) {
 		name = AndroidHelper.getString(json, key_name, null);
 		size = AndroidHelper.getInt(json, key_size, 0);
@@ -58,6 +58,7 @@ public class FileAntBuddy implements Parcelable {
 		thumbnailWidth = AndroidHelper.getInt(json, key_thumbnailWidth, 0);
 		thumbnailHeight = AndroidHelper.getInt(json, key_thumbnailHeight, 0);
 	}
+
 	public FileAntBuddy(AntBuddyFile antBuddyFile) {
 		name = antBuddyFile.getName();
 		size = antBuddyFile.getSize();
@@ -107,7 +108,23 @@ public class FileAntBuddy implements Parcelable {
 		this.thumbnailUrl = thumbnailUrl;
 	}
 
-    @Override
+	public int getThumbnailWidth() {
+		return thumbnailWidth;
+	}
+
+	public void setThumbnailWidth(int thumbnailWidth) {
+		this.thumbnailWidth = thumbnailWidth;
+	}
+
+	public int getThumbnailHeight() {
+		return thumbnailHeight;
+	}
+
+	public void setThumbnailHeight(int thumbnailHeight) {
+		this.thumbnailHeight = thumbnailHeight;
+	}
+
+	@Override
     public int describeContents() {
         return 0;
     }

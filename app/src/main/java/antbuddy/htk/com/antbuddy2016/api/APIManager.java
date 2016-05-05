@@ -28,6 +28,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
@@ -145,25 +146,25 @@ public class APIManager {
     }
 
 
-    public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<ChatMessage>> receiver) {
-        String token = ABSharedPreference.getAccountConfig().getToken();
-        Call<List<ChatMessage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages(token, time, chatRoomKey, typeChat);
-        call.enqueue(new Callback<List<ChatMessage>>() {
-            @Override
-            public void onResponse(Response<List<ChatMessage>> response) {
-                if (response.body() != null) {
-                    receiver.onSuccess(response.body());
-                } else {
-                    receiver.onError(response.code() + "");
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                receiver.onError(t.toString());
-            }
-        });
-    }
+//    public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<ChatMessage>> receiver) {
+//        String token = ABSharedPreference.getAccountConfig().getToken();
+//        Call<List<ChatMessage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages(token, time, chatRoomKey, typeChat);
+//        call.enqueue(new Callback<List<ChatMessage>>() {
+//            @Override
+//            public void onResponse(Response<List<ChatMessage>> response) {
+//                if (response.body() != null) {
+//                    receiver.onSuccess(response.body());
+//                } else {
+//                    receiver.onError(response.code() + "");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                receiver.onError(t.toString());
+//            }
+//        });
+//    }
 
     public static void GETMessages1(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<GChatMassage>> receiver) {
         String token = ABSharedPreference.getAccountConfig().getToken();
@@ -249,19 +250,91 @@ public class APIManager {
 
     public static void newMessageToHistory(RChatMessage chatMessage, String idMessage) {
 
-        HashMap<String, Object> body = new HashMap<>();
-        body.put("body", chatMessage.getBody());
-        body.put("fromKey", chatMessage.getFromKey());
-        body.put("receiverKey", chatMessage.getReceiverKey());
-        body.put("senderKey", chatMessage.getSenderKey());
-        body.put("subtype", chatMessage.getSubtype());
-        body.put("type", chatMessage.getType());
-        body.put("id", idMessage);
+//        HashMap<String, Object> body = new HashMap<>();
+//        body.put("body", chatMessage.getBody());
+//        body.put("fromKey", chatMessage.getFromKey());
+//        body.put("receiverKey", chatMessage.getReceiverKey());
+//        body.put("senderKey", chatMessage.getSenderKey());
+//        body.put("subtype", chatMessage.getSubtype());
+//        body.put("type", chatMessage.getType());
+//        body.put("id", idMessage);
+//
+//
+////        "file": {
+////            "name": "ab_attachment.png",
+////                    "size": 7672,
+////                    "fileUrl": "https://abs1.antbuddy.com/antbuddy-bucket/1462433296593_ab_attachment.png",
+////                    "mimeType": "image/png",
+////                    "thumbnailUrl": "https://abs1.antbuddy.com/antbuddy-bucket/thumb_1462433296593_ab_attachment.png",
+////                    "thumbnailWidth": 128,
+////                    "thumbnailHeight": 128
+////        },
+////
+//        if (chatMessage.getFileAntBuddy() != null) {
+//            LogHtk.i(LogHtk.Test1, "Vao day!");
+//            HashMap<String, Object> fileBody = new HashMap<>();
+//            fileBody.put("name", chatMessage.getFileAntBuddy().getName());
+//            fileBody.put("size", chatMessage.getFileAntBuddy().getSize());
+//            fileBody.put("fileUrl", chatMessage.getFileAntBuddy().getFileUrl());
+//            fileBody.put("mimeType", chatMessage.getFileAntBuddy().getMimeType());
+//            fileBody.put("thumbnailUrl", chatMessage.getFileAntBuddy().getThumbnailUrl());
+//            fileBody.put("thumbnailWidth", chatMessage.getFileAntBuddy().getThumbnailWidth());
+//            fileBody.put("thumbnailHeight", chatMessage.getFileAntBuddy().getThumbnailHeight());
+//
+//            body.put("file", fileBody);
+//        }
+//        LogHtk.i(LogHtk.Test1, "--> bodyL = " + body.toString());
 
-        Call<ChatMessage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), body);
-        call.enqueue(new Callback<ChatMessage>() {
+        GChatMassage message = new GChatMassage();
+        message.setBody(chatMessage.getBody());
+        message.setFromKey(chatMessage.getFromKey());
+        message.setReceiverKey(chatMessage.getReceiverKey());
+        message.setSenderKey(chatMessage.getSenderKey());
+        message.setSubtype(chatMessage.getSubtype());
+        message.setType(chatMessage.getType());
+        message.setId(idMessage);
+
+        if (chatMessage.getFileAntBuddy() != null) {
+            GFileAntBuddy file = new GFileAntBuddy();
+            file.setSize(chatMessage.getFileAntBuddy().getSize());
+            file.setName(chatMessage.getFileAntBuddy().getName());
+            file.setMimeType(chatMessage.getFileAntBuddy().getMimeType());
+            file.setFileUrl(chatMessage.getFileAntBuddy().getFileUrl());
+            file.setThumbnailHeight(chatMessage.getFileAntBuddy().getThumbnailHeight());
+            file.setThumbnailWidth(chatMessage.getFileAntBuddy().getThumbnailWidth());
+            file.setThumbnailUrl(chatMessage.getFileAntBuddy().getThumbnailUrl());
+
+            LogHtk.i(LogHtk.Test1, "--> File---- ");
+            LogHtk.i(LogHtk.Test1, "Size = " + file.getSize());
+            LogHtk.i(LogHtk.Test1, "Name = " + file.getName());
+            LogHtk.i(LogHtk.Test1, "MimeType = " + file.getMimeType());
+            LogHtk.i(LogHtk.Test1, "ThumbnailUrl = " + file.getThumbnailUrl());
+            LogHtk.i(LogHtk.Test1, "ThumbnailHeight = " + file.getThumbnailHeight());
+            LogHtk.i(LogHtk.Test1, "ThumbnailWidth = " + file.getThumbnailWidth());
+            message.setFileAntBuddy(file);
+
+            message.setBody("File uploaded: " + file.getFileUrl());
+        }
+
+        LogHtk.i(LogHtk.Test1, "--> message---- ");
+        LogHtk.i(LogHtk.Test1, "Body = " + message.getBody());
+        LogHtk.i(LogHtk.Test1, "FromKey = " + message.getFromKey());
+        LogHtk.i(LogHtk.Test1, "ReceiverKey = " + message.getReceiverKey());
+        LogHtk.i(LogHtk.Test1, "SenderKey = " + message.getSenderKey());
+        LogHtk.i(LogHtk.Test1, "ID = " + message.getId());
+        LogHtk.i(LogHtk.Test1, "Type = " + message.getType());
+        LogHtk.i(LogHtk.Test1, "Subtype = " + message.getSubtype());
+
+        Call<Void> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), message);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Response<ChatMessage> response) {
+            public void onResponse(Response<Void> response) {
+                LogHtk.i(LogHtk.Test1, "--> history URL = " + response.raw().request().url().toString());
+                LogHtk.i(LogHtk.Test1, "Code = " + response.code());
+                LogHtk.i(LogHtk.Test1, "body = " + response.body());
+                LogHtk.i(LogHtk.Test1, "errorBody = " + response.errorBody());
+                LogHtk.i(LogHtk.Test1, "message = " + response.message());
+                LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
             }
 
             @Override

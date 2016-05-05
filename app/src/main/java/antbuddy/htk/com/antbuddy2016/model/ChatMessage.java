@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,9 +24,12 @@ import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 /**
  * Created by Micky on 4/1/2016.
  */
-public class ChatMessage implements Parcelable {
+public class ChatMessage {
     public static String TAG = "ChatMessage";
+
+
     private String idMessage;
+
     private String senderJid;
     private String senderId;
     private String senderName;
@@ -80,29 +85,29 @@ public class ChatMessage implements Parcelable {
     public ChatMessage() {
     }
 
-    public ChatMessage(String idMessage, String senderJid, String senderId, String senderName, String receiverJid, String receiverId, String receiverName, String fromId, boolean isModified, String body, String type, String subtype, long datetime) {
-        this.idMessage = idMessage;
-        this.senderJid = senderJid;
-        this.senderId = senderId;
-        this.senderName = senderName;
-        this.receiverJid = receiverJid;
-        this.receiverId = receiverId;
-        this.receiverName = receiverName;
-        this.fromId = fromId;
-        this.isModified = isModified;
-        this.body = body;
-        this.type = type;
-        this.subtype = subtype;
-        this.time = "" +datetime;
-    }
-
-    public ChatMessage(String senderName, String receiverName, boolean isModified, String body, long datetime) {
-        this.senderName = senderName;
-        this.receiverName = receiverName;
-        this.isModified = isModified;
-        this.body = body;
-        this.time = "" + datetime;
-    }
+//    public ChatMessage(String idMessage, String senderJid, String senderId, String senderName, String receiverJid, String receiverId, String receiverName, String fromId, boolean isModified, String body, String type, String subtype, long datetime) {
+//        this.idMessage = idMessage;
+//        this.senderJid = senderJid;
+//        this.senderId = senderId;
+//        this.senderName = senderName;
+//        this.receiverJid = receiverJid;
+//        this.receiverId = receiverId;
+//        this.receiverName = receiverName;
+//        this.fromId = fromId;
+//        this.isModified = isModified;
+//        this.body = body;
+//        this.type = type;
+//        this.subtype = subtype;
+//        this.time = "" +datetime;
+//    }
+//
+//    public ChatMessage(String senderName, String receiverName, boolean isModified, String body, long datetime) {
+//        this.senderName = senderName;
+//        this.receiverName = receiverName;
+//        this.isModified = isModified;
+//        this.body = body;
+//        this.time = "" + datetime;
+//    }
 
     public String getSenderKey() {
         return senderKey;
@@ -178,41 +183,41 @@ public class ChatMessage implements Parcelable {
 //        }
 //        return listChatMessageHistory;
 //    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel outParcel, int paramInt) {
-        outParcel.writeString(idMessage);
-        outParcel.writeString(org);
-        outParcel.writeString(senderKey);
-        outParcel.writeString(body);
-        outParcel.writeString(fromKey);
-        outParcel.writeString(receiverKey);
-        outParcel.writeByte((byte) (isModified ? 1 : 0));
-        outParcel.writeString(subtype);
-        outParcel.writeString(type);
-        outParcel.writeString(time);
-        outParcel.writeParcelable(fileAntBuddy, paramInt);
-    }
-
-    public static final Creator<ChatMessage> CREATOR = new Creator<ChatMessage>() {
-
-        @Override
-        public ChatMessage createFromParcel(Parcel in) {
-            return new ChatMessage(in);
-        }
-
-        @Override
-        public ChatMessage[] newArray(int size) {
-            return new ChatMessage[size];
-        }
-    };
-
-
+//
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel outParcel, int paramInt) {
+//        outParcel.writeString(idMessage);
+//        outParcel.writeString(org);
+//        outParcel.writeString(senderKey);
+//        outParcel.writeString(body);
+//        outParcel.writeString(fromKey);
+//        outParcel.writeString(receiverKey);
+//        outParcel.writeByte((byte) (isModified ? 1 : 0));
+//        outParcel.writeString(subtype);
+//        outParcel.writeString(type);
+//        outParcel.writeString(time);
+//        outParcel.writeParcelable(fileAntBuddy, paramInt);
+//    }
+//
+//    public static final Creator<ChatMessage> CREATOR = new Creator<ChatMessage>() {
+//
+//        @Override
+//        public ChatMessage createFromParcel(Parcel in) {
+//            return new ChatMessage(in);
+//        }
+//
+//        @Override
+//        public ChatMessage[] newArray(int size) {
+//            return new ChatMessage[size];
+//        }
+//    };
+//
+//
 
 
 
@@ -485,5 +490,29 @@ public class ChatMessage implements Parcelable {
         LogHtk.i(LogHtk.ChatMessage, "body = " + body);
         LogHtk.i(LogHtk.ChatMessage, "org = " + org);
         LogHtk.i(LogHtk.ChatMessage, "type = " + type);
+    }
+
+    public void setFileAntBuddy(FileAntBuddy fileAntBuddy) {
+        this.fileAntBuddy = fileAntBuddy;
+    }
+
+    public String getOrg() {
+        return org;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    public void setSenderKey(String senderKey) {
+        this.senderKey = senderKey;
+    }
+
+    public void setFromKey(String fromKey) {
+        this.fromKey = fromKey;
+    }
+
+    public void setReceiverKey(String receiverKey) {
+        this.receiverKey = receiverKey;
     }
 }

@@ -3,6 +3,15 @@ package antbuddy.htk.com.antbuddy2016.GsonObjects;
 /**
  * Created by thanhnguyen on 13/04/2016.
  */
+
+//"name": "device-2016-04-12-140855.png",
+////        "size": 225369,
+////        "fileUrl": "https://abs1.antbuddy.com/antbuddy-bucket/1460444887543_device20160412140855.png",
+////        "mimeType": "image/png",
+////        "thumbnailUrl": "https://abs1.antbuddy.com/antbuddy-bucket/thumb_1460444887543_device20160412140855.png",
+////        "thumbnailWidth": 128,
+////        "thumbnailHeight": 228
+
 public class GFileAntBuddy {
     private String name;           //google_play_services.zip
     private int size;		   //16223844

@@ -1,6 +1,8 @@
 package antbuddy.htk.com.antbuddy2016.GsonObjects;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by thanhnguyen on 12/04/2016.
  */
@@ -97,7 +99,7 @@ public class GChatMassage {
     private String senderKey;
     private String fromKey;
     private String receiverKey;
-    private GFileAntBuddy fileAntBuddy;
+    private GFileAntBuddy file;
 
     public String getOrg() {
         return org;
@@ -124,11 +126,11 @@ public class GChatMassage {
     }
 
     public GFileAntBuddy getFileAntBuddy() {
-        return fileAntBuddy;
+        return file;
     }
 
     public void setFileAntBuddy(GFileAntBuddy fileAntBuddy) {
-        this.fileAntBuddy = fileAntBuddy;
+        this.file = fileAntBuddy;
     }
 
     public String getSenderKey() {

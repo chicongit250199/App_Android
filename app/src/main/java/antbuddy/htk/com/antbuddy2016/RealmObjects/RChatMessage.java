@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import io.realm.RealmObject;
@@ -119,7 +120,6 @@ public class RChatMessage extends RealmObject {
         super();
     }
 
-
     public RChatMessage(final Message message, RUserMe userMe) {
         id = message.getPacketID();
 
@@ -201,6 +201,33 @@ public class RChatMessage extends RealmObject {
             fromKey = senderKey;
         }
         body = _body;
+    }
+
+    public RChatMessage(final String _receiverKey, final String _body, final Boolean isMuc, final FileAntBuddy fileAntBuddy, RUserMe userMe) {
+        ROrg currentOrg = userMe.getFullCurrentOrg();
+        if (currentOrg == null) {
+            LogHtk.e(LogHtk.ChatMessage, "Warning! Current Org is not exist!");
+            return;
+        }
+        type = (isMuc? "groupchat": "chat");
+        org = currentOrg.getOrgKey();
+        senderKey = userMe.getKey();
+        receiverKey = _receiverKey;
+        if (isMuc) {
+            fromKey = receiverKey;
+        } else {
+            fromKey = senderKey;
+        }
+        body = _body;
+
+        this.fileAntBuddy = new RFileAntBuddy();
+        this.fileAntBuddy.setThumbnailHeight(fileAntBuddy.getThumbnailHeight());
+        this.fileAntBuddy.setThumbnailWidth(fileAntBuddy.getThumbnailWidth());
+        this.fileAntBuddy.setFileUrl(fileAntBuddy.getFileUrl());
+        this.fileAntBuddy.setThumbnailUrl(fileAntBuddy.getThumbnailUrl());
+        this.fileAntBuddy.setMimeType(fileAntBuddy.getMimeType());
+        this.fileAntBuddy.setName(fileAntBuddy.getName());
+        this.fileAntBuddy.setSize(fileAntBuddy.getSize());
     }
 
     public String getOrg() {

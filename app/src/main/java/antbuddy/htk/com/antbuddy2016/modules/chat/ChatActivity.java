@@ -492,8 +492,23 @@ public class ChatActivity extends Activity {
 
                     AntbuddyService.getInstance().uploadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
                         @Override
-                        public void onSuccess(FileAntBuddy fileAntBuddy) {
+                        public void onSuccess(final FileAntBuddy fileAntBuddy) {
                             LogHtk.i(LogHtk.Test1, "ThanhCong ROi! : " + fileAntBuddy.toString());
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    RUserMe userMe = realmManager.getUserme();
+                                    if (userMe != null) {
+                                        RChatMessage chatMessage = new RChatMessage(keyRoom, "", isGroup, fileAntBuddy, userMe);
+                                        AntbuddyService.getInstance().sendMessageOut(chatMessage);
+
+                                        imgPhoto.setVisibility(View.GONE);
+                                        imgDelete.setVisibility(View.GONE);
+                                        imgEditPhoto.setVisibility(View.GONE);
+                                    }
+                                }
+                            });
                         }
 
                         @Override
