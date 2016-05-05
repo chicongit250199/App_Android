@@ -15,6 +15,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.packet.AntBuddyFile;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
@@ -339,6 +340,15 @@ public class AntbuddyXmppConnection {
         msg.setPacketID(id);
         msg.setBody(chatMessage.getBody());
         msg.setWith(chatMessage.getReceiverKey());
+        if (chatMessage.getFileAntBuddy() != null) {
+            AntBuddyFile file = new AntBuddyFile(chatMessage.getFileAntBuddy().getName(),
+                    chatMessage.getFileAntBuddy().getSize(), chatMessage.getFileAntBuddy().getFileUrl(),
+                    chatMessage.getFileAntBuddy().getMimeType(), chatMessage.getFileAntBuddy().getThumbnailUrl());
+            msg.setFile(file);
+
+            msg.setBody("File uploaded: " + chatMessage.getFileAntBuddy().getFileUrl());
+        }
+
 //		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
         xmppConnection.sendPacket(msg);
         APIManager.newMessageToHistory(chatMessage, id);
