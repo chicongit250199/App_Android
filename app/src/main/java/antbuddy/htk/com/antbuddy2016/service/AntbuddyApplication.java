@@ -19,6 +19,8 @@ public class AntbuddyApplication extends Application {
 	private API apiService;
 	private RealmConfiguration realmConfig;
 
+	private String URL = "";
+
 	@Override
 	public void onCreate() {
         super.onCreate();
@@ -44,6 +46,7 @@ public class AntbuddyApplication extends Application {
 	}
 
 	private API createAPIService() {
+		URL = API.BASE_URL;
 		retrofit = new Retrofit.Builder()
 				.baseUrl(API.BASE_URL)			//"https://antbuddy.com"
 				.addConverterFactory(GsonConverterFactory.create())
@@ -83,11 +86,16 @@ public class AntbuddyApplication extends Application {
 
 	private API restartAPIServiceWithDomain(String domain) {
 		String URLWithDomain = String.format(API.BASE_URL_WITH_DOMAIN, domain);
+		URL = URLWithDomain;
 		retrofit = new Retrofit.Builder()
 				.baseUrl(URLWithDomain)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 		apiService = retrofit.create(API.class);
 		return apiService;
+	}
+
+	public String getURL() {
+		return URL;
 	}
 }

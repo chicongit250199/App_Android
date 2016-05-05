@@ -191,11 +191,8 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 						.getDimensionPixelSize(resourceId);
 			}
 
-			Log.i("Test1", "onGlobalLayoutListener 1 ");
             if (heightDifference > 100) {
                 keyBoardHeight = heightDifference;
-
-				Log.i("Test1", "keyBoardHeight = " + keyBoardHeight);
 				if (keyBoardHeightBefore != keyBoardHeight) {
 					keyBoardHeightBefore = keyBoardHeight;
 				}
@@ -222,23 +219,14 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             else {
 				isOpened = false;
 				if (isShowing()) {
-					Log.i("Test1", "popup dang show 2");
-//					rootView.requestLayout();
 					return;
 				}
 
-				Log.i("Test1", "onGlobalLayoutListener 2");
-
                 if(onSoftKeyboardOpenCloseListener!=null) {
-					Log.i("Test1", "onGlobalLayoutListener 3");
 					onSoftKeyboardOpenCloseListener.onKeyboardClose();
-
-					Log.i("Test1", "isShowing( =  " + isShowing());
 					if (!isShowing() && rootView.getLayoutParams().height != getScreenHeight() - getHeightStatusBar()) {
 						rootView.getLayoutParams().height = getScreenHeight() - getHeightStatusBar();
 						rootView.requestLayout();
-						Log.i("Test1", "onGlobalLayoutListener 4");
-
 						dismiss();
 					}
 				}
@@ -247,7 +235,6 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     };
 
 	public void showPopup() {
-		Log.i("Test1", "--> keyBoardHeightBefore = " + keyBoardHeightBefore);
 		if (keyBoardHeightBefore > 100) {
 			setSize(LayoutParams.MATCH_PARENT, keyBoardHeightBefore);
 			showAtLocation(rootView, Gravity.BOTTOM, 0, 0);

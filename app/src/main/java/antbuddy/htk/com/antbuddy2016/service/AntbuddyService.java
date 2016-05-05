@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 
+import java.io.File;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
@@ -16,7 +17,9 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.api.Request;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.model.Room;
 import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
@@ -330,6 +333,16 @@ public class AntbuddyService extends Service {
 				getApplicationContext().sendBroadcast(intent);
 			}
 		});
+	}
+
+	public void uploadFile(final File fileUpload, final HttpRequestReceiver<FileAntBuddy> receiver) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Request request = new Request();
+				request.updateLoadFile(fileUpload, receiver);
+			}
+		}).start();
 	}
 
 //	public String logout() throws RemoteException {

@@ -17,7 +17,17 @@ public class FileAntBuddy implements Parcelable {
 	private final static String key_thumbnailUrl = "thumbnailUrl";
 	private final static String key_thumbnailWidth = "thumbnailWidth";
 	private final static String key_thumbnailHeight = "thumbnailHeight";
-	
+
+//	{
+//		"name": "aaa.jks",
+//			"size": 2131,
+//			"fileUrl": "https://abs1.antbuddy.com/antbuddy-bucket/1462351753641_aaa.jks",
+//			"mimeType": "application/x-java-keystore",
+//			"thumbnailUrl": "",
+//			"thumbnailWidth": 128,
+//			"thumbnailHeight": 128
+//	}
+//
 
 	public static final String TAG_THISCLASS = "FileAntBuddy";
 	private String name;           //google_play_services.zip

@@ -59,8 +59,7 @@
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#58e139">
+                        android:layout_height="match_parent">
 
                         <ImageView
                             android:id="@+id/btn_smile"
@@ -71,7 +70,8 @@
                             android:padding="10dp"
                             android:background="@drawable/ab_smile"
                             android:layout_margin="5dp"
-                            android:adjustViewBounds="false" />
+                            android:adjustViewBounds="false"
+                            android:layout_gravity="center" />
 
                         <github.ankushsachdeva.emojicon.EmojiconEditText
                             android:paddingTop="5dp"
@@ -112,8 +112,7 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#cf2727">
+                        android:layout_height="wrap_content">
 
                         <antbuddy.htk.com.antbuddy2016.customview.HTKPhoToView
                             android:layout_width="match_parent"
@@ -131,6 +130,14 @@
                             android:layout_marginTop="5dp"
                             android:layout_marginRight="10dp"
                             android:visibility="visible"/>
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/imgEditPhoto"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/ab_editphoto" />
 
                     </RelativeLayout>
 

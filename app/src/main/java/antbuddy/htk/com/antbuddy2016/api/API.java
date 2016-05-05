@@ -1,10 +1,13 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
+import com.squareup.okhttp.RequestBody;
+
 import java.util.HashMap;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
+import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.model.OrganizationExist;
@@ -20,7 +23,9 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Query;
 
 /**
@@ -78,4 +83,7 @@ public interface API {
     @GET("/api/messages?limit=50")
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
     Call<List<GChatMassage>> GETMessages1(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
+
+    @POST("/api/files/")
+    Call<FileAntBuddy> POSTuploadfile(@Header("authorization") String token, @Body HashMap<String, Object> body);
 }

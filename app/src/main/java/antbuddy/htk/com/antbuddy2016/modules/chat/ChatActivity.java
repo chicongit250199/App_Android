@@ -48,7 +48,10 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RChatAdapter;
+import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.customview.HTKPhoToView;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
+import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
@@ -95,6 +98,7 @@ public class ChatActivity extends Activity {
 
     private HTKPhoToView imgPhoto;
     private ImageView imgDelete;
+    private ImageView imgEditPhoto;
 
     private ListView            lv_messages;
     private RChatAdapter        chatAdapter;
@@ -245,8 +249,14 @@ public class ChatActivity extends Activity {
         imgPhoto = (HTKPhoToView) findViewById(R.id.imgPhoto);
         imgPhoto.setVisibility(View.GONE);
 
+
         imgDelete = (ImageView) findViewById(R.id.imgDelete);
         imgDelete.setVisibility(View.GONE);
+
+        imgEditPhoto = (ImageView) findViewById(R.id.imgEditPhoto);
+        imgEditPhoto.setVisibility(View.GONE);
+
+
         rootView = (LinearLayout) findViewById(R.id.root_view);
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
@@ -420,6 +430,14 @@ public class ChatActivity extends Activity {
                 LogHtk.i(LogHtk.Test1, "Delete Photo!!!");
                 imgPhoto.setVisibility(View.GONE);
                 imgDelete.setVisibility(View.GONE);
+                imgEditPhoto.setVisibility(View.GONE);
+            }
+        });
+
+        imgEditPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogHtk.i(LogHtk.Test1, "Edit Photo!!!");
             }
         });
 
@@ -466,6 +484,37 @@ public class ChatActivity extends Activity {
                     }
 
                     etTypingMessage.setText("");
+                }
+
+                if (imgPhoto.getVisibility() == View.VISIBLE) {
+
+                    File file = new File(outPutfileUri.getPath());
+
+                    AntbuddyService.getInstance().uploadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
+                        @Override
+                        public void onSuccess(FileAntBuddy fileAntBuddy) {
+                            LogHtk.i(LogHtk.Test1, "ThanhCong ROi! : " + fileAntBuddy.toString());
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            LogHtk.i(LogHtk.Test1, "error = " + error);
+                        }
+                    });
+
+
+
+//                    APIManager.updateLoadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
+//                        @Override
+//                        public void onSuccess(FileAntBuddy object) {
+//                            LogHtk.i(LogHtk.Test1, "Thah COng! : " + object.toString());
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//                            LogHtk.i(LogHtk.Test1, "error = " + error);
+//                        }
+//                    });
                 }
             }
         });
@@ -518,6 +567,7 @@ public class ChatActivity extends Activity {
                     .load(new File(outPutfileUri.getPath()))
                     .into(imgPhoto);
             imgDelete.setVisibility(View.VISIBLE);
+            imgEditPhoto.setVisibility(View.VISIBLE);
         }
     }
 
