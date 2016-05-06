@@ -72,19 +72,7 @@ public interface API {
     @POST("/api/messages/")
     Call<GChatMassage> newMessageToHistory(@Header("authorization") String token, @Body GChatMassage body);
 
-
     @GET("/api/messages?limit=50")
     @Headers({ "Content-Type: application/json;charset=UTF-8"})
-    Call<List<ChatMessage>> GETMessages(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
-
-//    @GET("/api/messages?limit=50")
-//    @Headers({ "Content-Type: application/json;charset=UTF-8"})
-//    Call<List<RChatMassage>> GETMessages1(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
-
-    @GET("/api/messages?limit=50")
-    @Headers({ "Content-Type: application/json;charset=UTF-8"})
-    Call<List<GChatMassage>> GETMessages1(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
-
-    @POST("/api/files/")
-    Call<FileAntBuddy> POSTuploadfile(@Header("authorization") String token, @Body HashMap<String, Object> body);
+    Call<List<GChatMassage>> GETMessages(@Header("authorization") String token, @Query("before") String time, @Query("chatRoom") String chatRoomId,@Query("type") String typeChat);
 }

@@ -31,6 +31,8 @@ public class AntbuddyService extends Service {
     private static AntbuddyXmppConnection mXmppConnection;
     public static AntbuddyService mAntbuddyService;
 
+	public boolean isConnecting = false;
+
     private final IBinder serviceBinder = new LocalBinder();
     public class LocalBinder extends Binder {
         public AntbuddyService getService() {
@@ -57,7 +59,9 @@ public class AntbuddyService extends Service {
 
 		mAntbuddyService = AntbuddyService.this;
 
-		loginXMPP();
+		if (!isConnecting) {
+			loginXMPP();
+		}
 	}
 
 	@Override
@@ -101,7 +105,6 @@ public class AntbuddyService extends Service {
 				mXmppConnection.disconnectXMPP();
 			}
 		}).start();
-		LogHtk.i(LogHtk.Test1, "--->Service onDestroy startService ");
 		startService(new Intent(this, AntbuddyService.class));
 	}
 
@@ -211,11 +214,8 @@ public class AntbuddyService extends Service {
 		});
 	}
 
-	public AntbuddyXmppConnection getXMPPConnection() {
-		return mXmppConnection;
-	}
-
-	public void loginXMPP() {
+	synchronized public void loginXMPP() {
+		isConnecting = true;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -230,6 +230,7 @@ public class AntbuddyService extends Service {
 					new Exception("Warning! Userme is null! Can not login XMPP");
 				}
 				realmManager.closeRealm();
+				isConnecting = false;
 			}
 		}).start();
 	}
@@ -248,8 +249,6 @@ public class AntbuddyService extends Service {
 				} else {
 					LogHtk.i(LogHtk.ErrorHTK, "AntbuddyService/ XMPPConnection is null! So, No need to disconnect XMPP!");
 				}
-
-//				AntbuddyService.getInstance().stopSelf();
 			}
 		}).start();
 	}
@@ -259,7 +258,7 @@ public class AntbuddyService extends Service {
 		intent.putExtra("loadMessage", "start");
 		getApplicationContext().sendBroadcast(intent);
 
-		APIManager.GETMessages1(before, keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
+		APIManager.GETMessages(before, keyRoom, (isGroup ? "groupchat" : "chat"), new HttpRequestReceiver<List<GChatMassage>>() {
 			@Override
 			public void onSuccess(final List<GChatMassage> listMessages) {
 

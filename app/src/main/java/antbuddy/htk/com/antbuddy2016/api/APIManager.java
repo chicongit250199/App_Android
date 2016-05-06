@@ -168,9 +168,9 @@ public class APIManager {
 //        });
 //    }
 
-    public static void GETMessages1(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<GChatMassage>> receiver) {
+    public static void GETMessages(String time, String chatRoomKey, String typeChat, final HttpRequestReceiver<List<GChatMassage>> receiver) {
         String token = ABSharedPreference.getAccountConfig().getToken();
-        Call<List<GChatMassage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages1(token, time, chatRoomKey, typeChat);
+        Call<List<GChatMassage>> call = AntbuddyApplication.getInstance().getApiService().GETMessages(token, time, chatRoomKey, typeChat);
         call.enqueue(new Callback<List<GChatMassage>>() {
             @Override
             public void onResponse(Response<List<GChatMassage>> response) {
@@ -247,7 +247,6 @@ public class APIManager {
     }
 
     public static void POSTSaveMessage(RChatMessage chatMessage) {
-
         GChatMassage message = new GChatMassage();
         message.setBody(chatMessage.getBody());
         message.setFromKey(chatMessage.getFromKey());
@@ -257,7 +256,6 @@ public class APIManager {
         message.setType(chatMessage.getType());
         message.setId(chatMessage.getId());
         message.setTime(chatMessage.getTime());
-        //message.setOrg(chatMessage.getOrg());
 
         if (chatMessage.getFileAntBuddy() != null) {
             GFileAntBuddy file = new GFileAntBuddy();
@@ -268,59 +266,16 @@ public class APIManager {
             file.setThumbnailHeight(chatMessage.getFileAntBuddy().getThumbnailHeight());
             file.setThumbnailWidth(chatMessage.getFileAntBuddy().getThumbnailWidth());
             file.setThumbnailUrl(chatMessage.getFileAntBuddy().getThumbnailUrl());
-
-            LogHtk.i(LogHtk.Test1, "--> File---- ");
-            LogHtk.i(LogHtk.Test1, "Size = " + file.getSize());
-            LogHtk.i(LogHtk.Test1, "Name = " + file.getName());
-            LogHtk.i(LogHtk.Test1, "MimeType = " + file.getMimeType());
-            LogHtk.i(LogHtk.Test1, "ThumbnailUrl = " + file.getThumbnailUrl());
-            LogHtk.i(LogHtk.Test1, "ThumbnailHeight = " + file.getThumbnailHeight());
-            LogHtk.i(LogHtk.Test1, "ThumbnailWidth = " + file.getThumbnailWidth());
-            LogHtk.i(LogHtk.Test1, "FileUrl = " + file.getFileUrl());
             message.setFileAntBuddy(file);
 
             message.setBody("File uploaded: " + file.getFileUrl());
-//            message.setSubtype("");
         }
-
-        LogHtk.i(LogHtk.Test1, "--> message---- ");
-        LogHtk.i(LogHtk.Test1, "Body = " + message.getBody());
-        LogHtk.i(LogHtk.Test1, "FromKey = " + message.getFromKey());
-        LogHtk.i(LogHtk.Test1, "ReceiverKey = " + message.getReceiverKey());
-        LogHtk.i(LogHtk.Test1, "SenderKey = " + message.getSenderKey());
-        LogHtk.i(LogHtk.Test1, "ID = " + message.getId());
-        LogHtk.i(LogHtk.Test1, "Type = " + message.getType());
-        LogHtk.i(LogHtk.Test1, "Subtype = " + message.getSubtype());
 
         Call<GChatMassage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), message);
         call.enqueue(new Callback<GChatMassage>() {
             @Override
             public void onResponse(Response<GChatMassage> response) {
 
-                LogHtk.i(LogHtk.Test1, "--> history URL = " + response.raw().request().url().toString());
-                LogHtk.i(LogHtk.Test1, "Code = " + response.code());
-                Gson gson = new Gson();
-                String responseString =  gson.toJson(response.raw().request().body());
-                LogHtk.i(LogHtk.Test1, "body = " + responseString);
-
-                LogHtk.i(LogHtk.Test1, "errorBody = " + response.errorBody());
-                LogHtk.i(LogHtk.Test1, "message = " + response.message());
-                LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
-
-                GChatMassage messResponse = response.body();
-                LogHtk.i(LogHtk.Test1, "--------messResponse----------");
-                LogHtk.i(LogHtk.Test1, "Org = " + messResponse.getOrg());
-                LogHtk.i(LogHtk.Test1, "getReceiverName = " + messResponse.getReceiverName());
-                LogHtk.i(LogHtk.Test1, "getSenderName = " + messResponse.getSenderName());
-                LogHtk.i(LogHtk.Test1, "Body = " + messResponse.getBody());
-                LogHtk.i(LogHtk.Test1, "FromID = " + messResponse.getFromId());
-                LogHtk.i(LogHtk.Test1, "FromKey = " + messResponse.getFromKey());
-                LogHtk.i(LogHtk.Test1, "getReceiverId = " + messResponse.getReceiverId());
-                LogHtk.i(LogHtk.Test1, "ID = " + messResponse.getId());
-                LogHtk.i(LogHtk.Test1, "Time = " + messResponse.getTime());
-                LogHtk.i(LogHtk.Test1, "Subtype = " + messResponse.getSubtype());
-                LogHtk.i(LogHtk.Test1, "Type = " + messResponse.getType());
-//                LogHtk.i(LogHtk.Test1, "ID = " + messResponse.getId());
             }
 
             @Override

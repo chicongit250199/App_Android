@@ -1,10 +1,12 @@
 package antbuddy.htk.com.antbuddy2016.modules.chat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -12,6 +14,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -69,6 +73,14 @@ import io.realm.Sort;
  * Created by Micky on 4/1/2016.
  */
 public class ChatActivity extends Activity {
+
+    /**
+     * Id to identify a camera permission request.
+     */
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1990;
+
+
+    
     public final static String kKeyRoom = "Key of Room";
     public final static String key_type = "type";
     public final static String key_title = "title";
@@ -142,6 +154,7 @@ public class ChatActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setupRealmOne();
 
         Bundle bundle = getIntent().getExtras();
@@ -159,7 +172,6 @@ public class ChatActivity extends Activity {
 
         initViews();
         viewsListener();
-        updateUI();
 
         loadMoreMessages1();
 
@@ -295,7 +307,6 @@ public class ChatActivity extends Activity {
             @Override
             public void onDismiss() {
                 changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
-//                qImageView.setBackgroundResource(R.drawable.thumbs_down);
             }
         });
 
@@ -304,13 +315,12 @@ public class ChatActivity extends Activity {
 
             @Override
             public void onKeyboardOpen(int keyBoardHeight) {
-                LogHtk.i(LogHtk.Test1, "->onKeyboardOpen");
                 popup.dismiss();
             }
 
             @Override
             public void onKeyboardClose() {
-                LogHtk.i(LogHtk.Test1, "->onKeyboardClose");
+
             }
         });
 
@@ -407,27 +417,43 @@ public class ChatActivity extends Activity {
     }
 
     private void viewsListener() {
-
         cameraView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogHtk.i(LogHtk.Test1, "Camera!!!");
+                // Here, thisActivity is the current activity
+                if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
 
-                Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File file = new File(Environment.getExternalStorageDirectory(),
-                        "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(ChatActivity.this,
+                            Manifest.permission.CAMERA)) {
 
-                outPutfileUri = Uri.fromFile(file);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
-                startActivityForResult(intent, TAKE_PIC);
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+
+                    } else {
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(ChatActivity.this,
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                } else {
+                    openCamera();
+                }
             }
         });
-
 
         imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogHtk.i(LogHtk.Test1, "Delete Photo!!!");
                 imgPhoto.setVisibility(View.GONE);
                 imgDelete.setVisibility(View.GONE);
                 imgEditPhoto.setVisibility(View.GONE);
@@ -493,8 +519,6 @@ public class ChatActivity extends Activity {
                     AntbuddyService.getInstance().uploadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
                         @Override
                         public void onSuccess(final FileAntBuddy fileAntBuddy) {
-                            LogHtk.i(LogHtk.Test1, "ThanhCong ROi! : " + fileAntBuddy.toString());
-
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -533,17 +557,6 @@ public class ChatActivity extends Activity {
         });
     }
 
-    private void updateUI() {
-//        UserMe me = ObjectManager.getInstance().getUserMe();
-//        Glide.with(getApplicationContext())
-//                .load(me.getAvatar())
-//                .override(50, 50)
-//                .placeholder(R.drawable.ic_avatar_defaul)
-//                .error(R.drawable.ic_avatar_defaul)
-//                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-//                .into(imgSendMessage);
-    }
-
     public void loadMoreMessages1(){
         // Check internet
         if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
@@ -557,19 +570,19 @@ public class ChatActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
-            Toast.makeText(this, outPutfileUri.toString(), Toast.LENGTH_LONG).show();
-
-            // Show image in Edit Text
-            imgPhoto.setVisibility(View.VISIBLE);
-
-            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
-            Glide.with(getApplicationContext())
-                    .load(new File(outPutfileUri.getPath()))
-                    .into(imgPhoto);
-            imgDelete.setVisibility(View.VISIBLE);
-//            imgEditPhoto.setVisibility(View.VISIBLE);
-        }
+        LogHtk.i(LogHtk.Test3, "requestCode = " + requestCode);
+        LogHtk.i(LogHtk.Test3, "resultCode = " + resultCode);
+//        if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
+//            // Show image in Edit Text
+//            imgPhoto.setVisibility(View.VISIBLE);
+//
+//            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
+//            Glide.with(getApplicationContext())
+//                    .load(new File(outPutfileUri.getPath()))
+//                    .into(imgPhoto);
+//            imgDelete.setVisibility(View.VISIBLE);
+////            imgEditPhoto.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override
@@ -578,11 +591,6 @@ public class ChatActivity extends Activity {
             popup.dismiss();
             return;
         }
-
-        if (popup.isKeyBoardOpen()) {
-//            return;
-        }
-
 
         if (imgPhoto.getVisibility() == View.VISIBLE) {
             imgDelete.setVisibility(View.GONE);
@@ -594,24 +602,41 @@ public class ChatActivity extends Activity {
         super.onBackPressed();
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        if(!AndroidHelper.warningInternetConnection(ChatActivity.this)) {
-//            return;
-//        }
-//
-//        // Send message
-//        String text_body = etTypingMessage.getText().toString().trim();
-//        LogHtk.i(LogHtk.ChatActivity, "text_body =" + text_body);
-//        if (!TextUtils.isEmpty(text_body)) {
-//            LogHtk.i(LogHtk.ChatActivity, "key =" + keyReceiver);
-//            LogHtk.i(LogHtk.ChatActivity, "isRoom =" + isRoom);
-//            ChatMessage chatMessage = new ChatMessage(keyReceiver, text_body, isRoom);
-//            chatMessage.showLog();
-//            mIRemoteService.sendMessageOut(chatMessage);
-//            etTypingMessage.setText("");
-//        }
-//    }
+    private void openCamera() {
+        Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File file = new File(Environment.getExternalStorageDirectory(),
+                "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
+
+        outPutfileUri = Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
+        startActivityForResult(intent, TAKE_PIC);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    openCamera();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
         iconToBeChanged.setBackgroundResource(drawableResourceId);

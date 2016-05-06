@@ -1,8 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.service;
 
-import android.app.ActivityManager;
 import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.provider.Settings;
 
@@ -24,7 +22,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.provider.AdHocCommandDataProvider;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +60,7 @@ public class AntbuddyXmppConnection {
     private PacketListener presenceListener;
 
 
-    private RChatMessage chatMessage;
+    private RChatMessage chatMessageWillBeSent;
 
     /**
      * Notification
@@ -277,7 +274,7 @@ public class AntbuddyXmppConnection {
     private void messageIN(Packet packet) {
 
         final Message message = (Message) packet;
-        LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
+        //LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
         String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
 
         if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
@@ -287,13 +284,14 @@ public class AntbuddyXmppConnection {
                 public void run() {
                     RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
                     RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-                    LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
+                    //LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
                     realmBG.saveMessage(_chatMessage);
 
                     // Update time
-                    LogHtk.d(LogHtk.Test1, "					message.getTimestamp() = " + message.getTimestamp());
-                    chatMessage.setTime(message.getTimestamp());
-                    APIManager.POSTSaveMessage(chatMessage);
+                    if (chatMessageWillBeSent != null) {
+                        chatMessageWillBeSent.setTime(message.getTimestamp());
+                        APIManager.POSTSaveMessage(chatMessageWillBeSent);
+                    }
 
                     realmBG.closeRealm();
                 }
@@ -346,7 +344,7 @@ public class AntbuddyXmppConnection {
 
         String id = chatMessage.getFromKey() + AndroidHelper.renID();
         chatMessage.setId(id);
-        this.chatMessage = chatMessage;
+        this.chatMessageWillBeSent = chatMessage;
 
         Message msg = new Message(receiverJid, type);
         msg.setPacketID(id);
@@ -363,7 +361,6 @@ public class AntbuddyXmppConnection {
 
 //		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
         xmppConnection.sendPacket(msg);
-//        APIManager.POSTSaveMessage(chatMessage, id);
         //fix not update in other device
         if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
             String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
@@ -373,19 +370,6 @@ public class AntbuddyXmppConnection {
 
         realmManager.closeRealm();
     }
-
-//    public void sendToMyself(XMPPMessage messageChatting, String with) {
-//        // for  1-1: Need to send a message to myself
-//        Message msg = new Message(mUserInfo.get_id() + "@" + DOMAIN, Message.Type.chat);
-//        msg.setBody(messageChatting.getBody());
-//        if(messageChatting.getFileAntBuddy() != null) {
-//            FileAntBuddy file = messageChatting.getFileAntBuddy();
-//            msg.setFile(new AntBuddyFile(file.getName(), file.getSize(), file.getFileUrl(), file.getMimeType(), file.getThumbnailUrl()));
-//        }
-//
-//        msg.setWith(with);
-//        mConnection.sendPacket(msg);
-//    }
 
     Thread openingRoom;
 
@@ -462,176 +446,6 @@ public class AntbuddyXmppConnection {
             xmppConnection.disconnect();
             xmppConnection = null;
         }
-
-//		setmUserInfo(null);
-//		setListRoom(null);
-//		setListUser(null);
-//        setmCurrentRouter(null);
-//        reduceHistory(true);
-//
-//        // cancel all notification
-//        if(myNotificationManager != null) {
-//            myNotificationManager.cancelAll();
-//        }
-    }
-
-    private static Pattern maskNameUser = Pattern.compile("@[a-zA-Z]+");
-//	public boolean isCanShowNotification(XMPPMessage message, Context context)
-//	{
-//        // check gitlab message
-//        if(message.getSenderName() == null && message.getBody().contains("new commit")) {
-//            return true;
-//        }
-//
-//		boolean iamIn = sharedSetting.getBoolean(SettingAB.A_MESSAGE_IS_SENT_TO_A_PRIVATE_ROOM_IAM_IN, true);
-//		if (iamIn && message.getType().equalsIgnoreCase(ChatMessage.TYPE.groupchat.name()) && AntbuddyUtil.isPrivateRoom(message.getFromId(), getListRoom())) {
-//			return true;
-//		}
-//
-//		boolean privateMessage = sharedSetting.getBoolean(SettingAB.CHOISE_PRIVATE_MESSAGE, true);
-//		if(privateMessage && message.getType().equalsIgnoreCase(ChatMessage.TYPE.chat.toString()))
-//			return true;
-//
-//		boolean mentionInRoom = sharedSetting.getBoolean(SettingAB.CHOISE_MENTIIONNED_IN_ROOM, true);
-//		if(mentionInRoom) {
-//			String chat_text = message.getBody();
-//			Matcher matcher = maskNameUser.matcher(chat_text);
-//			while (matcher.find()) {
-//				int k = matcher.start();
-//				int m = matcher.end();
-//				String subtext = chat_text.substring(k, m);
-//				if (subtext.equalsIgnoreCase(EmojiconHandler.myName) || subtext.equalsIgnoreCase("@all"))
-//					return true;
-//			}
-//		}
-//		return false;
-//	}
-
-//    /**
-//     * Display notification with sound when receiver message
-//     *
-//     * @param message
-//     * @param context
-//     */
-//    private void displayNotification(XMPPMessage message, String roomId, Context context) {
-//		if(isCanShowNotification(message, context) == false) {
-//			return;
-//		}
-//
-//        LogHtk.i(TAG, "displayNotification="+message.getBody());
-//        String text = message.getBody();
-//        String senderName = "gitlab BOT";
-//
-//        if(message.getSenderName() != null) {
-//            senderName = message.getSenderName();
-//        }
-//        String title = senderName;
-//        String ticker = senderName + " : " + message.getBody();
-//
-//        int num_message = 0;
-//        if (notificationInfo.size() > 0 && notificationInfo.containsKey(roomId)) {
-//            num_message = notificationInfo.get(roomId);
-//            notificationInfo.put(roomId, ++num_message);
-//        } else {
-//            notificationInfo.put(roomId, ++num_message);
-//        }
-//
-//        // check private chat or group chat
-//        if (message.getType().equals(ChatMessage.TYPE.groupchat.name())) {
-//            for(Room room : getListRoom()) {
-////                if(room.get_id().equals(message.getSenderId())) {
-//                if(room.get_id().equals(message.getFromId())) {
-//                    title = room.getName();
-//                    break;
-//                }
-//            }
-//            text = ticker;
-//        }
-//		boolean isShowPopup = sharedSetting.getBoolean(SettingAB.SHOWING_A_POPUP, true);
-//		if (isShowPopup) {
-//
-//			// Invoking the default notification service
-//			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-//
-//			mBuilder.setWhen(System.currentTimeMillis());
-//			mBuilder.setContentTitle(title);
-//			mBuilder.setContentText(text);
-//			mBuilder.setTicker(ticker);
-//			mBuilder.setSmallIcon(R.drawable.ic_launcher);
-//			mBuilder.setAutoCancel(true);
-//			if (sharedSetting.getBoolean(SettingAB.PLAYING_A_SOUND, true)) {
-//					mBuilder.setDefaults(Notification.DEFAULT_SOUND);
-//			}
-//
-//
-//			// Increase notification number every time a new notification arrives
-//			mBuilder.setNumber(num_message);
-//			if (num_message > 1) {
-//				mBuilder.setContentText(num_message + " new messages");
-//			}
-//
-//			Intent resultIntent = new Intent(context, MainActivity.class);
-//			resultIntent.putExtra("roomJid", roomId);
-//			resultIntent.setAction(String.valueOf(roomId));
-//			resultIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//
-//			PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0,
-//					resultIntent, 0);
-//
-//			// start the activity when the user clicks the notification text
-//			mBuilder.setContentIntent(resultPendingIntent);
-//
-//			myNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//			int position = 0;
-//			for (int i = 0; i < getmUserInfo().getListRoomsOpeningChat().size(); i++) {
-//				if (getmUserInfo().getListRoomsOpeningChat().get(i).getChatRoomId().equals(roomId)) {
-//					position = i;
-//					break;
-//				}
-//			}
-//
-//			// pass the Notification object to the system
-//			myNotificationManager.notify(position, mBuilder.build());
-//		}
-//		else
-//		{
-//			if (sharedSetting.getBoolean(SettingAB.PLAYING_A_SOUND, true)) {
-//				try {
-//					Uri notification = getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//					Ringtone r = RingtoneManager.getRingtone(context, notification);
-//					r.play();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//    }
-
-    /**
-     * Reset notification count with id
-     *
-     * @param jid
-     */
-    public void resetNotificationCount(String jid) {
-        if (notificationInfo.containsKey(jid)) {
-            notificationInfo.put(jid, 0);
-        }
-    }
-
-    /**
-     * Check package is foreground
-     *
-     * @param myPackage
-     * @return
-     */
-    public boolean isForeground(String myPackage) {
-        ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> runningTaskInfo = manager.getRunningTasks(1);
-
-        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
-        if (componentInfo.getPackageName().equals(myPackage)) return true;
-        return false;
     }
 
     private ABXMPPConfig getABXMPPConfig() {

@@ -34,7 +34,6 @@ public class Request {
 
         JSONObject jsonObject = upLoadFile(AntbuddyApplication.getInstance().getURL(), file);
         if (jsonObject != null) {
-            LogHtk.i(LogHtk.Test1, "-->jsonObject: " + jsonObject.toString());
             receiver.onSuccess(new FileAntBuddy((jsonObject)));
         } else {
             receiver.onError("Can not upload File!");
@@ -77,19 +76,14 @@ public class Request {
 
             // request to server
             httpCon.connect();
-            LogHtk.i(LogHtk.Test1, "httpCon.getResponseCode() = " + httpCon.getResponseCode());
             if (httpCon.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 String strResponse = readStream(httpCon.getInputStream());
-                LogHtk.i(LogHtk.Test1, "111");
                 return new JSONObject(strResponse);
             }
-            LogHtk.i(LogHtk.Test1, "222");
 
         } catch (Exception e) {
-            LogHtk.i(LogHtk.Test1, "333");
             e.printStackTrace();
         }
-        LogHtk.i(LogHtk.Test1, "444");
         return null;
     }
 

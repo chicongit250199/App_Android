@@ -1,0 +1,27 @@
+LogHtk.i(LogHtk.Test1, "--> File---- ");
+LogHtk.i(LogHtk.Test1, "Size = " + file.getSize());
+            LogHtk.i(LogHtk.Test1, "Name = " + file.getName());
+            LogHtk.i(LogHtk.Test1, "MimeType = " + file.getMimeType());
+            LogHtk.i(LogHtk.Test1, "ThumbnailUrl = " + file.getThumbnailUrl());
+            LogHtk.i(LogHtk.Test1, "ThumbnailHeight = " + file.getThumbnailHeight());
+            LogHtk.i(LogHtk.Test1, "ThumbnailWidth = " + file.getThumbnailWidth());
+            LogHtk.i(LogHtk.Test1, "FileUrl = " + file.getFileUrl());
+
+
+             LogHtk.i(LogHtk.Test1, "--> message---- ");
+                    LogHtk.i(LogHtk.Test1, "Body = " + message.getBody());
+                    LogHtk.i(LogHtk.Test1, "FromKey = " + message.getFromKey());
+                    LogHtk.i(LogHtk.Test1, "ReceiverKey = " + message.getReceiverKey());
+                    LogHtk.i(LogHtk.Test1, "SenderKey = " + message.getSenderKey());
+                    LogHtk.i(LogHtk.Test1, "ID = " + message.getId());
+                    LogHtk.i(LogHtk.Test1, "Type = " + message.getType());
+                    LogHtk.i(LogHtk.Test1, "Subtype = " + message.getSubtype());
+
+
+                    LogHtk.i(LogHtk.Test1, "body = " + responseString);
+
+                                    LogHtk.i(LogHtk.Test1, "errorBody = " + response.errorBody());
+                                    LogHtk.i(LogHtk.Test1, "message = " + response.message());
+                                    LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
+
+
