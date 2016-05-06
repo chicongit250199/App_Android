@@ -572,17 +572,17 @@ public class ChatActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         LogHtk.i(LogHtk.Test3, "requestCode = " + requestCode);
         LogHtk.i(LogHtk.Test3, "resultCode = " + resultCode);
-//        if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
-//            // Show image in Edit Text
-//            imgPhoto.setVisibility(View.VISIBLE);
-//
-//            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
-//            Glide.with(getApplicationContext())
-//                    .load(new File(outPutfileUri.getPath()))
-//                    .into(imgPhoto);
-//            imgDelete.setVisibility(View.VISIBLE);
-////            imgEditPhoto.setVisibility(View.VISIBLE);
-//        }
+        if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
+            // Show image in Edit Text
+            imgPhoto.setVisibility(View.VISIBLE);
+
+            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
+            Glide.with(getApplicationContext())
+                    .load(new File(outPutfileUri.getPath()))
+                    .into(imgPhoto);
+            imgDelete.setVisibility(View.VISIBLE);
+//            imgEditPhoto.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -604,8 +604,13 @@ public class ChatActivity extends Activity {
 
     private void openCamera() {
         Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //File file = new File(Environment.getExternalStorageDirectory(), "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
+
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
         File file = new File(Environment.getExternalStorageDirectory(),
-                "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
+                "Antbuddy" + ts + ".jpg");
 
         outPutfileUri = Uri.fromFile(file);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
