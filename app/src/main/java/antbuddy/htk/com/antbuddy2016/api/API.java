@@ -33,7 +33,7 @@ import retrofit.http.Query;
  */
 public interface API {
 
-    String BASE_URL = "https://antbuddy.com";
+    String BASE_URL = "https://antbuddy.com";           // ant.chat
     String BASE_URL_WITH_DOMAIN = "https://%s.antbuddy.com";
 
     @FormUrlEncoded
@@ -70,10 +70,8 @@ public interface API {
     Call<List<Room>> GETRooms(@Header("authorization") String token);
 
     @POST("/api/messages/")
-    Call<Void> newMessageToHistory(@Header("authorization") String token, @Body GChatMassage body);
+    Call<GChatMassage> newMessageToHistory(@Header("authorization") String token, @Body GChatMassage body);
 
-//    @POST("/api/messages/")
-//    Call<ChatMessage> newMessageToHistory(@Header("authorization") String token, @Body ChatMessage message);
 
     @GET("/api/messages?limit=50")
     @Headers({ "Content-Type: application/json;charset=UTF-8"})

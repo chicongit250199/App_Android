@@ -62,6 +62,9 @@ public class AntbuddyXmppConnection {
     private PacketListener deleteListener;
     private PacketListener presenceListener;
 
+
+    private RChatMessage chatMessage;
+
     /**
      * Notification
      */
@@ -283,9 +286,15 @@ public class AntbuddyXmppConnection {
                 @Override
                 public void run() {
                     RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-                    RChatMessage chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-                    LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + chatMessage.toString());
-                    realmBG.saveMessage(chatMessage);
+                    RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+                    LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
+                    realmBG.saveMessage(_chatMessage);
+
+                    // Update time
+                    LogHtk.d(LogHtk.Test1, "					message.getTimestamp() = " + message.getTimestamp());
+                    chatMessage.setTime(message.getTimestamp());
+                    APIManager.POSTSaveMessage(chatMessage);
+
                     realmBG.closeRealm();
                 }
             }).start();
@@ -336,6 +345,9 @@ public class AntbuddyXmppConnection {
         }
 
         String id = chatMessage.getFromKey() + AndroidHelper.renID();
+        chatMessage.setId(id);
+        this.chatMessage = chatMessage;
+
         Message msg = new Message(receiverJid, type);
         msg.setPacketID(id);
         msg.setBody(chatMessage.getBody());
@@ -351,7 +363,7 @@ public class AntbuddyXmppConnection {
 
 //		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
         xmppConnection.sendPacket(msg);
-        APIManager.newMessageToHistory(chatMessage, id);
+//        APIManager.POSTSaveMessage(chatMessage, id);
         //fix not update in other device
         if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
             String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));

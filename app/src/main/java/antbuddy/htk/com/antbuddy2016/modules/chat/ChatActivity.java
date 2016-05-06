@@ -516,20 +516,6 @@ public class ChatActivity extends Activity {
                             LogHtk.i(LogHtk.Test1, "error = " + error);
                         }
                     });
-
-
-
-//                    APIManager.updateLoadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
-//                        @Override
-//                        public void onSuccess(FileAntBuddy object) {
-//                            LogHtk.i(LogHtk.Test1, "Thah COng! : " + object.toString());
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//                            LogHtk.i(LogHtk.Test1, "error = " + error);
-//                        }
-//                    });
                 }
             }
         });
@@ -582,7 +568,7 @@ public class ChatActivity extends Activity {
                     .load(new File(outPutfileUri.getPath()))
                     .into(imgPhoto);
             imgDelete.setVisibility(View.VISIBLE);
-            imgEditPhoto.setVisibility(View.VISIBLE);
+//            imgEditPhoto.setVisibility(View.VISIBLE);
         }
     }
 
@@ -596,6 +582,15 @@ public class ChatActivity extends Activity {
         if (popup.isKeyBoardOpen()) {
 //            return;
         }
+
+
+        if (imgPhoto.getVisibility() == View.VISIBLE) {
+            imgDelete.setVisibility(View.GONE);
+            imgPhoto.setVisibility(View.GONE);
+            etTypingMessage.setText("");
+            return;
+        }
+
         super.onBackPressed();
     }
 

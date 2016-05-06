@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 
@@ -44,6 +45,7 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -172,8 +174,6 @@ public class APIManager {
         call.enqueue(new Callback<List<GChatMassage>>() {
             @Override
             public void onResponse(Response<List<GChatMassage>> response) {
-                LogHtk.i(LogHtk.API_TAG, "History URL: " + response.raw().request().url().toString());
-
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {
@@ -194,8 +194,6 @@ public class APIManager {
             @Override
             public void onResponse(Response<UserMe> response) {
                 if (response.body() != null) {
-//                    LogHtk.i(LogHtk.Test3, "GETUserMe: " + response.body());
-
                     receiver.onSuccess(response.body());
                 } else {
                     receiver.onError(response.code() + "");
@@ -248,42 +246,7 @@ public class APIManager {
         });
     }
 
-    public static void newMessageToHistory(RChatMessage chatMessage, String idMessage) {
-
-//        HashMap<String, Object> body = new HashMap<>();
-//        body.put("body", chatMessage.getBody());
-//        body.put("fromKey", chatMessage.getFromKey());
-//        body.put("receiverKey", chatMessage.getReceiverKey());
-//        body.put("senderKey", chatMessage.getSenderKey());
-//        body.put("subtype", chatMessage.getSubtype());
-//        body.put("type", chatMessage.getType());
-//        body.put("id", idMessage);
-//
-//
-////        "file": {
-////            "name": "ab_attachment.png",
-////                    "size": 7672,
-////                    "fileUrl": "https://abs1.antbuddy.com/antbuddy-bucket/1462433296593_ab_attachment.png",
-////                    "mimeType": "image/png",
-////                    "thumbnailUrl": "https://abs1.antbuddy.com/antbuddy-bucket/thumb_1462433296593_ab_attachment.png",
-////                    "thumbnailWidth": 128,
-////                    "thumbnailHeight": 128
-////        },
-////
-//        if (chatMessage.getFileAntBuddy() != null) {
-//            LogHtk.i(LogHtk.Test1, "Vao day!");
-//            HashMap<String, Object> fileBody = new HashMap<>();
-//            fileBody.put("name", chatMessage.getFileAntBuddy().getName());
-//            fileBody.put("size", chatMessage.getFileAntBuddy().getSize());
-//            fileBody.put("fileUrl", chatMessage.getFileAntBuddy().getFileUrl());
-//            fileBody.put("mimeType", chatMessage.getFileAntBuddy().getMimeType());
-//            fileBody.put("thumbnailUrl", chatMessage.getFileAntBuddy().getThumbnailUrl());
-//            fileBody.put("thumbnailWidth", chatMessage.getFileAntBuddy().getThumbnailWidth());
-//            fileBody.put("thumbnailHeight", chatMessage.getFileAntBuddy().getThumbnailHeight());
-//
-//            body.put("file", fileBody);
-//        }
-//        LogHtk.i(LogHtk.Test1, "--> bodyL = " + body.toString());
+    public static void POSTSaveMessage(RChatMessage chatMessage) {
 
         GChatMassage message = new GChatMassage();
         message.setBody(chatMessage.getBody());
@@ -292,7 +255,9 @@ public class APIManager {
         message.setSenderKey(chatMessage.getSenderKey());
         message.setSubtype(chatMessage.getSubtype());
         message.setType(chatMessage.getType());
-        message.setId(idMessage);
+        message.setId(chatMessage.getId());
+        message.setTime(chatMessage.getTime());
+        //message.setOrg(chatMessage.getOrg());
 
         if (chatMessage.getFileAntBuddy() != null) {
             GFileAntBuddy file = new GFileAntBuddy();
@@ -311,9 +276,11 @@ public class APIManager {
             LogHtk.i(LogHtk.Test1, "ThumbnailUrl = " + file.getThumbnailUrl());
             LogHtk.i(LogHtk.Test1, "ThumbnailHeight = " + file.getThumbnailHeight());
             LogHtk.i(LogHtk.Test1, "ThumbnailWidth = " + file.getThumbnailWidth());
+            LogHtk.i(LogHtk.Test1, "FileUrl = " + file.getFileUrl());
             message.setFileAntBuddy(file);
 
             message.setBody("File uploaded: " + file.getFileUrl());
+//            message.setSubtype("");
         }
 
         LogHtk.i(LogHtk.Test1, "--> message---- ");
@@ -325,16 +292,35 @@ public class APIManager {
         LogHtk.i(LogHtk.Test1, "Type = " + message.getType());
         LogHtk.i(LogHtk.Test1, "Subtype = " + message.getSubtype());
 
-        Call<Void> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), message);
-        call.enqueue(new Callback<Void>() {
+        Call<GChatMassage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), message);
+        call.enqueue(new Callback<GChatMassage>() {
             @Override
-            public void onResponse(Response<Void> response) {
+            public void onResponse(Response<GChatMassage> response) {
+
                 LogHtk.i(LogHtk.Test1, "--> history URL = " + response.raw().request().url().toString());
                 LogHtk.i(LogHtk.Test1, "Code = " + response.code());
-                LogHtk.i(LogHtk.Test1, "body = " + response.body());
+                Gson gson = new Gson();
+                String responseString =  gson.toJson(response.raw().request().body());
+                LogHtk.i(LogHtk.Test1, "body = " + responseString);
+
                 LogHtk.i(LogHtk.Test1, "errorBody = " + response.errorBody());
                 LogHtk.i(LogHtk.Test1, "message = " + response.message());
                 LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
+
+                GChatMassage messResponse = response.body();
+                LogHtk.i(LogHtk.Test1, "--------messResponse----------");
+                LogHtk.i(LogHtk.Test1, "Org = " + messResponse.getOrg());
+                LogHtk.i(LogHtk.Test1, "getReceiverName = " + messResponse.getReceiverName());
+                LogHtk.i(LogHtk.Test1, "getSenderName = " + messResponse.getSenderName());
+                LogHtk.i(LogHtk.Test1, "Body = " + messResponse.getBody());
+                LogHtk.i(LogHtk.Test1, "FromID = " + messResponse.getFromId());
+                LogHtk.i(LogHtk.Test1, "FromKey = " + messResponse.getFromKey());
+                LogHtk.i(LogHtk.Test1, "getReceiverId = " + messResponse.getReceiverId());
+                LogHtk.i(LogHtk.Test1, "ID = " + messResponse.getId());
+                LogHtk.i(LogHtk.Test1, "Time = " + messResponse.getTime());
+                LogHtk.i(LogHtk.Test1, "Subtype = " + messResponse.getSubtype());
+                LogHtk.i(LogHtk.Test1, "Type = " + messResponse.getType());
+//                LogHtk.i(LogHtk.Test1, "ID = " + messResponse.getId());
             }
 
             @Override
