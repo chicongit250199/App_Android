@@ -94,7 +94,7 @@ public class CenterActivity extends AppCompatActivity {
 //            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
 //        }
 
-        if (!AntbuddyService.getInstance().isConnecting) {
+        if (AntbuddyService.getInstance() != null && !AntbuddyService.getInstance().isConnecting) {
             AntbuddyService.getInstance().loginXMPP();
         }
 

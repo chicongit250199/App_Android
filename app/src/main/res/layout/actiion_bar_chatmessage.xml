@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@color/walkthough_background">
+    android:background="@color/ab_green">
 
     <RelativeLayout
         android:layout_width="match_parent"

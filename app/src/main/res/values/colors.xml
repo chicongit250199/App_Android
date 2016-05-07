@@ -4,12 +4,13 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="color_green">#7ed321</color>
+    <color name="ab_green">#7ed321</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00000000</color>
 
     <!-- Login -->
-    <color name="walkthough_background">#45DB5E</color>
+    <color name="walkthough_background">#7ed321</color>
     <color name="signUpFree_Button">#FFFCFF</color>
 
     <color name="white_ab">#FFFCFF</color>

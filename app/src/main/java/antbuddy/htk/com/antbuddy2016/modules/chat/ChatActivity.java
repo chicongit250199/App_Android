@@ -24,6 +24,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -79,8 +81,6 @@ public class ChatActivity extends Activity {
      */
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1990;
 
-
-    
     public final static String kKeyRoom = "Key of Room";
     public final static String key_type = "type";
     public final static String key_title = "title";
@@ -95,12 +95,15 @@ public class ChatActivity extends Activity {
 
     private RObjectManagerOne realmManager;
 
-    private LinearLayout rootView;
+
+    private RelativeLayout rootView;
+    private LinearLayout navigationBarID;
+    private Button btnAttachment;
+    private LinearLayout idAttachView;
+
     private SwipyRefreshLayout  mSwipyRefreshLayout;
     private TextView            tv_title;
     private RelativeLayout      areaBack;
-
-
 
     // Input message
     private LinearLayout cameraView;
@@ -118,6 +121,9 @@ public class ChatActivity extends Activity {
     private ImageView           imgSendMessage;
     private ImageView           btn_smile;
     private EmojiconsPopup popup;
+
+    //Animations
+    private Animation animationFadeIn;
 
     private BroadcastReceiver loadMoreReceiver = new BroadcastReceiver() {
         @Override
@@ -153,8 +159,6 @@ public class ChatActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setupRealmOne();
 
         Bundle bundle = getIntent().getExtras();
@@ -257,6 +261,20 @@ public class ChatActivity extends Activity {
     }
 
     private void initViews() {
+        animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+
+        navigationBarID = (LinearLayout) findViewById(R.id.navigationBarID);
+        idAttachView = (LinearLayout) findViewById(R.id.idAttachView);
+        idAttachView.setVisibility(View.GONE);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, navigationBarID.getLayoutParams().height, 0, 0);
+        idAttachView.setLayoutParams(layoutParams);
+
+        btnAttachment = (Button) findViewById(R.id.btnAttachment);
+
+
+
         cameraView = (LinearLayout) findViewById(R.id.cameraView);
         imgPhoto = (HTKPhoToView) findViewById(R.id.imgPhoto);
         imgPhoto.setVisibility(View.GONE);
@@ -269,7 +287,7 @@ public class ChatActivity extends Activity {
         imgEditPhoto.setVisibility(View.GONE);
 
 
-        rootView = (LinearLayout) findViewById(R.id.root_view);
+        rootView = (RelativeLayout) findViewById(R.id.root_view);
         tv_title = (TextView) findViewById(R.id.tv_title);
         setTitle(title);
         etTypingMessage = (EmojiconEditText) findViewById(R.id.text_send);
@@ -405,7 +423,6 @@ public class ChatActivity extends Activity {
 
         imgSendMessage = (ImageView) findViewById(R.id.imgSendMessage);
 
-
         Rect r = new Rect();
         rootView.getWindowVisibleDisplayFrame(r);
     }
@@ -417,6 +434,22 @@ public class ChatActivity extends Activity {
     }
 
     private void viewsListener() {
+        btnAttachment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogHtk.i(LogHtk.Test3, "Attach file click!");
+
+                if (idAttachView.getVisibility() == View.VISIBLE) {
+                    idAttachView.setVisibility(View.GONE);
+                } else {
+                    //TODO: WARNING when run this line! Skipped 34 frames!  The application may be doing too much work on its main thread
+                    idAttachView.setVisibility(View.VISIBLE);
+
+//                    idAttachView.startAnimation(animationFadeIn);
+                }
+            }
+        });
+
         cameraView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -570,13 +603,11 @@ public class ChatActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogHtk.i(LogHtk.Test3, "requestCode = " + requestCode);
-        LogHtk.i(LogHtk.Test3, "resultCode = " + resultCode);
         if (requestCode == TAKE_PIC && resultCode == RESULT_OK) {
             // Show image in Edit Text
             imgPhoto.setVisibility(View.VISIBLE);
 
-            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
+//            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
             Glide.with(getApplicationContext())
                     .load(new File(outPutfileUri.getPath()))
                     .into(imgPhoto);
