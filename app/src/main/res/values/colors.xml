@@ -18,5 +18,6 @@
     <color name="ab_center_background">#ffffff</color>
 
     <color name="ab_red">#FFDA0C0C</color>
+    <color name="ab_orange">#edd42c</color>
 
 </resources>

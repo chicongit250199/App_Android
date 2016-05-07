@@ -258,11 +258,43 @@ public class AntbuddyXmppConnection {
         PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
         presenceListener = new PacketListener() {
             public void processPacket(Packet packet) {
-                Presence presence = (Presence) packet;
-                //LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+                presenceIN(packet);
             }
         };
         xmppConnection.addPacketListener(presenceListener, presenceFilter);
+    }
+
+    private void presenceIN(Packet packet) {
+        Presence presence = (Presence) packet;
+        //LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+
+        // Update status on RUser
+//        <presence to="4e499d80-1408-11e6-8d18-91c528c9c04c_69fbb50b-7822-485e-9960-ee0cb869e848@antbuddy.com/7b815c22a8c0f6fa"
+//        from="4e499d80-1408-11e6-8d18-91c528c9c04c_69fbb50b-7822-485e-9960-ee0cb869e848@antbuddy.com/19241909081462593894776630">
+//        <status>undefined</status
+//                ><show>away</show>
+//        </presence>
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                RObjectManagerOne realm = new RObjectManagerOne();
+////                realm.setUsers();
+//
+////                //RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+////                LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
+////                realmBG.saveMessage(_chatMessage);
+////
+////                // Update time
+////                if (chatMessageWillBeSent != null) {
+////                    chatMessageWillBeSent.setTime(message.getTimestamp());
+////                    APIManager.POSTSaveMessage(chatMessageWillBeSent);
+////                }
+//
+//                realm.closeRealm();
+//            }
+//        }).start();
+
+
     }
 
     /**

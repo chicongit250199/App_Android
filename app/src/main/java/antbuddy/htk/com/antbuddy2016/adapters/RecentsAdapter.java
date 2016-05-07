@@ -105,7 +105,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
             rowView = inflater.inflate(R.layout.row_member, parent, false);
             holder.imgAvatar = (ImageView) rowView.findViewById(R.id.imgAvatar);
             holder.tv_user_name = (TextView) rowView.findViewById(R.id.tv_user_name);
-            holder.ic_status = (ImageView) rowView.findViewById(R.id.ic_status);
+            holder.imgXMPPStatus = (ImageView) rowView.findViewById(R.id.imgXMPPStatus);
             rowView.setTag(holder);
         } else {
             rowView = convertView;
@@ -114,8 +114,8 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
 
         final ROpeningChatRoom openingChatroom = (ROpeningChatRoom) getChild(groupPosition, childPosition);
         ViewGroup.LayoutParams layoutParams = holder.imgAvatar.getLayoutParams();
-        if (groupPosition == 0) {
-            holder.ic_status.setVisibility(View.GONE);
+        if (groupPosition == 0) {   // List rooms
+            holder.imgXMPPStatus.setVisibility(View.GONE);
             layoutParams.width = 60;
             layoutParams.height = 60;
             holder.imgAvatar.setLayoutParams(layoutParams);
@@ -138,11 +138,11 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
                     break;
                 }
             }
-        } else {
+        } else {    // List users
             layoutParams.width = 160;
             layoutParams.height = 160;
             holder.imgAvatar.setLayoutParams(layoutParams);
-            //holder.ic_status.setVisibility(View.VISIBLE);
+            //holder.imgXMPPStatus.setVisibility(View.VISIBLE);
             for (RUser user : realmManager.getUsers()) {
                 if (user.getKey().equals(openingChatroom.getChatRoomKey())) {
                     Glide.with(context)
@@ -154,6 +154,10 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
                             .into(holder.imgAvatar);
 
                     holder.tv_user_name.setText(user.getName());
+
+                    // Check XMPP status
+
+                    holder.imgXMPPStatus.setVisibility(View.VISIBLE);
                     break;
                 }
             }
@@ -164,7 +168,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
     public class Holder {
         public ImageView imgAvatar;
         public TextView tv_user_name;
-        public ImageView ic_status;
+        public ImageView imgXMPPStatus;
     }
 
     public boolean hasStableIds() {

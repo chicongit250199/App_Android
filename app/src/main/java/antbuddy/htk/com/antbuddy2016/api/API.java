@@ -34,12 +34,12 @@ import retrofit.http.Query;
 public interface API {
 
     // Product
-//    String BASE_URL = "https://antbuddy.com";
-//    String BASE_URL_WITH_DOMAIN = "https://%s.antbuddy.com";
+    String BASE_URL = "https://antbuddy.com";
+    String BASE_URL_WITH_DOMAIN = "https://%s.antbuddy.com";
 
     // Staging
-    String BASE_URL = "https://ant.chat";           // ant.chat
-    String BASE_URL_WITH_DOMAIN = "https://%s.ant.chat";
+//    String BASE_URL = "https://ant.chat";           // ant.chat
+//    String BASE_URL_WITH_DOMAIN = "https://%s.ant.chat";
 
     @FormUrlEncoded
     @POST("/users/session/")

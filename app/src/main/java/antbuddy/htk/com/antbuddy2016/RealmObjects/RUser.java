@@ -21,6 +21,22 @@ public class RUser extends RealmObject {
     private boolean active;
     private boolean isFavorite;
 
+    enum XMPPStatus {
+        online,
+        away,   // away
+        dnd,    // Do not disturb
+    }
+
+    private String xmppStatus;
+
+    public String getXmppStatus() {
+        return xmppStatus;
+    }
+
+    public void setXmppStatus(String xmppStatus) {
+        this.xmppStatus = xmppStatus;
+    }
+
     private String user; 	// The same "key", This field used in list users of Room
 
     public String getAvatar() {

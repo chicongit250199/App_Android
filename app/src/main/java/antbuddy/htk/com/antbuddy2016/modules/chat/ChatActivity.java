@@ -79,6 +79,7 @@ public class ChatActivity extends Activity {
     /**
      * Id to identify a camera permission request.
      */
+//    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1990;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1990;
 
     public final static String kKeyRoom = "Key of Room";
@@ -468,7 +469,7 @@ public class ChatActivity extends Activity {
                         // No explanation needed, we can request the permission.
 
                         ActivityCompat.requestPermissions(ChatActivity.this,
-                                new String[]{Manifest.permission.CAMERA},
+                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 MY_PERMISSIONS_REQUEST_CAMERA);
 
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
@@ -605,6 +606,7 @@ public class ChatActivity extends Activity {
             imgPhoto.setVisibility(View.VISIBLE);
 
 //            LogHtk.i(LogHtk.Test1, "URI: " + outPutfileUri.toString());
+            new Exception("PATH : " + outPutfileUri.getPath()).printStackTrace();
             Glide.with(getApplicationContext())
                     .load(new File(outPutfileUri.getPath()))
                     .into(imgPhoto);
@@ -630,6 +632,23 @@ public class ChatActivity extends Activity {
         super.onBackPressed();
     }
 
+    private static File getOutputMediaFile(){
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "AntPhoto");
+
+        if (!mediaStorageDir.exists()){
+            if (!mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
+        return new File(mediaStorageDir.getPath() + File.separator +
+                "Ant"+ ts + ".jpg");
+    }
+
     private void openCamera() {
         Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //File file = new File(Environment.getExternalStorageDirectory(), "Antbuddy_"+ NationalTime.getLocalTimeToUTCTime() + ".jpg");
@@ -637,12 +656,15 @@ public class ChatActivity extends Activity {
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
 
-        File file = new File(Environment.getExternalStorageDirectory(),
-                "Antbuddy" + ts + ".jpg");
+        File file = getOutputMediaFile();
 
-        outPutfileUri = Uri.fromFile(file);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
-        startActivityForResult(intent, TAKE_PIC);
+        if (file != null) {
+            outPutfileUri = Uri.fromFile(file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri);
+            startActivityForResult(intent, TAKE_PIC);
+        } else {
+            LogHtk.e(LogHtk.ErrorHTK, "ChatActivity/ Error! Can not create photo file!");
+        }
     }
 
     @Override

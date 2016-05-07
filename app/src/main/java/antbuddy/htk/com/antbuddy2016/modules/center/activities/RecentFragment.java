@@ -117,15 +117,6 @@ public class RecentFragment extends Fragment {
         initViews(rootView);
         viewsListener();
 
-        // Service created at Application, but we need to check it again
-//        if (AntbuddyService.getInstance() != null) {
-//            AntbuddyService.getInstance().resetXMPP();
-//        } else {
-//            LogHtk.e(LogHtk.RecentFragment, "Warning! Android Local Service is null at recentFragment!");
-//        }
-
-        //loading_UserMe_Users_Rooms();
-
         updateUI();
         return rootView;
     }
@@ -158,77 +149,6 @@ public class RecentFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    protected void loading_UserMe_Users_Rooms() {
-        Boolean isdataLoadedFromDB = false;
-        AntbuddyApplication application = AntbuddyApplication.getInstance();
-//        if (application.isUserMeExist() && application.isUsersExist() && application.isRoomsExist()) {
-//            updateUI();
-//            isdataLoadedFromDB = true;
-//        }
-
-        if (AndroidHelper.isInternetAvailable(getActivity().getApplicationContext())) {
-            APIManager.GETUserMe(new HttpRequestReceiver<UserMe>() {
-                @Override
-                public void onSuccess(UserMe me) {
-                    realmManager.saveUserMeOrUpdate(me);
-//                    AntbuddyApplication.getInstance().setUserme(RObjectManager.getInstance().getUserMe());
-                    loadUsers();
-                }
-
-                @Override
-                public void onError(String error) {
-                    LogHtk.e(LogHtk.RecentFragment, "Error! Can not load UserMe from server!");
-                    APIManager.showToastWithCode(error, getActivity());
-                    processUIWhenError();
-                }
-            });
-        } else if (!isdataLoadedFromDB) {    // No connection and No data in DB
-            processUIWhenError();
-        }
-    }
-
-    private void loadUsers() {
-        APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
-            @Override
-            public void onSuccess(List<User> users) {
-//                RObjectManager.saveUsersOrUpdate(users);
-//                AntbuddyApplication.getInstance().setUsers(RObjectManager.getUsers());
-                loadRooms();
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Users from server!");
-                APIManager.showToastWithCode(error, getActivity());
-                processUIWhenError();
-            }
-        });
-    }
-
-    private void loadRooms() {
-        APIManager.GETGroups(new HttpRequestReceiver<List<Room>>() {
-            @Override
-            public void onSuccess(List<Room> rooms) {
-//                RObjectManager.saveRoomsOrUpdate(rooms);
-//                AntbuddyApplication.getInstance().setRooms(RObjectManager.getRooms());
-                updateUI();
-            }
-
-            @Override
-            public void onError(String error) {
-                LogHtk.e(LogHtk.RecentFragment, "Error! Can not load Rooms from server!");
-                APIManager.showToastWithCode(error, getActivity());
-                processUIWhenError();
-
-            }
-        });
-    }
-
     protected void updateUI() {
         RUserMe me = realmManager.getUserMeFromCache();
 
@@ -254,28 +174,16 @@ public class RecentFragment extends Fragment {
             } else {
                 LogHtk.i(LogHtk.ErrorHTK, "Opening chat rooms is NUll");
             }
-
-//            CenterActivity.connectXMPP(me);
-//            try {
-//                if (!AntbuddyService.getInstance().isXMPPConnected()) {
-//
-//                } else {
-//
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                LogHtk.e(LogHtk.RecentFragment, "Warning! XMPPConnection is null at RecentFragment!");
-//            }
         }
     }
 
-    private void processUIWhenError() {
-        if (!AndroidHelper.isInternetAvailable(getContext())) {
-            backgroundTry.setVisibility(View.VISIBLE);
-            prb_Loading.setVisibility(View.GONE);
-            btnTry.setVisibility(View.VISIBLE);
-            backgroundViews.setVisibility(View.GONE);
-            prb_LoadingFisrt.setVisibility(View.GONE);
-        }
-    }
+//    private void processUIWhenError() {
+//        if (!AndroidHelper.isInternetAvailable(getContext())) {
+//            backgroundTry.setVisibility(View.VISIBLE);
+//            prb_Loading.setVisibility(View.GONE);
+//            btnTry.setVisibility(View.VISIBLE);
+//            backgroundViews.setVisibility(View.GONE);
+//            prb_LoadingFisrt.setVisibility(View.GONE);
+//        }
+//    }
 }
