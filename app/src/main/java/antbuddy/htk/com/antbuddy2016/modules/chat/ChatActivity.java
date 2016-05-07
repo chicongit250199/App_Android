@@ -437,14 +437,11 @@ public class ChatActivity extends Activity {
         btnAttachment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogHtk.i(LogHtk.Test3, "Attach file click!");
-
                 if (idAttachView.getVisibility() == View.VISIBLE) {
                     idAttachView.setVisibility(View.GONE);
                 } else {
                     //TODO: WARNING when run this line! Skipped 34 frames!  The application may be doing too much work on its main thread
                     idAttachView.setVisibility(View.VISIBLE);
-
 //                    idAttachView.startAnimation(animationFadeIn);
                 }
             }

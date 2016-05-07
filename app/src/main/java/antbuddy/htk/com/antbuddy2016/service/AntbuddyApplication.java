@@ -74,7 +74,7 @@ public class AntbuddyApplication extends Application {
 		if (domain.length() > 0) {
 			apiService = restartAPIServiceWithDomain(ABSharedPreference.get(ABSharedPreference.KEY_DOMAIN));
 		} else {
-			LogHtk.e(TAG, "Domain is not Exist");
+			LogHtk.e(TAG, "Domain is not Exist!");
 		}
 
 		return apiService;

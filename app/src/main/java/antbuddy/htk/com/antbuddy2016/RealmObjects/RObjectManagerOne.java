@@ -178,6 +178,7 @@ public class RObjectManagerOne {
     }
 
     public void loading_UserMe_Users_Rooms() {
+        LogHtk.i(LogHtk.Test3, "555");
         AntbuddyService service = AntbuddyService.getInstance();
 
         if (service != null) {

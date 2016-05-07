@@ -155,6 +155,7 @@ public class AntbuddyService extends Service {
 
 			@Override        // Main Thread
 			public void onError(String error) {
+				LogHtk.i(LogHtk.ErrorHTK, "Error (GET UserMe)! " + error);
 				Intent intent = new Intent(BroadcastConstant.CENTER_LOADING_DATA_SUCEESS);
 				intent.putExtra("loadingResult", error);
 				getApplicationContext().sendBroadcast(intent);

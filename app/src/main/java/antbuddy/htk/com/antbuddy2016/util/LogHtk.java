@@ -25,6 +25,7 @@ public class LogHtk {
     public static String Realm = "Realm";
     public static String ErrorHTK = "ErrorHTK";
     public static String WarningHTK = "WarningHTK";
+    public static String Broadcast = "Broadcast";
 
 
     private static String[] tags = {
@@ -46,6 +47,7 @@ public class LogHtk {
             Realm,
             ErrorHTK,
             WarningHTK,
+            Broadcast,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

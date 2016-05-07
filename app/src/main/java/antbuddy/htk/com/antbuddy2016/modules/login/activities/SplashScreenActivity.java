@@ -35,7 +35,7 @@ public class SplashScreenActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             try {
                 String result = intent.getStringExtra("loadingResult");
-
+                LogHtk.i(LogHtk.Broadcast, "SplashScreenActivity/result = " + result);
                 if (result.contains("yes")) {
                     AndroidHelper.gotoActivity(SplashScreenActivity.this, CenterActivity.class, true);
                     unregisterReceiver(loadingReceiver);
@@ -56,6 +56,14 @@ public class SplashScreenActivity extends Activity {
                 if (result.contains("noUsers")) {
                     AndroidHelper.gotoActivity(SplashScreenActivity.this, DomainActivity.class, true);
                     unregisterReceiver(loadingReceiver);
+                }
+
+                //
+                if (result.contains("401")) {
+                    AndroidHelper.gotoActivity(SplashScreenActivity.this, LoginActivity.class, true);
+                    unregisterReceiver(loadingReceiver);
+                    ABSharedPreference.resetAccountLogin();
+                    ABSharedPreference.resetAccountInSharedPreferences();
                 }
 
 
@@ -82,6 +90,9 @@ public class SplashScreenActivity extends Activity {
 
             @Override
             public void run() {
+
+
+                LogHtk.i(LogHtk.Test3, "111");
                 String currentScreen = ABSharedPreference.get(ABSharedPreference.KEY_CURRENT_SCREEN);
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.WALK_THROUGH_ACTIVITY.toString())) {
                     Intent i = new Intent(SplashScreenActivity.this, WalkThroughActivity.class);
@@ -109,6 +120,7 @@ public class SplashScreenActivity extends Activity {
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY.toString())) {
                     //loadingCenter();
+                    LogHtk.i(LogHtk.Test3, "333");
                     setupRealmOne();
                 }
 
@@ -151,6 +163,7 @@ public class SplashScreenActivity extends Activity {
     }
 
     private void setupRealmOne() {
+        LogHtk.i(LogHtk.Test3, "444");
         realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
         realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
         realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());

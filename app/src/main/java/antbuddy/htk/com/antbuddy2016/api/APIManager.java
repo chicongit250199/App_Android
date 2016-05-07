@@ -73,6 +73,7 @@ public class APIManager {
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {
+                    LogHtk.e(LogHtk.ErrorHTK, "APIManager/GETLogin/ ERROR! " + response.message());
                     receiver.onError(response.code() + "");
                 }
             }
@@ -196,6 +197,7 @@ public class APIManager {
                 if (response.body() != null) {
                     receiver.onSuccess(response.body());
                 } else {
+                    LogHtk.e(LogHtk.ErrorHTK, "APIManager/GETUserMe/ ERROR! " + response.message());
                     receiver.onError(response.code() + "");
                 }
             }
