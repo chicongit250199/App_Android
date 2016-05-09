@@ -193,8 +193,7 @@ public class RObjectManagerOne {
         return realm.where(RUser.class).findAll();
     }
 
-    public static RUser findUser(String userKey) {
-        Realm realm = Realm.getDefaultInstance();
+    public static RUser findUser(String userKey, Realm realm) {
         RUser user = realm.where(RUser.class).equalTo("key", userKey).findFirst();
         return user;
     }

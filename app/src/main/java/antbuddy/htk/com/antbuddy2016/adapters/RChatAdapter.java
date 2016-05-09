@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
@@ -142,7 +143,15 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
             String url_avatar = "";
             RUser user;
             if (!senderKey.isEmpty()) {
-                user = RObjectManager.findUser(senderKey);
+                user = RObjectManagerOne.findUser(senderKey, this.realm);
+                if (user != null) {
+                    url_avatar = user.getAvatar();
+                }
+            }
+
+            if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+                user = RObjectManagerOne.findUser(keyMe, this.realm);
+
                 if (user != null) {
                     url_avatar = user.getAvatar();
                 }
