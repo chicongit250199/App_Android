@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import io.realm.RealmObject;
@@ -120,7 +121,7 @@ public class RChatMessage extends RealmObject {
         super();
     }
 
-    public RChatMessage(final Message message, RUserMe userMe) {
+    public RChatMessage(final Message message) {
         id = message.getPacketID();
 
         // XMPP Message Info
@@ -382,8 +383,6 @@ public class RChatMessage extends RealmObject {
         this.expandBody = expandBody;
     }
 
-
-
     public String toString() {
         StringBuilder result = new StringBuilder();
         String newLine = System.getProperty("line.separator");
@@ -411,5 +410,29 @@ public class RChatMessage extends RealmObject {
         result.append("}");
 
         return result.toString();
+    }
+
+    public void showLog() {
+        LogHtk.i(LogHtk.Object, "----RChatMessage----");
+        LogHtk.i(LogHtk.Object, "id = " + id);
+        LogHtk.i(LogHtk.Object, "senderJid = " + senderJid);
+        LogHtk.i(LogHtk.Object, "senderId = " + senderId);
+        LogHtk.i(LogHtk.Object, "senderName = " + senderName);
+        LogHtk.i(LogHtk.Object, "body = " + body);
+        LogHtk.i(LogHtk.Object, "fromId = " + fromId);
+        LogHtk.i(LogHtk.Object, "receiverJid = " + receiverJid);
+        LogHtk.i(LogHtk.Object, "receiverId = " + receiverId);
+        LogHtk.i(LogHtk.Object, "receiverName = " + receiverName);
+        LogHtk.i(LogHtk.Object, "isModified = " + isModified);
+        LogHtk.i(LogHtk.Object, "type = " + type);
+        LogHtk.i(LogHtk.Object, "subtype = " + subtype);
+        LogHtk.i(LogHtk.Object, "time = " + time);
+        LogHtk.i(LogHtk.Object, "expandBody = " + expandBody);
+        LogHtk.i(LogHtk.Object, "org = " + org);
+        LogHtk.i(LogHtk.Object, "senderKey = " + senderKey);
+        LogHtk.i(LogHtk.Object, "fromKey = " + fromKey);
+        LogHtk.i(LogHtk.Object, "receiverKey = " + receiverKey);
+        LogHtk.i(LogHtk.Object, "fileAntBuddy = " + fileAntBuddy);
+        LogHtk.i(LogHtk.Object, "----End----");
     }
 }

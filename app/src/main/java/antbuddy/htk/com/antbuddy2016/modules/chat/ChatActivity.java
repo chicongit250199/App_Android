@@ -59,6 +59,7 @@ import antbuddy.htk.com.antbuddy2016.customview.HTKPhoToView;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -254,7 +255,19 @@ public class ChatActivity extends Activity {
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyMe)
+                        .or()
+                        .equalTo("fromKey", ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))
+                        .equalTo("senderKey", ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))
+                        .equalTo("receiverKey", keyRoom)
                         .findAll().distinct("id"));
+
+
+//                LogHtk.i(LogHtk.Test1, "keyRoom = " + keyRoom);
+//                realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class)
+//                        .equalTo("org", keyRoom)
+//                        .findAll().distinct("id"));
+
+
             }
         }
 
@@ -578,6 +591,8 @@ public class ChatActivity extends Activity {
         realmManager.addChatMessagesListener(new RealmChangeListener() {
             @Override
             public void onChange() {
+                LogHtk.i(LogHtk.Test1, "Co su thay doi! size = " + realmManager.getChatMessages().size());
+
                 lv_messages.setSelection(lv_messages.getCount() - 1);
                 if (!isloadedMessages) {
                     lv_messages.setSelection(lv_messages.getCount() - 1);

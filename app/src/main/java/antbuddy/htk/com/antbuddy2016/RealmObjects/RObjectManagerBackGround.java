@@ -35,12 +35,21 @@ public class RObjectManagerBackGround {
     }
 
     public void saveMessage(RChatMessage message) {
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(message);
-//        RChatMessage realmMessage = realm.createObject(RChatMessage.class);
-//        realmMessage.setBody(message.getBody());
-//        realmMessage.setTime(message.getTime());
-        realm.commitTransaction();
+        try {
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(message);
+            realm.commitTransaction();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return;
+        }
+
+//        RChatMessage messageSaved = realm.where(RChatMessage.class).equalTo("id", message.getId()).findFirst();
+//        if (messageSaved != null) {
+//            messageSaved.showLog();
+//        } else {
+//            LogHtk.e(LogHtk.Test1, "ERROR! MessageSaved is Null!");
+//        }
     }
 
     // ASSIGN

@@ -327,7 +327,7 @@ public class AntbuddyXmppConnection {
                 @Override
                 public void run() {
                     RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-                    RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
+                    RChatMessage _chatMessage = new RChatMessage(message);
                     LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
                     realmBG.saveMessage(_chatMessage);
 
