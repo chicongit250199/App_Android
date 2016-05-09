@@ -31,6 +31,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROrg;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
@@ -266,7 +267,7 @@ public class AntbuddyXmppConnection {
 
     private void presenceIN(Packet packet) {
         Presence presence = (Presence) packet;
-        //LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+        LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
 
         // Update status on RUser
 //        <presence to="4e499d80-1408-11e6-8d18-91c528c9c04c_69fbb50b-7822-485e-9960-ee0cb869e848@antbuddy.com/7b815c22a8c0f6fa"
@@ -274,10 +275,15 @@ public class AntbuddyXmppConnection {
 //        <status>undefined</status
 //                ><show>away</show>
 //        </presence>
+
+
+
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
 //                RObjectManagerOne realm = new RObjectManagerOne();
+//                realm.setUsers(realm.getRealm().where(RUser.class).equalTo("key", ).findAll());
+//
 ////                realm.setUsers();
 //
 ////                //RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
@@ -306,17 +312,23 @@ public class AntbuddyXmppConnection {
     private void messageIN(Packet packet) {
 
         final Message message = (Message) packet;
-        //LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
-        String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+        LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
 
-        if (message.getBody() != null && message.getBody().length() > 0 && !message.getFrom().equals(domainXMPP)) {
+        String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+        LogHtk.d(LogHtk.XMPP_TAG, "--> domainXMPP = " + domainXMPP);
+        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getBody() = " + message.getBody());
+        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getBody().length() = " + message.getBody().length());
+        LogHtk.d(LogHtk.XMPP_TAG, "-->!message.getFrom().equals(domainXMPP) = " + !message.getFrom().equals(domainXMPP));
+        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getFrom() = " + message.getFrom());
+
+        if (message.getBody() != null && message.getBody().length() > 0) {
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
                     RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-                    //LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
+                    LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
                     realmBG.saveMessage(_chatMessage);
 
                     // Update time
@@ -332,6 +344,7 @@ public class AntbuddyXmppConnection {
     }
 
     public void messageOUT(final RChatMessage chatMessage) {
+
         if (xmppConnection == null || !xmppConnection.isConnected()) {
             //LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect! --> Try to connect XMPP ... ");
             new Thread(new Runnable() {
@@ -390,16 +403,7 @@ public class AntbuddyXmppConnection {
 
             msg.setBody("File uploaded: " + chatMessage.getFileAntBuddy().getFileUrl());
         }
-
-//		LogHtk.i(LogHtk.Test1, "XMPP message out: " + msg.toXML());
         xmppConnection.sendPacket(msg);
-        //fix not update in other device
-        if (chatMessage.getType().equals(ChatMessage.TYPE.chat.toString()) && !chatMessage.getReceiverKey().equals(userMe.getKey())) {
-            String mReceiverJid = String.format("%s_%s@%s", userMe.getKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
-            msg.setTo(mReceiverJid);
-            xmppConnection.sendPacket(msg);
-        }
-
         realmManager.closeRealm();
     }
 

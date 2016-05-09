@@ -18,6 +18,7 @@ import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import io.realm.Realm;
@@ -98,6 +99,10 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         String senderKey = message.getSenderKey();
         boolean isMe = (TextUtils.isEmpty(message.getSubtype()) || message.getSubtype().equals("null")) && senderKey.equals(keyMe);
         Boolean isFile = message.getFileAntBuddy() != null && message.getFileAntBuddy().getMimeType().startsWith("image");
+
+        if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+            isMe = true;
+        }
 
         if (isMe) {
             holder.ll_message_left.setVisibility(View.GONE);

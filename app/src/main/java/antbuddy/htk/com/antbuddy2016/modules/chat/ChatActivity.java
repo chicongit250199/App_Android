@@ -634,7 +634,7 @@ public class ChatActivity extends Activity {
 
     private static File getOutputMediaFile(){
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "AntPhoto");
+                Environment.DIRECTORY_PICTURES), "AntBuddyPhoto");
 
         if (!mediaStorageDir.exists()){
             if (!mediaStorageDir.mkdirs()){
