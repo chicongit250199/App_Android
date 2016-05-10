@@ -27,6 +27,8 @@ public class LogHtk {
     public static String WarningHTK = "WarningHTK";
     public static String Broadcast = "Broadcast";
     public static String Object = "Object";
+    public static String Info = "Info";
+    public static String XMPPPresence = "XMPPPresence";
 
 
     private static String[] tags = {
@@ -50,6 +52,8 @@ public class LogHtk {
             WarningHTK,
             Broadcast,
             Object,
+            Info,
+            XMPPPresence,
 //           "Hoa debug",
 //            "Thanh",
 //            SettingsFragment.TAG_THISCLASS,

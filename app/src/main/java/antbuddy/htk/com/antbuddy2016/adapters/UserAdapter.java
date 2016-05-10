@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -44,6 +45,7 @@ public class UserAdapter extends ArrayAdapter<RUser> {
             vi = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = vi.inflate(R.layout.row_member, null);
             holder.imgAvatar = (ImageView)rowView.findViewById(R.id.imgAvatar);
+            holder.imgXMPPStatus = (ImageView)rowView.findViewById(R.id.imgXMPPStatus);
             holder.tv_user_name = (TextView)rowView.findViewById(R.id.tv_user_name);
             rowView.setTag(holder);
         } else {
@@ -60,11 +62,14 @@ public class UserAdapter extends ArrayAdapter<RUser> {
                 .error(R.drawable.ic_avatar_defaul)
                 .into(holder.imgAvatar);
         holder.tv_user_name.setText(user.getName());
+
+        showXmppStatus(holder.imgXMPPStatus, user.getXmppStatus());
         return rowView;
     }
 
     public class Holder {
         public ImageView imgAvatar;
+        public ImageView imgXMPPStatus;
         public TextView tv_user_name;
     }
 
@@ -96,5 +101,25 @@ public class UserAdapter extends ArrayAdapter<RUser> {
     @Override
     public RUser getItem(int position) {
         return users.get(position);
+    }
+
+    private void showXmppStatus(ImageView imageView, String statusStr) {
+        imageView.setVisibility(View.VISIBLE);
+        if (statusStr!= null && statusStr.length() > 0) {
+
+            if (statusStr.equals(RUser.XMPPStatus.offline.toString())) {
+                int id = ctx.getResources().getIdentifier("xmppstatus_offline", "drawable", ctx.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.online.toString())){
+                int id = ctx.getResources().getIdentifier("xmppstatus_online", "drawable", ctx.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.away.toString())){
+                int id = ctx.getResources().getIdentifier("xmppstatus_away", "drawable", ctx.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.dnd.toString())){
+                int id = ctx.getResources().getIdentifier("xmppstatus_dnd", "drawable", ctx.getPackageName());
+                imageView.setImageResource(id);
+            }
+        }
     }
 }

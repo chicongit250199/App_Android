@@ -43,8 +43,6 @@ public class Request {
     private static JSONObject upLoadFile(String urlStr, File fileUpload) {
         try{
             urlStr = urlStr + "/api/files/";
-            LogHtk.i(LogHtk.Test1, "-->urlStr: " + urlStr);
-            LogHtk.i(LogHtk.Test1, "fileUpload: " + fileUpload.getPath());
             URL url = new URL(urlStr);
             HttpsURLConnection httpCon = (HttpsURLConnection) url.openConnection();
 
@@ -58,11 +56,7 @@ public class Request {
             // set entry
             String fileExtension = getFilenameExtension(fileUpload.getPath());
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
-
-            LogHtk.i(LogHtk.Test1, "fileExtension: " + fileExtension);
-            LogHtk.i(LogHtk.Test1, "mimeType: " + mimeType);
             if (mimeType == null) {
-                LogHtk.i(LogHtk.Test1, "mimeType is Null!  ");
                 mimeType = fileExtension;
             }
 

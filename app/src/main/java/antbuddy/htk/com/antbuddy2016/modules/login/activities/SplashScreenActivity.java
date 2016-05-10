@@ -163,7 +163,6 @@ public class SplashScreenActivity extends Activity {
     }
 
     private void setupRealmOne() {
-        LogHtk.i(LogHtk.Test3, "444");
         realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
         realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
         realmManager.setRooms(realmManager.getRealm().where(RRoom.class).findAll());

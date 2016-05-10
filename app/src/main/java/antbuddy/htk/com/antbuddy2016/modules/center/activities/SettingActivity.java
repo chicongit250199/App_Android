@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
@@ -25,6 +26,8 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmChangeListener;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -32,6 +35,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  */
 public class SettingActivity extends Activity {
     private ImageView imgAvatar;
+    private ImageView ic_status;
     private TextView tv_user_name;
     private LinearLayout ll_user;
 
@@ -45,6 +49,7 @@ public class SettingActivity extends Activity {
     private LinearLayout backgroundViews;
     private ProgressBar prb_Loading;
     private Button btnTry;
+    RUser userMe;
 
     private RObjectManagerOne realmManager;
 
@@ -53,11 +58,12 @@ public class SettingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         imgAvatar    = (ImageView) findViewById(R.id.imgAvatar);
+        ic_status    = (ImageView) findViewById(R.id.ic_status);
         tv_user_name = (TextView) findViewById(R.id.tv_user_name);
 
         realmManager = new RObjectManagerOne();
         realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
-
+        realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
         initViews();
 
 //        loading_UserMe();
@@ -84,6 +90,23 @@ public class SettingActivity extends Activity {
     }
 
     private void viewsListener() {
+        realmManager.addUsersListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                RObjectManagerOne realmManager = new RObjectManagerOne();;
+                realmManager.setUserme(realmManager.getRealm().where(RUserMe.class).findFirst());
+                RUserMe me = realmManager.getUserme();
+                if (me != null) {
+                    RUser userMe = realmManager.getRealm().where(RUser.class).equalTo("key", me.getKey()).findFirst();
+                    if (userMe != null) {
+                        showXmppStatus(ic_status, userMe.getXmppStatus());
+                    }
+                }
+
+                realmManager.closeRealm();
+            }
+        });
+
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +227,11 @@ public class SettingActivity extends Activity {
         prb_Loading.setVisibility(View.GONE);
         btnTry.setVisibility(View.VISIBLE);
         backgroundViews.setVisibility(View.VISIBLE);
+
+        userMe = realmManager.getRealm().where(RUser.class).equalTo("key", realmManager.getUserme().getKey()).findFirst();
+        if (userMe != null) {
+            showXmppStatus(ic_status, userMe.getXmppStatus());
+        }
     }
 
     private void updateUIWhenNoInternet() {
@@ -212,6 +240,25 @@ public class SettingActivity extends Activity {
             prb_Loading.setVisibility(View.GONE);
             btnTry.setVisibility(View.VISIBLE);
             backgroundViews.setVisibility(View.GONE);
+        }
+    }
+
+    private void showXmppStatus(ImageView imageView, String statusStr) {
+        imageView.setVisibility(View.VISIBLE);
+        if (statusStr!= null && statusStr.length() > 0) {
+            if (statusStr.equals(RUser.XMPPStatus.offline.toString())) {
+                int id = getResources().getIdentifier("xmppstatus_offline", "drawable", getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.online.toString())){
+                int id = getResources().getIdentifier("xmppstatus_online", "drawable", getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.away.toString())){
+                int id = getResources().getIdentifier("xmppstatus_away", "drawable", getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.dnd.toString())){
+                int id = getResources().getIdentifier("xmppstatus_dnd", "drawable", getPackageName());
+                imageView.setImageResource(id);
+            }
         }
     }
 }

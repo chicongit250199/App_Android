@@ -25,3 +25,9 @@ LogHtk.i(LogHtk.Test1, "Size = " + file.getSize());
                                     LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
 
 
+RealmResults<RUser> users = realm.getUsers();
+        for (RUser user:users) {
+            LogHtk.i(LogHtk.XMPPPresence, "--> Key: " + user.getKey() + ", name: " + user.getName());
+        }
+
+

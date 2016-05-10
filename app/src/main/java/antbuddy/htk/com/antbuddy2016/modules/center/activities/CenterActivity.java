@@ -134,7 +134,7 @@ public class CenterActivity extends AppCompatActivity {
             }
         });
 
-        realmManager.loading_UserMe_Users_Rooms();
+        //realmManager.loading_UserMe_Users_Rooms();
     }
 
 //    private void setupRealmData() {

@@ -194,16 +194,14 @@ public class RObjectManagerBackGround {
         }
     }
 
-    public void loading_UserMe_Users_Rooms() {
-        AntbuddyService service = AntbuddyService.getInstance();
-        if (service != null) {
-            AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
-        } else {
-            LogHtk.i(LogHtk.ErrorHTK, "Service is still null!");
-        }
-
-//        AntbuddyService.getInstance().loadUsers();
-    }
+//    public void loading_UserMe_Users_Rooms() {
+//        AntbuddyService service = AntbuddyService.getInstance();
+//        if (service != null) {
+//            AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
+//        } else {
+//            LogHtk.i(LogHtk.ErrorHTK, "Service is still null!");
+//        }
+//    }
 
 
     public RealmResults<RUser> getUsersFromDB() {

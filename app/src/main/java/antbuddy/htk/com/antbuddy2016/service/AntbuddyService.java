@@ -15,6 +15,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.api.Request;
@@ -25,6 +26,7 @@ import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmResults;
 
 public class AntbuddyService extends Service {
 
@@ -60,7 +62,15 @@ public class AntbuddyService extends Service {
 		mAntbuddyService = AntbuddyService.this;
 
 		if (!isConnecting) {
-			loginXMPP();
+			//loading_UserMe_Users_Rooms();
+			RObjectManagerOne realmManager = new RObjectManagerOne();
+			realmManager.setUsers(realmManager.getRealm().where(RUser.class).findAll());
+			RealmResults<RUser> users = realmManager.getUsers();
+			if (users != null && users.size() > 0) {
+				loginXMPP();
+			} else {
+				LogHtk.e(LogHtk.ErrorHTK, "Error! Cannot login XMPP because Users is null!");
+			}
 		}
 	}
 
@@ -163,7 +173,7 @@ public class AntbuddyService extends Service {
 		});
 	}
 
-	public void loadUsers() {
+	private void loadUsers() {
 		APIManager.GETUsers(new HttpRequestReceiver<List<User>>() {
 			@Override
 			public void onSuccess(final List<User> users) {

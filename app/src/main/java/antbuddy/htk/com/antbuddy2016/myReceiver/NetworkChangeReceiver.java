@@ -20,12 +20,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMan.getActiveNetworkInfo();
         if (netInfo != null && (netInfo.getType() == ConnectivityManager.TYPE_WIFI || netInfo.getType() == ConnectivityManager.TYPE_MOBILE)) {
-            LogHtk.i(LogHtk.Test1, "Co network!");
+            LogHtk.i(LogHtk.Info, "Have network!");
             if (AntbuddyService.getInstance() != null && !AntbuddyService.getInstance().isConnecting) {
                 AntbuddyService.getInstance().loginXMPP();
             }
         } else {
-            LogHtk.i(LogHtk.Test1, "KHONG Co network!");
+            LogHtk.i(LogHtk.Info, "No network!");
             AntbuddyService.getInstance().resetXMPP();
         }
 

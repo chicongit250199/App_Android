@@ -507,7 +507,6 @@ public class ChatActivity extends Activity {
         imgEditPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogHtk.i(LogHtk.Test1, "Edit Photo!!!");
             }
         });
 
@@ -581,7 +580,7 @@ public class ChatActivity extends Activity {
 
                         @Override
                         public void onError(String error) {
-                            LogHtk.i(LogHtk.Test1, "error = " + error);
+                            LogHtk.e(LogHtk.ErrorHTK, "error = " + error);
                         }
                     });
                 }
@@ -591,8 +590,6 @@ public class ChatActivity extends Activity {
         realmManager.addChatMessagesListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                LogHtk.i(LogHtk.Test1, "Co su thay doi! size = " + realmManager.getChatMessages().size());
-
                 lv_messages.setSelection(lv_messages.getCount() - 1);
                 if (!isloadedMessages) {
                     lv_messages.setSelection(lv_messages.getCount() - 1);

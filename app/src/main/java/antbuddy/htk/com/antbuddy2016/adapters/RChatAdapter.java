@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
@@ -163,7 +162,6 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
                     .bitmapTransform(new CropCircleTransformation(ctx))
                     .into(isMe ? holder.imgAvatarRight : holder.imgAvatarLeft);
         }
-
 
         return rowView;
     }

@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ic_status"
-                android:src="@drawable/ic_online"
+                android:src="@drawable/xmppstatus_online"
                 android:visibility="visible"
                 android:layout_gravity="center" />
 

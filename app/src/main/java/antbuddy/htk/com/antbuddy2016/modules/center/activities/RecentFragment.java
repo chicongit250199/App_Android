@@ -16,20 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManager;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RecentsAdapter;
-import antbuddy.htk.com.antbuddy2016.api.APIManager;
-import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.model.Room;
-import antbuddy.htk.com.antbuddy2016.model.User;
-import antbuddy.htk.com.antbuddy2016.model.UserMe;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
-import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
@@ -98,13 +91,13 @@ public class RecentFragment extends Fragment {
                 Bundle args = new Bundle();
                 if (groupPosition == 0) {
                     ROpeningChatRoom openingChatRoom = (ROpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
-                    RRoom room = RObjectManager.findRoom(openingChatRoom.getChatRoomKey());
+                    RRoom room = RObjectManagerOne.findRoom(openingChatRoom.getChatRoomKey(), realmManager.getRealm());
                     args.putString(ChatActivity.kKeyRoom, room.getKey());
                     args.putBoolean(ChatActivity.key_type, true);
                     args.putString(ChatActivity.key_title, room.getName());
                 } else {
                     ROpeningChatRoom openingChatRoom = (ROpeningChatRoom) recentsAdapter.getChild(groupPosition, childPosition);
-                    RUser user = RObjectManager.findUser(openingChatRoom.getChatRoomKey());
+                    RUser user = RObjectManagerOne.findUser(openingChatRoom.getChatRoomKey(), realmManager.getRealm());
                     args.putString(ChatActivity.kKeyRoom, user.getKey());
                     args.putBoolean(ChatActivity.key_type, false);
                     args.putString(ChatActivity.key_title, user.getName());

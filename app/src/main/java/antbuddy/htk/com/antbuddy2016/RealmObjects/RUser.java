@@ -21,13 +21,14 @@ public class RUser extends RealmObject {
     private boolean active;
     private boolean isFavorite;
 
-    enum XMPPStatus {
+    public static enum XMPPStatus {
         online,
+        offline,
         away,   // away
         dnd,    // Do not disturb
     }
 
-    private String xmppStatus;
+    private String xmppStatus = XMPPStatus.offline.toString();
 
     public String getXmppStatus() {
         return xmppStatus;

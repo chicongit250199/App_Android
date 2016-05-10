@@ -131,7 +131,7 @@ public class AntbuddyXmppConnection {
         ConnectionConfiguration connConfig = new ConnectionConfiguration(config.getHOST_XMPP(), config.getPORT_XMPP(), config.getDOMAIN_XMPP());
 
         if (xmppConnection == null) {
-            LogHtk.i(LogHtk.Test1, "XmppConnection is created!");
+            LogHtk.i(LogHtk.Info, "XmppConnection is created!");
             xmppConnection = new XMPPConnection(connConfig);
         }
 
@@ -258,49 +258,89 @@ public class AntbuddyXmppConnection {
     private void addPresenceListener() {
         PacketTypeFilter presenceFilter = new PacketTypeFilter(Presence.class);
         presenceListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                presenceIN(packet);
+            public void processPacket(final Packet packet) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        presenceIN(packet);
+                    }
+                }).start();
+
             }
         };
         xmppConnection.addPacketListener(presenceListener, presenceFilter);
     }
 
-    private void presenceIN(Packet packet) {
+    synchronized private void presenceIN(Packet packet) {
+        LogHtk.i(LogHtk.XMPPPresence, "=================================presenceIN ===================================");
+        RObjectManagerOne realm = new RObjectManagerOne();
+
         Presence presence = (Presence) packet;
-        LogHtk.i(LogHtk.XMPP_TAG, "IN/PRESENCE: " + presence.toXML());
+        LogHtk.i(LogHtk.XMPPPresence, presence.toXML());
 
-        // Update status on RUser
-//        <presence to="4e499d80-1408-11e6-8d18-91c528c9c04c_69fbb50b-7822-485e-9960-ee0cb869e848@antbuddy.com/7b815c22a8c0f6fa"
-//        from="4e499d80-1408-11e6-8d18-91c528c9c04c_69fbb50b-7822-485e-9960-ee0cb869e848@antbuddy.com/19241909081462593894776630">
-//        <status>undefined</status
-//                ><show>away</show>
-//        </presence>
+        // FROM
+        final String senderID = presence.getFrom().split("_")[0];
+        realm.setUser(realm.getRealm().where(RUser.class).equalTo("key", senderID).findFirst());
 
+        // Show log
+//        realm.setUsers(realm.getRealm().where(RUser.class).findAll());
+//        RealmResults<RUser> users = realm.getUsers();
+//        for (RUser user:users) {
+//            LogHtk.i(LogHtk.XMPPPresence, "--> Key: " + user.getKey() + ", name: " + user.getName());
+//        }
 
+        LogHtk.i(LogHtk.XMPPPresence, "senderID: " + senderID);
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                RObjectManagerOne realm = new RObjectManagerOne();
-//                realm.setUsers(realm.getRealm().where(RUser.class).equalTo("key", ).findAll());
-//
-////                realm.setUsers();
-//
-////                //RChatMessage _chatMessage = new RChatMessage(message, realmBG.getUserMeFromDB());
-////                LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
-////                realmBG.saveMessage(_chatMessage);
-////
-////                // Update time
-////                if (chatMessageWillBeSent != null) {
-////                    chatMessageWillBeSent.setTime(message.getTimestamp());
-////                    APIManager.POSTSaveMessage(chatMessageWillBeSent);
-////                }
-//
-//                realm.closeRealm();
-//            }
-//        }).start();
+        // TYPE
+        final Presence.Type typeXMPP = presence.getType();
 
+        // STATUS
+        Presence.Mode xmppMode = presence.getMode();
 
+        if (senderID.length() > 0 && typeXMPP != null && xmppMode == null) {
+            LogHtk.i(LogHtk.XMPPPresence, "--> Process online, offline");
+
+            RUser user = realm.getUser();
+            if (user != null) {
+                LogHtk.i(LogHtk.XMPPPresence, "senderID = " + senderID + " with name: " + user.getName());
+
+                if (typeXMPP.toString().equals(Presence.Type.unavailable.toString())) {
+                    LogHtk.i(LogHtk.XMPPPresence, "- unavailable");
+                    realm.getRealm().beginTransaction();
+                    user.setXmppStatus(RUser.XMPPStatus.offline.toString());
+                    realm.getRealm().copyToRealmOrUpdate(user);
+                    realm.getRealm().commitTransaction();
+                }
+
+                if (typeXMPP.toString().equals(Presence.Type.available.toString())) {
+                    LogHtk.i(LogHtk.XMPPPresence, "- available");
+                    realm.getRealm().beginTransaction();
+                    user.setXmppStatus(RUser.XMPPStatus.online.toString());
+                    realm.getRealm().copyToRealmOrUpdate(user);
+                    realm.getRealm().commitTransaction();
+                }
+            } else {
+                LogHtk.e(LogHtk.XMPPPresence, "User is null!");
+            }
+        }
+
+        // Process away, dnd
+        if (xmppMode != null  && xmppMode.toString().length() > 0) {
+            LogHtk.i(LogHtk.XMPPPresence, "--> Process away, dnd");
+            RUser user = realm.getUser();
+            if (user != null) {
+                LogHtk.i(LogHtk.XMPPPresence, "senderID = " + senderID + " with name: " + user.getName());
+                LogHtk.i(LogHtk.XMPPPresence, "- " + xmppMode.toString());
+                realm.getRealm().beginTransaction();
+                user.setXmppStatus(xmppMode.toString());
+                realm.getRealm().copyToRealmOrUpdate(user);
+                realm.getRealm().commitTransaction();
+            } else {
+                LogHtk.e(LogHtk.XMPPPresence, "User is null!");
+            }
+        }
+
+        realm.closeRealm();
     }
 
     /**
@@ -315,12 +355,6 @@ public class AntbuddyXmppConnection {
         LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
 
         String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
-        LogHtk.d(LogHtk.XMPP_TAG, "--> domainXMPP = " + domainXMPP);
-        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getBody() = " + message.getBody());
-        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getBody().length() = " + message.getBody().length());
-        LogHtk.d(LogHtk.XMPP_TAG, "-->!message.getFrom().equals(domainXMPP) = " + !message.getFrom().equals(domainXMPP));
-        LogHtk.d(LogHtk.XMPP_TAG, "--> message.getFrom() = " + message.getFrom());
-
         if (message.getBody() != null && message.getBody().length() > 0) {
 
             new Thread(new Runnable() {
@@ -456,7 +490,7 @@ public class AntbuddyXmppConnection {
      */
     public void disconnectXMPP() {
         if (xmppConnection != null) {
-            LogHtk.i(LogHtk.Test1, "disconnect XMPP");
+            LogHtk.i(LogHtk.XMPP_TAG, "disconnect XMPP");
 			xmppConnection.setConnected(false);
 
             if (chatListener != null) {

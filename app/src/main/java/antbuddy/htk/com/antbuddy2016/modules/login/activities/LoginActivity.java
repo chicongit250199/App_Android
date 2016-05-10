@@ -58,7 +58,6 @@ public class LoginActivity extends Activity {
 
 
         if(AntbuddyService.getInstance() == null) {
-            LogHtk.i(LogHtk.Test1, "--->Login startService ");
             startService(new Intent(this, AntbuddyService.class));
         }
         emailStr    = ABSharedPreference.getAccountConfig().getEmail();

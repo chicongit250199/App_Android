@@ -18,6 +18,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -156,8 +157,7 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
                     holder.tv_user_name.setText(user.getName());
 
                     // Check XMPP status
-
-                    holder.imgXMPPStatus.setVisibility(View.VISIBLE);
+                    showXmppStatus(holder.imgXMPPStatus, user.getXmppStatus());
                     break;
                 }
             }
@@ -177,5 +177,24 @@ public class RecentsAdapter extends BaseExpandableListAdapter {
 
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    private void showXmppStatus(ImageView imageView, String statusStr) {
+        imageView.setVisibility(View.VISIBLE);
+        if (statusStr!= null && statusStr.length() > 0) {
+            if (statusStr.equals(RUser.XMPPStatus.offline.toString())) {
+                int id = context.getResources().getIdentifier("xmppstatus_offline", "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.online.toString())){
+                int id = context.getResources().getIdentifier("xmppstatus_online", "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.away.toString())){
+                int id = context.getResources().getIdentifier("xmppstatus_away", "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            } else if (statusStr.equals(RUser.XMPPStatus.dnd.toString())){
+                int id = context.getResources().getIdentifier("xmppstatus_dnd", "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            }
+        }
     }
 }
