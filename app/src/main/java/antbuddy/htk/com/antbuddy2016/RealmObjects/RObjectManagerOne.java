@@ -417,4 +417,17 @@ public class RObjectManagerOne {
     public void setChatMessages(RealmResults<RChatMessage> chatMessages) {
         this.chatMessages = chatMessages;
     }
+
+    public void setAllUsersOffline() {
+        users = realm.where(RUser.class).findAll();
+        if (users != null && users.size() >0 ) {
+            for (int i = 0 ; i < users.size() ; i ++) {
+                realm.beginTransaction();
+                RUser user = users.get(i);
+                user.setXmppStatus(RUser.XMPPStatus.offline.toString());
+                realm.copyToRealmOrUpdate(user);
+                realm.commitTransaction();
+            }
+        }
+    }
 }

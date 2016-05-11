@@ -6,8 +6,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
+import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by thanhnguyen on 23/04/2016.
@@ -26,6 +30,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             }
         } else {
             LogHtk.i(LogHtk.Info, "No network!");
+            RObjectManagerOne realmManager = new RObjectManagerOne();
+            realmManager.setAllUsersOffline();
+            realmManager.closeRealm();
+
             AntbuddyService.getInstance().resetXMPP();
         }
 
