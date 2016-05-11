@@ -171,7 +171,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
         android:orientation="horizontal"
-        android:background="@color/ab_green"
+        android:background="@color/white_ab"
         android:id="@+id/idAttachView">
 
         <LinearLayout
@@ -183,8 +183,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="false"
                 android:background="@drawable/ab_document" />
@@ -196,7 +196,8 @@
                 android:layout_gravity="center"
                 android:text="Documents"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black" />
+                android:textColor="@color/ab_grey_deep"
+                android:textSize="17dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -208,8 +209,8 @@
 
             <ImageView
                 android:id="@+id/imageView16"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="false"
                 android:background="@drawable/ab_camera2" />
@@ -221,7 +222,8 @@
                 android:layout_gravity="center"
                 android:text="  Camera  "
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black" />
+                android:textColor="@color/ab_grey_deep"
+                android:textSize="17dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -233,8 +235,8 @@
 
             <ImageView
                 android:id="@+id/imageView17"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="false"
                 android:background="@drawable/ab_gallery" />
@@ -246,7 +248,8 @@
                 android:layout_gravity="center"
                 android:text=" Gallery "
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black" />
+                android:textColor="@color/ab_grey_deep"
+                android:textSize="17dp" />
         </LinearLayout>
     </LinearLayout>
 

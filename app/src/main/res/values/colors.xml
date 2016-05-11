@@ -20,5 +20,6 @@
     <color name="ab_red">#FFDA0C0C</color>
     <color name="ab_orange">#edd42c</color>
     <color name="ab_grey">#FFCFCEC9</color>
+    <color name="ab_grey_deep">#7b7a78</color>
 
 </resources>
