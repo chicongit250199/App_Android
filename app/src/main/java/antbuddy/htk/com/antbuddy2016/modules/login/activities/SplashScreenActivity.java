@@ -119,8 +119,6 @@ public class SplashScreenActivity extends Activity {
                 }
 
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.CENTER_ACTIVITY.toString())) {
-                    //loadingCenter();
-                    LogHtk.i(LogHtk.Test3, "333");
                     setupRealmOne();
                 }
 
