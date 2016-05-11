@@ -56,18 +56,18 @@
 
             <Button
                 android:id="@+id/btnAttachment"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@drawable/ab_attachment"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ab_attach"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <Button
                 android:id="@+id/btnSetting"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/setting"
+                android:background="@drawable/ab_setting"
                 android:layout_gravity="center"
                 android:layout_margin="5dp" />
         </LinearLayout>
