@@ -25,6 +25,8 @@ import antbuddy.htk.com.antbuddy2016.model.User;
 import antbuddy.htk.com.antbuddy2016.modules.chat.ChatActivity;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
+import antbuddy.htk.com.antbuddy2016.util.LogHtk;
+import io.realm.RealmChangeListener;
 
 /**
  * Created by thanhnguyen on 30/03/2016.
@@ -67,9 +69,7 @@ public class MembersFragment extends Fragment {
 
         initViews(rootView);
         viewsListener();
-
         updateUI();
-        //loading_Users();
 
         return rootView;
     }
@@ -82,6 +82,15 @@ public class MembersFragment extends Fragment {
     }
 
     private void viewsListener() {
+        realmManager.addUsersListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                mUserAdapter.notifyDataSetChanged();
+                LogHtk.i(LogHtk.Test1, "MemberFragment/ thay doi gi khong?!!");
+            }
+        });
+
+
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
