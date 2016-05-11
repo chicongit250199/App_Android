@@ -338,7 +338,7 @@ public class ChatActivity extends Activity {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
+                changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_face);
             }
         });
 
@@ -522,7 +522,7 @@ public class ChatActivity extends Activity {
                     etTypingMessage.requestFocus();
                     final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.showSoftInput(etTypingMessage, InputMethodManager.SHOW_IMPLICIT);
-                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_smile);
+                    changeEmojiKeyboardIcon(btn_smile, R.drawable.ab_face);
                 } else {
                     if (popup.isKeyBoardOpen()) {
                         // Dismiss Keyboard
@@ -568,6 +568,8 @@ public class ChatActivity extends Activity {
                                     RUserMe userMe = realmManager.getUserme();
                                     if (userMe != null) {
                                         RChatMessage chatMessage = new RChatMessage(keyRoom, "", isGroup, fileAntBuddy, userMe);
+                                        String id = chatMessage.getFromKey() + AndroidHelper.renID();
+                                        chatMessage.setId(id);
                                         AntbuddyService.getInstance().sendMessageOut(chatMessage);
 
                                         imgPhoto.setVisibility(View.GONE);

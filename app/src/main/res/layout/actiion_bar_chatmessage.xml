@@ -69,7 +69,8 @@
                 android:layout_height="32dp"
                 android:background="@drawable/ab_setting"
                 android:layout_gravity="center"
-                android:layout_margin="5dp" />
+                android:layout_margin="5dp"
+                android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>
 

@@ -63,12 +63,12 @@
 
                     <ImageView
                         android:id="@+id/btn_smile"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center"
                         android:layout_margin="5dp"
                         android:adjustViewBounds="false"
-                        android:background="@drawable/ab_smile"
+                        android:background="@drawable/ab_face"
                         android:contentDescription="@string/smile"
                         android:drawablePadding="0dip"
                         android:padding="10dp" />
@@ -90,7 +90,8 @@
                         android:paddingTop="5dp"
                         android:textColor="@color/black"
                         android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="16sp">
+                        android:textSize="16sp"
+                        android:layout_marginTop="5dp">
 
                         <requestFocus />
                     </github.ankushsachdeva.emojicon.EmojiconEditText>
@@ -104,8 +105,8 @@
 
                         <ImageView
                             android:id="@+id/imgCamera"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
                             android:layout_centerInParent="true"
                             android:background="@drawable/ab_camera" />
                     </LinearLayout>

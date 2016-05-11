@@ -86,10 +86,8 @@ public class MembersFragment extends Fragment {
             @Override
             public void onChange() {
                 mUserAdapter.notifyDataSetChanged();
-                LogHtk.i(LogHtk.Test1, "MemberFragment/ thay doi gi khong?!!");
             }
         });
-
 
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override

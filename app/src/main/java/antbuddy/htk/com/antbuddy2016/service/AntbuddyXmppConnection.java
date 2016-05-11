@@ -350,11 +350,9 @@ public class AntbuddyXmppConnection {
      * @param packet
      */
     private void messageIN(Packet packet) {
-
         final Message message = (Message) packet;
-        LogHtk.d(LogHtk.XMPP_TAG, "												-->Message from XMPP: " + message.toXML());
-
-        String domainXMPP = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+        LogHtk.i(LogHtk.XMPP_TAG, "====================XMPP Message IN===============================");
+        LogHtk.i(LogHtk.XMPP_TAG, message.toXML());
         if (message.getBody() != null && message.getBody().length() > 0) {
 
             new Thread(new Runnable() {
@@ -362,7 +360,7 @@ public class AntbuddyXmppConnection {
                 public void run() {
                     RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
                     RChatMessage _chatMessage = new RChatMessage(message);
-                    LogHtk.d(LogHtk.XMPP_TAG, "					ChatMessage" + _chatMessage.toString());
+                    LogHtk.i(LogHtk.XMPP_TAG, " -> ChatMessage: " + _chatMessage.toString());
                     realmBG.saveMessage(_chatMessage);
 
                     // Update time
@@ -374,6 +372,8 @@ public class AntbuddyXmppConnection {
                     realmBG.closeRealm();
                 }
             }).start();
+        } else {
+            LogHtk.e(LogHtk.ErrorHTK, "Warning! XMPP message in not be show!");
         }
     }
 
@@ -421,12 +421,10 @@ public class AntbuddyXmppConnection {
             type = Message.Type.chat;
         }
 
-        String id = chatMessage.getFromKey() + AndroidHelper.renID();
-        chatMessage.setId(id);
         this.chatMessageWillBeSent = chatMessage;
 
         Message msg = new Message(receiverJid, type);
-        msg.setPacketID(id);
+        msg.setPacketID(chatMessage.getId());
         msg.setBody(chatMessage.getBody());
         msg.setWith(chatMessage.getReceiverKey());
         if (chatMessage.getFileAntBuddy() != null) {
