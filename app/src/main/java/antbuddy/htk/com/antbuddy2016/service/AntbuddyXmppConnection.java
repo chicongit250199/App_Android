@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerBackGround;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
@@ -34,6 +35,7 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
+import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
 import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
@@ -353,32 +355,70 @@ public class AntbuddyXmppConnection {
         final Message message = (Message) packet;
         LogHtk.i(LogHtk.XMPP_TAG, "====================XMPP Message IN===============================");
         LogHtk.i(LogHtk.XMPP_TAG, message.toXML());
-        if (message.getBody() != null && message.getBody().length() > 0) {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
-                    RChatMessage _chatMessage = new RChatMessage(message);
-                    LogHtk.i(LogHtk.XMPP_TAG, " -> ChatMessage: " + _chatMessage.toString());
-                    realmBG.saveMessage(_chatMessage);
+        if (message.getTimestamp().length() > 0 && message.getBody() != null && message.getBody().length() > 0) {
 
-                    // Update time
-                    if (chatMessageWillBeSent != null) {
-                        chatMessageWillBeSent.setTime(message.getTimestamp());
-                        APIManager.POSTSaveMessage(chatMessageWillBeSent);
-                    }
+            Type type = message.getType();
+            if (type != null) {
+                if ((type.toString().equals("groupchat") && message.getAck() != null)
+                        || (type.toString().equals("chat") && message.getAck() != null)
+                        || (type.toString().equals("chat") && message.getAck() == null && message.getFrom().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN)))) {
 
-                    realmBG.closeRealm();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
+                            RChatMessage _chatMessage = new RChatMessage(message);
+                            LogHtk.i(LogHtk.XMPP_TAG, " -> ChatMessage: " + _chatMessage.toString());
+                            _chatMessage.setTime(message.getTimestamp());
+                            realmBG.saveMessage(_chatMessage);
+
+                            APIManager.POSTSaveMessage(_chatMessage, new HttpRequestReceiver<GChatMassage>() {
+                                @Override
+                                public void onSuccess(GChatMassage chatmessage) {
+                                    LogHtk.i(LogHtk.XMPP_TAG, " -> Message saved: " + chatmessage.toString());
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    LogHtk.e(LogHtk.XMPP_TAG, "ERROR! Can not save message! " + error);
+                                }
+                            });
+
+//                            if (message.getFrom().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+//                                // No need to save
+//                                LogHtk.i(LogHtk.XMPP_TAG, "~~ No need to save message!");
+//                            } else {
+//                                APIManager.POSTSaveMessage(_chatMessage, new HttpRequestReceiver<GChatMassage>() {
+//                                    @Override
+//                                    public void onSuccess(GChatMassage chatmessage) {
+//                                        LogHtk.i(LogHtk.XMPP_TAG, " -> Message saved: " + chatmessage.toString());
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//                                        LogHtk.e(LogHtk.XMPP_TAG, "ERROR! Can not save message! " + error);
+//                                    }
+//                                });
+//                            }
+
+                            realmBG.closeRealm();
+                        }
+                    }).start();
+                } else {
+                    LogHtk.e(LogHtk.ErrorHTK, "Warning! XMPP message in not be show!");
                 }
-            }).start();
+            } else {
+                LogHtk.e(LogHtk.ErrorHTK, "Error! Mode is null!");
+            }
+
         } else {
-            LogHtk.e(LogHtk.ErrorHTK, "Warning! XMPP message in not be show!");
+            LogHtk.e(LogHtk.ErrorHTK, "XMPP message don't have timestamp field!");
         }
     }
 
     public void messageOUT(final RChatMessage chatMessage) {
-
+        LogHtk.i(LogHtk.XMPP_TAG, "===========================XMPP Message OUT===================================");
         if (xmppConnection == null || !xmppConnection.isConnected()) {
             //LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect! --> Try to connect XMPP ... ");
             new Thread(new Runnable() {
@@ -435,6 +475,8 @@ public class AntbuddyXmppConnection {
 
             msg.setBody("File uploaded: " + chatMessage.getFileAntBuddy().getFileUrl());
         }
+
+        LogHtk.i(LogHtk.XMPP_TAG, msg.toXML());
         xmppConnection.sendPacket(msg);
         realmManager.closeRealm();
     }

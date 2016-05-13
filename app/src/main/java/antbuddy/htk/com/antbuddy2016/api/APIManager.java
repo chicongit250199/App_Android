@@ -248,7 +248,7 @@ public class APIManager {
         });
     }
 
-    public static void POSTSaveMessage(RChatMessage chatMessage) {
+    public static void POSTSaveMessage(RChatMessage chatMessage, final HttpRequestReceiver<GChatMassage> receiver) {
         GChatMassage message = new GChatMassage();
         message.setBody(chatMessage.getBody());
         message.setFromKey(chatMessage.getFromKey());
@@ -273,15 +273,35 @@ public class APIManager {
             message.setBody("File uploaded: " + file.getFileUrl());
         }
 
+        LogHtk.i(LogHtk.Test1, "--> message---- ");
+        LogHtk.i(LogHtk.Test1, "Body = " + message.getBody());
+        LogHtk.i(LogHtk.Test1, "FromKey = " + message.getFromKey());
+        LogHtk.i(LogHtk.Test1, "ReceiverKey = " + message.getReceiverKey());
+        LogHtk.i(LogHtk.Test1, "SenderKey = " + message.getSenderKey());
+        LogHtk.i(LogHtk.Test1, "ID = " + message.getId());
+        LogHtk.i(LogHtk.Test1, "Type = " + message.getType());
+        LogHtk.i(LogHtk.Test1, "Subtype = " + message.getSubtype());
+        LogHtk.i(LogHtk.Test1, "Time = " + message.getTime());
+
+        LogHtk.i(LogHtk.Test1, "ABSharedPreference.getAccountConfig().getToken() = " + ABSharedPreference.getAccountConfig().getToken());
         Call<GChatMassage> call = AntbuddyApplication.getInstance().getApiService().newMessageToHistory(ABSharedPreference.getAccountConfig().getToken(), message);
         call.enqueue(new Callback<GChatMassage>() {
             @Override
             public void onResponse(Response<GChatMassage> response) {
+                LogHtk.i(LogHtk.Test1, "errorBody = " + response.errorBody());
+                LogHtk.i(LogHtk.Test1, "message = " + response.message());
+                LogHtk.i(LogHtk.Test1, "Raw = " + response.raw());
 
+                if (response.body() != null) {
+                    receiver.onSuccess(response.body());
+                } else {
+                    receiver.onError(response.code() + "");
+                }
             }
 
             @Override
             public void onFailure(Throwable t) {
+                receiver.onError(t.toString());
             }
         });
     }

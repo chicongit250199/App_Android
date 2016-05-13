@@ -100,9 +100,9 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
         boolean isMe = (TextUtils.isEmpty(message.getSubtype()) || message.getSubtype().equals("null")) && senderKey.equals(keyMe);
         Boolean isFile = message.getFileAntBuddy() != null && message.getFileAntBuddy().getMimeType().startsWith("image");
 
-        if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
-            isMe = true;
-        }
+//        if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+//            isMe = true;
+//        }
 
         if (isMe) {
             holder.ll_message_left.setVisibility(View.GONE);
@@ -148,13 +148,13 @@ public class RChatAdapter extends RealmBaseAdapter<RChatMessage> {
                 }
             }
 
-            if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
-                user = RObjectManagerOne.findUser(keyMe, this.realm);
-
-                if (user != null) {
-                    url_avatar = user.getAvatar();
-                }
-            }
+//            if (message.getFromKey().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+//                user = RObjectManagerOne.findUser(keyMe, this.realm);
+//
+//                if (user != null) {
+//                    url_avatar = user.getAvatar();
+//                }
+//            }
 
             Glide.with(ctx)
                     .load(url_avatar)

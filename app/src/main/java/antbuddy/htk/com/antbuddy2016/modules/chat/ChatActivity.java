@@ -255,10 +255,6 @@ public class ChatActivity extends Activity {
                         .equalTo("fromKey", keyRoom)
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyMe)
-                        .or()
-                        .equalTo("fromKey", ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))
-                        .equalTo("senderKey", ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))
-                        .equalTo("receiverKey", keyRoom)
                         .findAll().distinct("id"));
 
 
@@ -549,6 +545,9 @@ public class ChatActivity extends Activity {
                     RUserMe userMe = realmManager.getUserme();
                     if (userMe != null) {
                         RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, userMe);
+                        String id = chatMessage.getFromKey() + AndroidHelper.renID();
+                        LogHtk.i(LogHtk.Test1, "12 -- ID = " + id);
+                        chatMessage.setId(id);
                         AntbuddyService.getInstance().sendMessageOut(chatMessage);
                     }
 
@@ -569,6 +568,7 @@ public class ChatActivity extends Activity {
                                     if (userMe != null) {
                                         RChatMessage chatMessage = new RChatMessage(keyRoom, "", isGroup, fileAntBuddy, userMe);
                                         String id = chatMessage.getFromKey() + AndroidHelper.renID();
+                                        LogHtk.i(LogHtk.Test1, "1 -- ID = " + id);
                                         chatMessage.setId(id);
                                         AntbuddyService.getInstance().sendMessageOut(chatMessage);
 

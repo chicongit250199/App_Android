@@ -160,6 +160,36 @@ public class RChatMessage extends RealmObject {
             org = group2;
             receiverKey = with; // with ~ receiverKey
             senderKey = fromKey =  fromSplit[0].split("_")[0];
+
+            LogHtk.i(LogHtk.Test1, "1");
+            // Myself
+            if (group1.equals(with) && fromKey.equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+                LogHtk.i(LogHtk.Test1, "2");
+                senderKey = with;
+                fromKey = with;
+                receiverKey = with;
+            }
+
+            LogHtk.i(LogHtk.Test1, "3");
+            // 1-1
+            if (fromKey.equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
+                LogHtk.i(LogHtk.Test1, "4");
+                if (!group1.equals(with)) {
+                    LogHtk.i(LogHtk.Test1, "5");
+                    senderKey = group1;
+                    fromKey = group1;
+                    receiverKey = with;
+                }
+
+            } else {
+                LogHtk.i(LogHtk.Test1, "6");
+                if (!fromKey.equals(group1) && !fromKey.equals(with)) {
+                    LogHtk.i(LogHtk.Test1, "7");
+                    receiverKey = with;
+                    senderKey = fromKey;
+                }
+            }
+            LogHtk.i(LogHtk.Test1, "8");
         }
 
         // Common

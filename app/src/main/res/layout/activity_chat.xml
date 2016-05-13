@@ -66,18 +66,16 @@
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_gravity="center"
-                        android:layout_margin="5dp"
                         android:adjustViewBounds="false"
                         android:background="@drawable/ab_face"
                         android:contentDescription="@string/smile"
                         android:drawablePadding="0dip"
-                        android:padding="10dp" />
+                        android:layout_marginTop="2dp" />
 
                     <github.ankushsachdeva.emojicon.EmojiconEditText
                         android:id="@+id/text_send"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:background="#00000000"
                         android:hint="@string/type_message"
