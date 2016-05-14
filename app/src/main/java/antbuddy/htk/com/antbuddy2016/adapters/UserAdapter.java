@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 

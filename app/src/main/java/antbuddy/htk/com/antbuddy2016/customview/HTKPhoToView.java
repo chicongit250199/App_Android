@@ -3,16 +3,9 @@ package antbuddy.htk.com.antbuddy2016.customview;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import antbuddy.htk.com.antbuddy2016.R;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 
 /**
  * Created by thanhnguyen on 04/05/2016.

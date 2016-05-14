@@ -1,39 +1,13 @@
 package antbuddy.htk.com.antbuddy2016.api;
 
 import android.app.Activity;
-import android.text.TextUtils;
-import android.webkit.MimeTypeMap;
 
-import com.google.gson.Gson;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
-
-import org.apache.http.*;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GChatMassage;
 import antbuddy.htk.com.antbuddy2016.GsonObjects.GFileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
-import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
-import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.model.NewAccount;
 import antbuddy.htk.com.antbuddy2016.model.Organization;
 import antbuddy.htk.com.antbuddy2016.model.OrganizationExist;
@@ -45,7 +19,6 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;

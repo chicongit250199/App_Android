@@ -26,7 +26,6 @@ import antbuddy.htk.com.antbuddy2016.service.AntbuddyApplication;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.RealmChangeListener;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 

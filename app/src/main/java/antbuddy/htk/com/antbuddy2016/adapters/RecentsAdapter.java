@@ -18,7 +18,6 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RObjectManagerOne;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.ROpeningChatRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
-import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**

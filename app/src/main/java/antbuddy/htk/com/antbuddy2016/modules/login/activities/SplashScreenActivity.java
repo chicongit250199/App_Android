@@ -65,8 +65,6 @@ public class SplashScreenActivity extends Activity {
                     ABSharedPreference.resetAccountLogin();
                     ABSharedPreference.resetAccountInSharedPreferences();
                 }
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -90,8 +88,6 @@ public class SplashScreenActivity extends Activity {
 
             @Override
             public void run() {
-
-
                 LogHtk.i(LogHtk.Test3, "111");
                 String currentScreen = ABSharedPreference.get(ABSharedPreference.KEY_CURRENT_SCREEN);
                 if (currentScreen.equals(ABSharedPreference.CURRENTSCREEN.WALK_THROUGH_ACTIVITY.toString())) {

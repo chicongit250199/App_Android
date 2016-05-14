@@ -37,10 +37,8 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.interfaces.XMPPReceiver;
-import antbuddy.htk.com.antbuddy2016.model.ChatMessage;
 import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.setting.ABXMPPConfig;
-import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
 import io.realm.RealmResults;
 
@@ -61,9 +59,6 @@ public class AntbuddyXmppConnection {
     private PacketListener groupChatListener;
     private PacketListener deleteListener;
     private PacketListener presenceListener;
-
-
-    private RChatMessage chatMessageWillBeSent;
 
     /**
      * Notification
@@ -284,15 +279,6 @@ public class AntbuddyXmppConnection {
         final String senderID = presence.getFrom().split("_")[0];
         realm.setUser(realm.getRealm().where(RUser.class).equalTo("key", senderID).findFirst());
 
-        // Show log
-//        realm.setUsers(realm.getRealm().where(RUser.class).findAll());
-//        RealmResults<RUser> users = realm.getUsers();
-//        for (RUser user:users) {
-//            LogHtk.i(LogHtk.XMPPPresence, "--> Key: " + user.getKey() + ", name: " + user.getName());
-//        }
-
-        LogHtk.i(LogHtk.XMPPPresence, "senderID: " + senderID);
-
         // TYPE
         final Presence.Type typeXMPP = presence.getType();
 
@@ -385,23 +371,6 @@ public class AntbuddyXmppConnection {
                                 }
                             });
 
-//                            if (message.getFrom().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN))) {
-//                                // No need to save
-//                                LogHtk.i(LogHtk.XMPP_TAG, "~~ No need to save message!");
-//                            } else {
-//                                APIManager.POSTSaveMessage(_chatMessage, new HttpRequestReceiver<GChatMassage>() {
-//                                    @Override
-//                                    public void onSuccess(GChatMassage chatmessage) {
-//                                        LogHtk.i(LogHtk.XMPP_TAG, " -> Message saved: " + chatmessage.toString());
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String error) {
-//                                        LogHtk.e(LogHtk.XMPP_TAG, "ERROR! Can not save message! " + error);
-//                                    }
-//                                });
-//                            }
-
                             realmBG.closeRealm();
                         }
                     }).start();
@@ -418,7 +387,7 @@ public class AntbuddyXmppConnection {
     }
 
     public void messageOUT(final RChatMessage chatMessage) {
-        LogHtk.i(LogHtk.XMPP_TAG, "===========================XMPP Message OUT===================================");
+        //LogHtk.i(LogHtk.XMPP_TAG, "===========================XMPP Message OUT===================================");
         if (xmppConnection == null || !xmppConnection.isConnected()) {
             //LogHtk.e(LogHtk.ErrorHTK, "ERROR! XMPPConnection is null or do not connect! --> Try to connect XMPP ... ");
             new Thread(new Runnable() {
@@ -460,8 +429,6 @@ public class AntbuddyXmppConnection {
             receiverJid = String.format("%s_%s@%s", chatMessage.getReceiverKey(), orgKey, ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN));
             type = Message.Type.chat;
         }
-
-        this.chatMessageWillBeSent = chatMessage;
 
         Message msg = new Message(receiverJid, type);
         msg.setPacketID(chatMessage.getId());

@@ -41,13 +41,13 @@ public class FileAntBuddy implements Parcelable {
 	public FileAntBuddy() {
 	}
 	
-	public FileAntBuddy(String name, int size, String fileUrl, String mimeType, String thumbnailUrl) {
-		this.name = name;
-		this.size = size;
-		this.fileUrl = fileUrl;
-		this.mimeType = mimeType;
-		this.thumbnailUrl = thumbnailUrl;
-	}
+//	public FileAntBuddy(String name, int size, String fileUrl, String mimeType, String thumbnailUrl) {
+//		this.name = name;
+//		this.size = size;
+//		this.fileUrl = fileUrl;
+//		this.mimeType = mimeType;
+//		this.thumbnailUrl = thumbnailUrl;
+//	}
 
 	public FileAntBuddy(JSONObject json) {
 		name = AndroidHelper.getString(json, key_name, null);
@@ -59,13 +59,13 @@ public class FileAntBuddy implements Parcelable {
 		thumbnailHeight = AndroidHelper.getInt(json, key_thumbnailHeight, 0);
 	}
 
-	public FileAntBuddy(AntBuddyFile antBuddyFile) {
-		name = antBuddyFile.getName();
-		size = antBuddyFile.getSize();
-		fileUrl = antBuddyFile.getFileUrl();
-		mimeType = antBuddyFile.getMimeType();
-		thumbnailUrl = antBuddyFile.getThumbnailUrl();
-	}
+//	public FileAntBuddy(AntBuddyFile antBuddyFile) {
+//		name = antBuddyFile.getName();
+//		size = antBuddyFile.getSize();
+//		fileUrl = antBuddyFile.getFileUrl();
+//		mimeType = antBuddyFile.getMimeType();
+//		thumbnailUrl = antBuddyFile.getThumbnailUrl();
+//	}
 
 	public FileAntBuddy(Parcel in) {
 		name = in.readString();

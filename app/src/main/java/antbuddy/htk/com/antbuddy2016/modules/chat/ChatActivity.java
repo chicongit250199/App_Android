@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,31 +19,26 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 
 import antbuddy.htk.com.antbuddy2016.R;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RChatMessage;
@@ -53,21 +47,17 @@ import antbuddy.htk.com.antbuddy2016.RealmObjects.RRoom;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUser;
 import antbuddy.htk.com.antbuddy2016.RealmObjects.RUserMe;
 import antbuddy.htk.com.antbuddy2016.adapters.RChatAdapter;
-import antbuddy.htk.com.antbuddy2016.api.APIManager;
 import antbuddy.htk.com.antbuddy2016.customview.HTKPhoToView;
 import antbuddy.htk.com.antbuddy2016.interfaces.HttpRequestReceiver;
 import antbuddy.htk.com.antbuddy2016.model.FileAntBuddy;
 import antbuddy.htk.com.antbuddy2016.service.AntbuddyService;
-import antbuddy.htk.com.antbuddy2016.setting.ABSharedPreference;
 import antbuddy.htk.com.antbuddy2016.util.AndroidHelper;
 import antbuddy.htk.com.antbuddy2016.util.BroadcastConstant;
 import antbuddy.htk.com.antbuddy2016.util.LogHtk;
-import antbuddy.htk.com.antbuddy2016.util.NationalTime;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
-import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.Sort;
 
@@ -95,7 +85,6 @@ public class ChatActivity extends Activity {
     private boolean isloadedMessages;
 
     private RObjectManagerOne realmManager;
-
 
     private RelativeLayout rootView;
     private LinearLayout navigationBarID;
@@ -180,11 +169,6 @@ public class ChatActivity extends Activity {
         viewsListener();
 
         loadMoreMessages1();
-
-//        boolean isConnectService = connectServiceInAndroid();
-//        if (!isConnectService) {
-//            LogHtk.i(LogHtk.SERVICE_TAG, "CenterActivity can not get service object in android!");
-//        }
     }
 
     private void setupRealmOne() {
@@ -256,14 +240,6 @@ public class ChatActivity extends Activity {
                         .equalTo("senderKey", keyRoom)
                         .equalTo("receiverKey", keyMe)
                         .findAll().distinct("id"));
-
-
-//                LogHtk.i(LogHtk.Test1, "keyRoom = " + keyRoom);
-//                realmManager.setChatMessages(realmManager.getRealm().where(RChatMessage.class)
-//                        .equalTo("org", keyRoom)
-//                        .findAll().distinct("id"));
-
-
             }
         }
 
@@ -282,8 +258,6 @@ public class ChatActivity extends Activity {
         idAttachView.setLayoutParams(layoutParams);
 
         btnAttachment = (Button) findViewById(R.id.btnAttachment);
-
-
 
         cameraView = (LinearLayout) findViewById(R.id.cameraView);
         imgPhoto = (HTKPhoToView) findViewById(R.id.imgPhoto);
@@ -546,7 +520,6 @@ public class ChatActivity extends Activity {
                     if (userMe != null) {
                         RChatMessage chatMessage = new RChatMessage(keyRoom, text_body, isGroup, userMe);
                         String id = chatMessage.getFromKey() + AndroidHelper.renID();
-                        LogHtk.i(LogHtk.Test1, "12 -- ID = " + id);
                         chatMessage.setId(id);
                         AntbuddyService.getInstance().sendMessageOut(chatMessage);
                     }
@@ -555,15 +528,17 @@ public class ChatActivity extends Activity {
                 }
 
                 if (imgPhoto.getVisibility() == View.VISIBLE) {
-
+                    imgSendMessage.setEnabled(false);
                     File file = new File(outPutfileUri.getPath());
 
                     AntbuddyService.getInstance().uploadFile(file, new HttpRequestReceiver<FileAntBuddy>() {
                         @Override
                         public void onSuccess(final FileAntBuddy fileAntBuddy) {
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    imgSendMessage.setEnabled(true);
                                     RUserMe userMe = realmManager.getUserme();
                                     if (userMe != null) {
                                         RChatMessage chatMessage = new RChatMessage(keyRoom, "", isGroup, fileAntBuddy, userMe);
@@ -583,6 +558,12 @@ public class ChatActivity extends Activity {
                         @Override
                         public void onError(String error) {
                             LogHtk.e(LogHtk.ErrorHTK, "error = " + error);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imgSendMessage.setEnabled(true);
+                                }
+                            });
                         }
                     });
                 }

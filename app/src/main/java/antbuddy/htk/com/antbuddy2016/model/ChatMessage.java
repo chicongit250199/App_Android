@@ -1,10 +1,7 @@
 package antbuddy.htk.com.antbuddy2016.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
-
-import com.google.gson.annotations.SerializedName;
 
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;

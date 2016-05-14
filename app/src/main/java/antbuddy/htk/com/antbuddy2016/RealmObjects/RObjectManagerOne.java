@@ -66,8 +66,6 @@ public class RObjectManagerOne {
         AntbuddyService service = AntbuddyService.getInstance();
 
         if (service != null) {
-            new Exception("+++++++++++ShowLog++++++++++>>>>>>>>loading_UserMe_Users_Rooms").printStackTrace();
-//            LogHtk.i(LogHtk.API_TAG, "+++++++++++++++++++++>>>>>>>>loading_UserMe_Users_Rooms");
             AntbuddyService.getInstance().loading_UserMe_Users_Rooms();
         } else {
             LogHtk.e(LogHtk.ErrorHTK, "RObjectManagerOne/ Service is still null!");
@@ -196,7 +194,6 @@ public class RObjectManagerOne {
         if (userme != null && userMeListener != null) {
             userme.addChangeListener(userMeListener);
         } else {
-            new Exception("----test--- RObjectManagerOne/ UserMe is null or userMeListener is null! ").printStackTrace();
             LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ UserMe is null or userMeListener is null!");
         }
 //
@@ -248,7 +245,6 @@ public class RObjectManagerOne {
                 if (this.users != null && users.size() > 0 && usersListener != null) {
                     this.users.addChangeListener(usersListener);
                 } else {
-                    new Exception("----test--- RObjectManagerOne/ Users is null or userMeListener is null! ").printStackTrace();
                     LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ Users is null or usersListener is null!");
                 }
             }
@@ -301,7 +297,6 @@ public class RObjectManagerOne {
                 if (this.rooms != null && rooms.size() > 0  && roomsListener != null) {
                     this.rooms.addChangeListener(roomsListener);
                 } else {
-                    new Exception("----test--- RObjectManagerOne/ Rooms is null or userMeListener is null! ").printStackTrace();
                     LogHtk.e(LogHtk.WarningHTK, "RObjectManagerOne/ Rooms is null or roomsListener is null!");
                 }
             }

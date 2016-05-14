@@ -9,8 +9,8 @@ android {
         applicationId "antbuddy.htk.com.antbuddy2016"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.1"
+        versionCode 4
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -30,11 +30,9 @@ dependencies {
     compile project(':emojiconmaster')
     compile 'com.lapism:searchview:2.2'
 
-
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta1'
-
 
     compile project(':qsmack322')
     compile 'jp.wasabeef:glide-transformations:2.0.0'

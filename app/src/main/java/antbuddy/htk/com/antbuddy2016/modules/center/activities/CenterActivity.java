@@ -239,23 +239,24 @@ public class CenterActivity extends AppCompatActivity {
                 setTitle(titles[position]);
                 AndroidHelper.hideSoftKeyboard(CenterActivity.this);
 
-                if (position == 0) {
-                    btnAlwaysChange.setBackgroundResource(R.drawable.open_chat_2);
-                    btnAlwaysChange.setTag(0);
-                }
-
-                if (position == 1) {
-                    btnAlwaysChange.setBackgroundResource(R.drawable.call2);
-                    btnAlwaysChange.setTag(1);
-                    btnAlwaysChange.setWidth(44);
-                    btnAlwaysChange.setHeight(44);
-                    return;
-                }
-
-                if (position == 2) {
-                    btnAlwaysChange.setBackgroundResource(R.drawable.addgroup);
-                    btnAlwaysChange.setTag(2);
-                }
+//                if (position == 0) {
+//                    btnAlwaysChange.setBackgroundResource(R.drawable.open_chat_2);
+//                    btnAlwaysChange.setTag(0);
+//                }
+//
+//                if (position == 1) {
+//                    btnAlwaysChange.setBackgroundResource(R.drawable.call2);
+//                    btnAlwaysChange.setTag(1);
+//                    btnAlwaysChange.setWidth(44);
+//                    btnAlwaysChange.setHeight(44);
+//                    return;
+//                }
+//
+//                if (position == 2) {
+//
+//                    btnAlwaysChange.setBackgroundResource(R.drawable.addgroup);
+//                    btnAlwaysChange.setTag(2);
+//                }
 
 //                if (position == 3) {
 //                    btnAlwaysChange.setBackgroundResource(R.drawable.addperson);

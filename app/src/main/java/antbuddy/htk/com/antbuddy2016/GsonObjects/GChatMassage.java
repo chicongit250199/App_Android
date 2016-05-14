@@ -1,8 +1,6 @@
 package antbuddy.htk.com.antbuddy2016.GsonObjects;
 
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by thanhnguyen on 12/04/2016.
  */
