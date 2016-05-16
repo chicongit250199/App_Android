@@ -397,7 +397,7 @@ public class AntbuddyXmppConnection {
 
                             String from = message.getFrom();
                             String xmppResource = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_RESOURCE);
-                            String xmppDomain = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+//                            String xmppDomain = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
                             if ((from != null && from.contains(xmppResource)) || (messageIDs != null && messageIDs.contains(_chatMessage.getId()))) {
                                 LogHtk.i(LogHtk.Test1, "XMPP Resource : " + xmppResource);
                                 LogHtk.i(LogHtk.Test1, "-->IN messageIDs: " + messageIDs.size());
