@@ -13,4 +13,16 @@
 
     <!-- icon -->
     <string name="smile">Smile</string>
+
+
+    <!-- TODO: Should implement this : Status -->
+    <string-array name="statues">
+        <item>Available</item>
+        <item>Available</item>
+        <item>Busy</item>
+        <item>In a meeting</item>
+        <item>At work</item>
+        <item>At gym</item>
+    </string-array>
+
 </resources>

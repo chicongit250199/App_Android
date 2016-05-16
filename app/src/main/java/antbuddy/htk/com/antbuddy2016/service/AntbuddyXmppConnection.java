@@ -10,10 +10,12 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.AntBuddyFile;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
@@ -21,7 +23,9 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.provider.AdHocCommandDataProvider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +63,8 @@ public class AntbuddyXmppConnection {
     private PacketListener groupChatListener;
     private PacketListener deleteListener;
     private PacketListener presenceListener;
+
+    private List<String> messageIDs;
 
     /**
      * Notification
@@ -130,6 +136,8 @@ public class AntbuddyXmppConnection {
         if (xmppConnection == null) {
             LogHtk.i(LogHtk.Info, "XmppConnection is created!");
             xmppConnection = new XMPPConnection(connConfig);
+
+
         }
 
         try {
@@ -152,6 +160,7 @@ public class AntbuddyXmppConnection {
         try {
             SASLAuthentication.supportSASLMechanism("PLAIN", 0);
             String android_id = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+            ABSharedPreference.save(ABSharedPreference.KEY_XMPP_RESOURCE, android_id);
             xmppConnection.login(config.getUSERNAME_XMPP(), config.getPASSWORD_XMPP(), android_id);
 
             // After connect successful
@@ -162,6 +171,29 @@ public class AntbuddyXmppConnection {
             addMessageListener();
             addConnectionListener();
             addPresenceListener();
+
+            // Add packet Listener
+            PacketFilter getFilter = new IQTypeFilter(IQ.Type.ERROR);
+            xmppConnection.addPacketListener(new PacketListener() {
+                public void processPacket(Packet packet) {
+                    LogHtk.i(LogHtk.Test1, "===========> 111");
+                    String from = packet.getFrom();
+                    String to = packet.getTo();
+
+                    final IQ request = new IQ() {
+                        @Override
+                        public String getChildElementXML() {
+                            return toXML();
+                        }
+                    };
+                    request.setFrom(from);
+                    request.setTo(to);
+
+                    final IQ result = IQ.createResultIQ(request);
+                    LogHtk.i(LogHtk.Test1, "Reply: " + result.toXML());
+                    xmppConnection.sendPacket(result);
+                }
+            }, getFilter);
 
             // send presence out to Server XMPP
             sendPresenceOutFromOpeningRooms();
@@ -339,8 +371,8 @@ public class AntbuddyXmppConnection {
      */
     private void messageIN(Packet packet) {
         final Message message = (Message) packet;
-        LogHtk.i(LogHtk.XMPP_TAG, "====================XMPP Message IN===============================");
-        LogHtk.i(LogHtk.XMPP_TAG, message.toXML());
+//        LogHtk.i(LogHtk.XMPP_TAG, "====================XMPP Message IN===============================");
+//        LogHtk.i(LogHtk.XMPP_TAG, message.toXML());
 
         if (message.getTimestamp().length() > 0 && message.getBody() != null && message.getBody().length() > 0) {
 
@@ -350,26 +382,40 @@ public class AntbuddyXmppConnection {
                         || (type.toString().equals("chat") && message.getAck() != null)
                         || (type.toString().equals("chat") && message.getAck() == null && message.getFrom().equals(ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN)))) {
 
+                    LogHtk.i(LogHtk.XMPP_TAG, "====================XMPP Message IN===============================");
+                    LogHtk.i(LogHtk.XMPP_TAG, message.toXML());
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             RObjectManagerBackGround realmBG = new RObjectManagerBackGround();
                             RChatMessage _chatMessage = new RChatMessage(message);
+
                             LogHtk.i(LogHtk.XMPP_TAG, " -> ChatMessage: " + _chatMessage.toString());
                             _chatMessage.setTime(message.getTimestamp());
                             realmBG.saveMessage(_chatMessage);
 
-                            APIManager.POSTSaveMessage(_chatMessage, new HttpRequestReceiver<GChatMassage>() {
-                                @Override
-                                public void onSuccess(GChatMassage chatmessage) {
-                                    LogHtk.i(LogHtk.XMPP_TAG, " -> Message saved: " + chatmessage.toString());
-                                }
+                            String from = message.getFrom();
+                            String xmppResource = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_RESOURCE);
+                            String xmppDomain = ABSharedPreference.get(ABSharedPreference.KEY_XMPP_DOMAIN);
+                            if ((from != null && from.contains(xmppResource)) || (messageIDs != null && messageIDs.contains(_chatMessage.getId()))) {
+                                LogHtk.i(LogHtk.Test1, "XMPP Resource : " + xmppResource);
+                                LogHtk.i(LogHtk.Test1, "-->IN messageIDs: " + messageIDs.size());
+                                messageIDs.remove(_chatMessage.getId());
+                                APIManager.POSTSaveMessage(_chatMessage, new HttpRequestReceiver<GChatMassage>() {
+                                    @Override
+                                    public void onSuccess(GChatMassage chatmessage) {
+                                        LogHtk.i(LogHtk.XMPP_TAG, " -> Message saved: " + chatmessage.toString());
+                                    }
 
-                                @Override
-                                public void onError(String error) {
-                                    LogHtk.e(LogHtk.XMPP_TAG, "ERROR! Can not save message! " + error);
-                                }
-                            });
+                                    @Override
+                                    public void onError(String error) {
+                                        LogHtk.e(LogHtk.XMPP_TAG, "ERROR! Can not save message! " + error);
+                                    }
+                                });
+                            } else {
+                                LogHtk.i(LogHtk.Test1, "No need save message data! Because it'd saved on web client!");
+                            }
 
                             realmBG.closeRealm();
                         }
@@ -444,6 +490,11 @@ public class AntbuddyXmppConnection {
         }
 
         LogHtk.i(LogHtk.XMPP_TAG, msg.toXML());
+        if (messageIDs == null) {
+            messageIDs = new ArrayList<>();
+        }
+        messageIDs.add(chatMessage.getId());
+        LogHtk.i(LogHtk.Test1, "-->OUT messageIDs: " + messageIDs.size());
         xmppConnection.sendPacket(msg);
         realmManager.closeRealm();
     }

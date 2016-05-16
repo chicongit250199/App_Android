@@ -84,6 +84,7 @@ public class ABSharedPreference {
     public static final String KEY_XMPP_DOMAIN   = "KEY_XMPP_DOMAIN";
     public static final String KEY_XMPP_USERNAME = "KEY_XMPP_USERNAME";
     public static final String KEY_XMPP_PASSWORD = "KEY_XMPP_PASSWORD";
+    public static final String KEY_XMPP_RESOURCE = "KEY_XMPP_RESOURCE";
 
     // Setting
     public static final String KEY_REMEMBER_PASSWORD = "KEY_REMEMBER_PASSWORD";
